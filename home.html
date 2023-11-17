@@ -1,78 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Website with Login & Registration Form</title>
-    <link rel="stylesheet" href="home.css" />
-    <!-- Favicons -->
-    <script src="https://kit.fontawesome.com/67405e0868.js" crossorigin="anonymous"></script>
-  </head>
-  <body>
-    <!-- Header -->
-    <header class="header">
-      <nav class="nav">
-        <div class="nav_logo">ResQSupply</div>
-      </nav>
-    </header>
-    <!-- Home -->
-    <section class="home">
-      <div class="form_container">
-        <!-- Login From -->
-        <div class="form login_form">
-          <form action="#">
-            <h2>Login</h2>
-            <div class="input_box">
-              <input type="text" placeholder="Enter your Username" required />
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Website with Login & Registration Form</title>
+  <link rel="stylesheet" href="home.css" />
+  <!-- Favicons -->
+  <script src="https://kit.fontawesome.com/67405e0868.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <nav class="nav">
+      <div class="nav_logo">ResQSupply</div>
+    </nav>
+  </header>
+  <!-- Home -->
+  <section class="home">
+    <div class="form_container">
+      <!-- Login From -->
+      <div class="form login_form">
+        <form action="#">
+          <div class="title"><h2>Login</h2></div>
+          <div class="input-box">
+            <input type="text" placeholder="Enter your Username" minlength="8" maxlength="20" required />
+            <i class="fa-solid fa-star user"></i>
+          </div>
+          <div class="input-box">
+            <input type="password" placeholder="Enter your password" minlength="8" maxlength="12" required />
+            <i class="fa-solid fa-lock password"></i>
+            <i class="fa-solid fa-eye-slash pw_hide"></i>
+          </div>
+          <div class="option_field">
+            <span class="checkbox">
+              <input type="checkbox" id="check" />
+              <label for="check">Remember me</label>
+            </span>
+          </div>
+          <button class="button">Login Now</button>
+          <div class="login_signup">Don't have an account? <a href="#" id="signup">Signup</a></div>
+        </form>
+      </div>
+      <!-- Signup From -->
+      <div class="form signup_form">
+        <div class="title"><h2>Signup</h2></div>
+        <form action="https://google.com">
+          <div class="field username">
+            <div class="input-box">
+              <input type="text" id="username" placeholder="Enter your Username" minlength="8" maxlength="20" required/>
               <i class="fa-solid fa-star user"></i>
             </div>
-            <div class="input_box">
-              <input type="password" placeholder="Enter your password" required />
-              <i class="fa-solid fa-lock password"></i>
-              <i class="fa-solid fa-eye-slash pw_hide"></i>
-            </div>
-            <div class="option_field">
-              <span class="checkbox">
-                <input type="checkbox" id="check" />
-                <label for="check">Remember me</label>
-              </span>
-            </div>
-            <button class="button">Login Now</button>
-            <div class="login_signup">Don't have an account? <a href="#" id="signup">Signup</a></div>
-          </form>
-        </div>
-        <!-- Signup From -->
-        <div class="form signup_form">
-          <form action="#">
-            <h2>Signup</h2>
-            <div class="input_box">
-              <input type="text" placeholder="Enter your Username" required />
-              <i class="fa-solid fa-star user"></i>
-            </div>
-            <div class="input_box">
-              <input type="text" placeholder="Enter your Full Name" required />
+            <span class="check username">
+              <p class="check-text">Please enter a Valid Username</p>
+            </span>
+          </div>
+          <div class="field fullname">
+            <div class="input-box">
+              <input type="text" id="fullname" placeholder="Enter your Full Name" minlength="5" maxlength="50" required />
               <i class="fa-solid fa-user fname"></i>
             </div>
-            <div class="input_box">
-              <input type="tel" id="phone" placeholder="Enter your Phone Number" minlength="10" maxlength="10" required />
+            <span class="check fullname">
+              <p class="check-text">Please enter a Valid Fullname</p>
+            </span>
+          </div>
+          <div class="field phone">
+            <div class="input-box">
+              <input type="tel" id="phone" placeholder="Enter your Phone Number" minlength="10" maxlength="15" required />
               <i class="fa-solid fa-phone phone"></i>
             </div>
-            <div class="input_box">
-              <input type="text" placeholder="Enter your Email (Optional)" />
+            <span class="check phone">
+              <p class="check-text">Please enter a Valid Phone Number</p>
+            </span>
+          </div>
+          <div class="field email">
+            <div class="input-box">
+              <input type="email" placeholder="Enter your Email (Optional)" />
               <i class="fa-solid fa-envelope mail"></i>
             </div>
-            <div class="input_box">
-              <input type="password" placeholder="Create password" required />
+          </div>
+          <div class="field password">
+            <div class="input-box">
+              <input type="password" id="pass" placeholder="Create password" maxlength="12" required />
               <i class="fa-solid fa-lock password"></i>
               <i class="fa-solid fa-eye-slash pw_hide"></i>
             </div>
-            <button class="button">Signup Now</button>
-            <div class="login_signup">Already have an account? <a href="#" id="login">Login</a></div>
-          </form>
-        </div>
+            <span class="password-check">
+              <h3 class="check-title">Password should be:</h3>
+              <ul class="checklist">
+                <li class="list-item">8-12 Characters Long </li>
+                <li class="list-item">Containing 1 Uppercase Character </li>
+                <li class="list-item">Containing 1 Special Character </li>
+                <li class="list-item">Only Containing English Characters </li>
+              </ul>
+            </span>
+          </div>
+          <button class="button">Signup Now</button>
+          <div class="login_signup">Already have an account? <a href="#" id="login">Login</a></div>
+        </form>
       </div>
-    </section>
-    <script src="home.js"></script>
-  </body>
+    </div>
+  </section>
+  <script src="home.js"></script>
+</body>
 </html>
