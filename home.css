@@ -22,8 +22,9 @@
   justify-content: space-between;
 }
 .nav_logo {
-  font-size: 25px;
+  font-size: 28px;
   color: #fff;
+  font-weight: 550;
 }
 .button {
   padding: 6px 24px;
@@ -52,7 +53,7 @@
   position: absolute;
   height: 100vh;
   width: 100vw;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.35);
   z-index: 100;
 }
 
@@ -111,7 +112,7 @@
   border-bottom: 1.5px solid #aaaaaa;
 }
 .input_box input:focus {
-  border-color: #7d2ae8;
+  border-color: #0a7388;
 }
 .input_box i {
   position: absolute;
@@ -131,8 +132,9 @@
 .input_box input:focus ~ i.fname,
 .input_box input:focus ~ i.phone,
 .input_box input:focus ~ i.mail,
-.input_box input:focus ~ i.password {
-  color: #7d2ae8;
+.input_box input:focus ~ i.password,
+.input_box input:focus ~ i.pw_hide {
+  color: #0a7388;
 }
 .input_box i.pw_hide {
   right: 0;
@@ -146,7 +148,7 @@
   justify-content: space-between;
 }
 .form_container a {
-  color: #7d2ae8;
+  color: #0a7388;
   font-size: 12px;
   text-decoration: none;
 }
@@ -159,7 +161,7 @@
   white-space: nowrap;
 }
 .checkbox input {
-  accent-color: #7d2ae8;
+  accent-color: #0a7388;
 }
 .checkbox label {
   font-size: 12px;
@@ -168,7 +170,7 @@
   color: #0b0217;
 }
 .form_container .button {
-  background: #7d2ae8;
+  background: #0a7388;
   margin-top: 30px;
   width: 100%;
   padding: 10px 0;

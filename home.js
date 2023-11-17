@@ -8,10 +8,10 @@ pwShowHide.forEach((icon) => {
     let getPwInput = icon.parentElement.querySelector("input");
     if (getPwInput.type === "password") {
       getPwInput.type = "text";
-      icon.classList.replace("uil-eye-slash", "uil-eye");
+      icon.classList.replace("fa-eye-slash", "fa-eye");
     } else {
       getPwInput.type = "password";
-      icon.classList.replace("uil-eye", "uil-eye-slash");
+      icon.classList.replace("fa-eye", "fa-eye-slash");
     }
   });
 });
