@@ -3,7 +3,7 @@ signupBtn = document.querySelector("#signup"),
 loginBtn = document.querySelector("#login"),
 pwShowHide = document.querySelectorAll(".pw_hide"),
 passChecklist = document.querySelectorAll('.list-item');
-passInp = document.querySelector('#pass');
+passInput = document.querySelector('#pass');
 form = document.querySelector('.form.signup_form');
 passField = document.querySelector('.field.password');
 usernameField = document.querySelector('.field.username');
@@ -46,9 +46,9 @@ let validationRegex = [
 ]
 
 //Password Requirements Checklist
-passInp.addEventListener('keyup', () => {
+passInput.addEventListener('keyup', () => {
   validationRegex.forEach((item, i) => {
-    let isValid = item.regex.test(passInp.value)
+    let isValid = item.regex.test(passInput.value)
     if (isValid) {
       passChecklist[i].classList.add('checked');
     } else {
@@ -58,11 +58,11 @@ passInp.addEventListener('keyup', () => {
 })
 
 //Show-Hide Password Requirements
-passInp.addEventListener("focus", (e) => {
+passInput.addEventListener("focus", (e) => {
   e.preventDefault();
   passField.classList.add("active");
 })
-passInp.addEventListener("blur", (e) => {
+passInput.addEventListener("blur", (e) => {
   e.preventDefault();
   passField.classList.remove("active");
 })
@@ -80,32 +80,32 @@ function checkPass() {
 const usernamePattern = /^[a-zA-Z0-9]+$/
 function checkUsername() {
 if (!usernameInput.value.match(usernamePattern)) {
-  return usernameField.classList.add("invalid"); //adding invalid class if email value do not mathced with email pattern
+  return usernameField.classList.add("invalid");
 }
-usernameField.classList.remove("invalid"); //removing invalid class if email value matched with emaiPattern
+usernameField.classList.remove("invalid");
 }
 
 //Fullname Validation
 const fullnamePattern = /[^0-9!@#$%^&*()-_=+{}\[\]:;<>,.?\/\\|]+\s+[^0-9!@#$%^&*()-_=+{}\[\]:;<>,.?\/\\]+$/
 function checkFullname() {
   if (!fullnameInput.value.match(fullnamePattern)) {
-    return fullnameField.classList.add("invalid"); //adding invalid class if email value do not mathced with email pattern
+    return fullnameField.classList.add("invalid");
   }
-  fullnameField.classList.remove("invalid"); //removing invalid class if email value matched with emaiPattern
+  fullnameField.classList.remove("invalid");
 }
 
 //Phone Number Validation
-const phonePattern = /^[0-9]+$/
+const phonePattern = /^[+0-9]+$/
 function checkPhone() {
   if (!phoneInput.value.match(phonePattern)) {
-    return phoneField.classList.add("invalid"); //adding invalid class if email value do not mathced with email pattern
+    return phoneField.classList.add("invalid");
   }
-  phoneField.classList.remove("invalid"); //removing invalid class if email value matched with emaiPattern
+  phoneField.classList.remove("invalid");
 }
 
 //Validation When Submiting
 form.addEventListener("submit", (e) => {
-  e.preventDefault(); //preventing form submitting
+  e.preventDefault();
   checkUsername();
   checkFullname();
   checkPhone();
