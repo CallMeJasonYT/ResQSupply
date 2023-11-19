@@ -87,9 +87,12 @@ function checkPass() {
 const usernamePattern = /^[a-zA-Z0-9]+\s?[a-zA-Z0-9]+$/
 function checkUsername() {
   if (!usernameInput.value.match(usernamePattern)) {
-    return usernameField.classList.add("invalid");
+    usernameField.classList.add("invalid");
+    usernameField.classList.remove("duplicate");
+  }else{
+    usernameField.classList.remove("invalid");
+    checkUsernameAvailability();
   }
-  usernameField.classList.remove("invalid");
 }
 
 //Fullname Validation
@@ -121,19 +124,21 @@ function checkAddress() {
 
 // AJAX Request to check the Database for Username Similarity
 function checkUsernameAvailability() {
-  var xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-      var response = JSON.parse(xhr.responseText);
-      if (response.message != 'False') {
-        usernameField.classList.add("duplicate");
-      } else {
-        usernameField.classList.remove("duplicate");
+  if(!usernameField.classList.contains("invalid")){
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        var response = JSON.parse(xhr.responseText);
+        if (response.message != 'False') {
+          usernameField.classList.add("duplicate");
+        } else {
+          usernameField.classList.remove("duplicate");
+        }
       }
-    }
-  };
-  xhr.open("GET", "check_username.php?username=" + usernameInput.value, true);
-  xhr.send();
+    };
+    xhr.open("GET", "check_username.php?username=" + usernameInput.value, true);
+    xhr.send();
+  }
 }
 
 // AJAX Request to check the Database for Credentials
@@ -146,6 +151,7 @@ function checkCredentials() {
         passLoginField.classList.add("invalid");
       } else{
         passLoginField.classList.remove("invalid");
+        formAct.action = response.message + ".html"
         formAct.submit();
       }
     }
@@ -156,7 +162,6 @@ function checkCredentials() {
 
 //Validation When Typing
 usernameInput.addEventListener("keyup", checkUsername);
-usernameInput.addEventListener("keyup", checkUsernameAvailability);
 fullnameInput.addEventListener("keyup", checkFullname);
 phoneInput.addEventListener("keyup", checkPhone);
 addressInput.addEventListener("keyup", checkAddress);
@@ -184,4 +189,3 @@ loginForm.addEventListener("submit", (e) => {
   e.preventDefault();
   checkCredentials();
 });
-

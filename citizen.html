@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResQSupply</title>
+  <link rel="stylesheet" href="citizen.css" />
+  <!-- Favicons -->
+  <script src="https://kit.fontawesome.com/67405e0868.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <nav class="nav">
+      <button class="button burger" type="button"><i class="fa-solid fa-bars burger"></i></button>
+      <div class="nav_logo">ResQSupply</div>
+      <button class="button logout" type="button"><i class="fa-solid fa-right-from-bracket"></i></button>
+    </nav>
+  </header>
+  <!-- Home -->
+  <section class="citizen-home">
+    <div class="mobile-selections">
+      <!-- Mobile Selections -->
+      <div class="tab-control">
+        <button type="button" class="button selected" onclick="toggleBottomBorder(this)">Requests</button>
+        <button type="button" class="button" onclick="toggleBottomBorder(this)">Announcements</button>
+        <button type="button" class="button" onclick="toggleBottomBorder(this)">Offers</button>
+      </div>
+      <div class="requests-tab">
+        <div class="add-req">
+            <p>Create</p><i class="fa-regular fa-square-plus create"></i>
+        </div>
+        <div class="requests-box">
+          <ul class="requests-list">
+            <li class="list-item">
+              <div class="item-title"><b>Water Bottle</b>
+                <i class="fa-regular fa-trash-can trash"></i>
+              </div>
+              <div class="people">20 People</div>
+              <div class="creation-day">Monday 11th October</div>
+              <div class="status">Pending</div> 
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script src="citizen.js"></script>
+</body>
+
+</html>
