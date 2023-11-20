@@ -15,23 +15,38 @@
   <!-- Header -->
   <header class="header">
     <nav class="nav">
-      <button class="button burger" type="button"><i class="fa-solid fa-bars burger"></i></button>
+      <button class="button burger" type="button">
+        <i class="fa-solid fa-bars burgeri active"></i>
+        <i class="fa-solid fa-xmark burgerx"></i>
+      </button>
       <div class="nav_logo">ResQSupply</div>
       <button class="button logout" type="button"><i class="fa-solid fa-right-from-bracket"></i></button>
     </nav>
   </header>
   <!-- Home -->
   <section class="citizen-home">
-    <div class="mobile-selections">
+    <div class="burger-container">
+      <div class="burger-menu">
+        <ul>
+          <li class="burger-item">
+            <p>Change Address</p>
+          </li>
+          <li class="burger-item">
+            <p>Emergency Numbers</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="mobile-selections active">
       <!-- Mobile Selections -->
       <div class="tab-control">
-        <button type="button" class="button selected" onclick="toggleBottomBorder(this)">Requests</button>
-        <button type="button" class="button" onclick="toggleBottomBorder(this)">Announcements</button>
-        <button type="button" class="button" onclick="toggleBottomBorder(this)">Offers</button>
+        <button type="button" id="reqBtn" class="button" onclick="toggleBottomBorder(this)">Requests</button>
+        <button type="button" id="annBtn" class="button selected" onclick="toggleBottomBorder(this)">Announcements</button>
+        <button type="button" id="offBtn" class="button" onclick="toggleBottomBorder(this)">Offers</button>
       </div>
       <div class="requests-tab">
         <div class="add-req">
-            <p>Create</p><i class="fa-regular fa-square-plus create"></i>
+          <p>Create</p><i class="fa-regular fa-square-plus create"></i>
         </div>
         <div class="requests-box">
           <ul class="requests-list">
@@ -40,8 +55,36 @@
                 <i class="fa-regular fa-trash-can trash"></i>
               </div>
               <div class="people">20 People</div>
-              <div class="creation-day">Monday 11th October</div>
-              <div class="status">Pending</div> 
+              <div class="datetime">Creation Date: Monday 11th October</div>
+              <div class="datetime">Pickup Date: Monday 11th October</div>
+              <div class="status">Pending</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="announcements-tab active">
+        <div class="announcements-box">
+          <ul class="announcements-list">
+            <li class="list-item">
+              <div class="item-title"><b>Water Needed in Central Square</b></div>
+              <div class="datetime">Monday 11th October</div>
+              <div class="text">After the flooding in Patras, there is immidiate need of water bottles in the central square of the city.</div>
+              <div class="make-offer"><p>Make Offer</p><i class="fa-solid fa-hand-holding-hand offer"></i></div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="offers-tab">
+        <div class="offers-box">
+          <ul class="offers-list">
+            <li class="list-item">
+              <div class="item-title"><b>Pasta</b>
+                <i class="fa-regular fa-trash-can trash"></i>
+              </div>
+              <div class="quantity">Quantity: 50</div>
+              <div class="datetime">Creation Date: Monday 11th October</div>
+              <div class="datetime">Pickup Date: Monday 11th October</div>
+              <div class="status">Status: Complete</div>
             </li>
           </ul>
         </div>

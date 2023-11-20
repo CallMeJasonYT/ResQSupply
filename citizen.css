@@ -9,6 +9,7 @@
 
 div {
   display: block;
+  overflow-x: hidden;
 }
 
 .header {
@@ -16,7 +17,8 @@ div {
   height: 70px;
   width: 100%;
   z-index: 101;
-  padding: 0 20px;
+  background-color: #ffffff;
+  padding: 0 10px;
 }
 
 .nav {
@@ -27,6 +29,9 @@ div {
   height: 100%;
   align-items: center;
   justify-content: center;
+  border: none;
+  background-color: #ffffff;
+  border-bottom: 2px solid #000000;
 }
 
 .nav_logo {
@@ -36,73 +41,73 @@ div {
   font-weight: 550;
 }
 
-.nav .button{
-    border: 0;
-    cursor: pointer;
-    height: 45px;
-    padding: 10px;
-    overflow: visible;
-    position: absolute;
-    background-color: transparent;
-    font-size: 22px;
-    transition: all 0.2s ease-out;
+.nav .button {
+  border: 0;
+  cursor: pointer;
+  height: 45px;
+  padding: 10px;
+  overflow: visible;
+  position: absolute;
+  background-color: transparent;
+  font-size: 22px;
+  transition: all 0.2s ease-out;
 }
 
-.nav .button.logout{
-    top: 10px;
-    right: 24px;
-    width: 45px;
+.nav .button.logout {
+  top: 10px;
+  right: 24px;
+  width: 45px;
 }
 
-.nav .button.burger{
-    top: 10px;
-    left: 24px;
-    width: 45px;
+.nav .button.burger {
+  top: 10px;
+  left: 24px;
+  width: 45px;
 }
 
 .button {
   padding: 5px 10px;
   background: transparent;
-  border-radius: 0px;
   cursor: pointer;
   color: #000000;
   border: none;
   width: 100%;
-  font-size: 16px;
-}
-.button.selected{
-    transition: all 0.1s ease-out;
-    border-bottom: 3px solid #0e505e;
-}
-.button.logout:hover{
-    color: #ff0000;
-}
-.button.burger:hover{
-    color: #0a7388;
-}
-
-::-webkit-scrollbar {
-    width: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: #d1d1d1!important;
-    border-radius: 6.5px;
-}
-
-::-webkit-scrollbar-track {
-    background-color: #fff!important;
-    border-radius: 0;
-}
-
-.tab-control{
-    padding: 6px 14px;
-    display: flex;
-    width: 100%;
+  font-size: 18px;
 }
 
 .button:active {
   transform: scale(0.98);
+}
+
+.button.selected {
+  transition: all 0.1s ease-out;
+  border-bottom: 3px solid #0e505e;
+  font-weight: 550;
+}
+
+.button.logout:hover {
+  color: #ff0000;
+}
+
+.button.burger:hover {
+  color: #0a7388;
+}
+
+i.burgeri,
+i.burgerx{
+  display: none;
+}
+
+i.burgeri.active,
+i.burgerx.active{
+  display: block;
+}
+
+.tab-control {
+  padding: 10px 0px;
+  padding-top: 20px;
+  display: flex;
+  width: 100%;
 }
 
 /* Home */
@@ -114,107 +119,189 @@ div {
   background-position: center;
 }
 
-.home::before {
-  content: "";
-  position: absolute;
-  height: 100vh;
+.burger-container{
+  position: relative;
+  top: 75px;
+  height: calc(100vh - 75px);
   width: 100vw;
-  background-color: rgba(0, 0, 0, 0.35);
-  z-index: 100;
+  display: none;
+  z-index: 1;
+}
+
+.burger-container.active{
+  display: block;
+  animation: slideInRight 0.3s ease-in-out;
+}
+
+.burger-menu{
+  position: relative;
+  padding: 35px;
+  width: 100%;
+  top: 20%;
+}
+.burger-item{
+  position: relative;
+  width: 100%;
+  font-size: 24px;
+  padding: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+}
+.burger-item:hover{
+  background: #0a73888f;
+  border-radius: 7px;
+  transition: 0.2s ease-in;
 }
 
 /* General Form Styling */
 .mobile-selections {
   position: absolute;
   height: 85vh;
-  max-width: 430px;
+  max-width: 530px;
   width: 100%;
   top: 50%;
   left: 50%;
-  z-index: 101;
-  background: #fff;
+  background: #ffffff;
   padding: 10px;
-  border-radius: 12px;
   transition: all 0.4s ease-out;
   pointer-events: auto;
+  display: none;
   transform: translate(-50%, -50%) scale(1);
-  opacity: 1;
-  overflow: hidden;
+}
+
+.mobile-selections.active{
+  display: block;
+}
+
+.requests-tab,
+.announcements-tab,
+.offers-tab {
+  margin-top: 10px;
+  display: none;
+}
+
+.requests-tab{
+  margin:0;
+}
+
+.requests-tab.active,
+.announcements-tab.active,
+.offers-tab.active{
+  display: block;
+}
+
+ul {
+  list-style-type: none;
+}
+
+.requests-box,
+.announcements-box,
+.offers-box {
+  background: #e0e0e0;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 5px;
   overflow-y: scroll;
 }
 
-ul{
-    list-style-type: none;
-}
-
-.requests-box{
-    padding: 10px;
-    margin-top: 5px;
-}
-
-.list-item{
+.list-item {
   position: relative;
   width: 100%;
-  padding: 10px; 
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
   border: 1px solid #525151;
   border-radius: 6px;
   background: #ffffff;
-}
-
-.list-item{
   font-size: 16px;
 }
 
-.item-title{
+.item-title {
   display: flex;
   justify-content: space-between;
+  font-size: 18px;
 }
 
-.item-title i.trash{
+.item-title i.trash {
   color: #9e1414;
   cursor: pointer;
 }
 
-.people, .status, .creation-day{
-  font-size: 12px;
+.people,
+.status,
+.datetime {
+  font-size: 14px;
 }
 
-.people{
+.people {
   padding-top: 5px;
 }
-.status{
+
+.status {
   padding-bottom: 5px;
 }
 
-.requests-tab{
-    margin-top: 10px;
+.announcements-list .datetime{
+  padding-bottom: 5px;
 }
 
-.add-req{
+.text {
+  font-size: 16px;
+}
+.add-req,
+.make-offer {
   display: flex;
   justify-content: flex-end;
-  padding: 10px;
+  padding: 5px;
   font-weight: 700;
   font-size: 15px;
 }
-
-.add-req i.create{
-    font-size: 24px;
-    cursor: pointer;
-    margin-left: 10px;
-    transition: all 0.1s ease-out;
-  }
-
-.add-req i.create:hover{
-    color:#0a7388;
+.make-offer{
+  padding: 0px;
 }
 
-@media screen and (min-width:640px) {
-  .form_container {
-    max-width: 500px;
-  }
+.add-req i.create,
+.make-offer i.offer {
+  font-size: 24px;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: all 0.1s ease-out;
+}
 
-  .input-box {
-    margin-top: 20px;
+.make-offer i.offer{
+  font-size: 18px;
+}
+
+.add-req i.create:hover,
+.make-offer i.offer:hover {
+  color: #0a7388;
+}
+
+@media screen and (min-width:780px) {}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(-100%);
   }
+  to {
+    transform: translateX(0);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+  
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #a3a3a3;
+  border-radius: 20px;
+  border: 6px solid transparent;
+  background-clip: content-box;
 }
