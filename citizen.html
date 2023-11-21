@@ -41,14 +41,73 @@
       <!-- Mobile Selections -->
       <div class="tab-control">
         <button type="button" id="reqBtn" class="button" onclick="toggleBottomBorder(this)">Requests</button>
-        <button type="button" id="annBtn" class="button selected" onclick="toggleBottomBorder(this)">Announcements</button>
+        <button type="button" id="annBtn" class="button selected"
+          onclick="toggleBottomBorder(this)">Announcements</button>
         <button type="button" id="offBtn" class="button" onclick="toggleBottomBorder(this)">Offers</button>
       </div>
       <div class="requests-tab">
-        <div class="add-req">
+        <div class="add-req active">
           <p>Create</p><i class="fa-regular fa-square-plus create"></i>
         </div>
-        <div class="requests-box">
+        <div class="requests-form">
+          <div class="cancelbtn">
+            <i class="fa-solid fa-xmark cancel"></i>
+          </div>
+          <div class="item-select">
+            <div class="item-drop-sel">
+              <div class="cat-btn">
+                <span class="item-text">Select Category</span>
+                <i class="fa-solid fa-chevron-down down"></i>
+              </div>
+              <div class="item-btn">
+                <span class="item-text">Select Item</span>
+                <i class="fa-solid fa-chevron-down down"></i>
+              </div>
+            </div>
+            <div class="content">
+              <div class="item-options">
+                <div class="search">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input type="text" placeholder="Search...">
+                </div>
+                <ul class="item-list">
+                  <li class="item">Water</li>
+                  <li class="item">Water</li>
+                  <li class="item">Water</li>
+                  <li class="item">Water</li>
+                  <li class="item">Water</li>
+                  <li class="item">Water</li>
+                  <li class="item">Water</li>
+                </ul>
+              </div>
+              <div class="category-options">
+                <div class="search">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input type="text" placeholder="Search...">
+                </div>
+                <ul class="category-list">
+                  <li class="item">Water2</li>
+                  <li class="item">Water2</li>
+                  <li class="item">Water2</li>
+                  <li class="item">Water2</li>
+                  <li class="item">Water2</li>
+                  <li class="item">Water2</li>
+
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="itemAmount">
+            <div class="people-counter">
+              <div class="cntr-text"> People in Need: </div>
+              <span class="minus">-</span>
+              <span class="num">1</span>
+              <span class="plus">+</span>
+            </div>
+          </div>
+          <button type="button" class="button"> Submit </button>
+        </div>
+        <div class="requests-box active">
           <ul class="requests-list">
             <li class="list-item">
               <div class="item-title"><b>Water Bottle</b>
@@ -68,8 +127,11 @@
             <li class="list-item">
               <div class="item-title"><b>Water Needed in Central Square</b></div>
               <div class="datetime">Monday 11th October</div>
-              <div class="text">After the flooding in Patras, there is immidiate need of water bottles in the central square of the city.</div>
-              <div class="make-offer"><p>Make Offer</p><i class="fa-solid fa-hand-holding-hand offer"></i></div>
+              <div class="text">After the flooding in Patras, there is immidiate need of water bottles in the central
+                square of the city.</div>
+              <div class="make-offer">
+                <p>Make Offer</p><i class="fa-solid fa-hand-holding-hand offer"></i>
+              </div>
             </li>
           </ul>
         </div>
