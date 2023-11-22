@@ -41,6 +41,30 @@ div {
   font-weight: 550;
 }
 
+.nav-options {
+  font-size: 16px;
+  font-weight: 450;
+  display: none;
+  justify-content: space-between;
+  margin-right: 40px;
+  
+}
+
+.nav-options.active {
+  display: flex;
+  justify-content: space-between;
+}
+
+.option{
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+}
+.option:hover{
+  background-color: #0a7388;
+  border-radius: 5px;
+  color: #fff;
+}
 .nav .button {
   border: 0;
   cursor: pointer;
@@ -86,7 +110,8 @@ div {
 }
 
 .button.logout:hover,
-.cancel:hover {
+.cancelr:hover,
+.cancelo:hover {
   color: #ff0000;
 }
 
@@ -121,22 +146,30 @@ i.burgerx.active {
 }
 
 .burger-container {
-  position: relative;
-  top: 75px;
-  height: calc(100vh - 75px);
-  width: 100vw;
+  position: absolute;
+  height: 85vh;
+  max-width: 620px;
+  width: 100%;
+  top: 50%;
+  left: 50%;
+  background: #ffffff;
+  padding: 10px;
+  transition: all 0.4s ease-out;
+  pointer-events: auto;
   display: none;
+  transform: translate(-50%, -50%) scale(1);
   z-index: 1;
 }
 
 .burger-container.active {
   display: block;
-  animation: slideInRight 0.3s ease-in-out;
 }
 
 .burger-menu {
-  position: relative;
+  position: fixed;
+  text-align: center;
   padding: 35px;
+  max-width: 620px;
   width: 100%;
   top: 20%;
 }
@@ -158,10 +191,10 @@ i.burgerx.active {
 }
 
 /* General Form Styling */
-.mobile-selections {
+.module {
   position: absolute;
   height: 85vh;
-  max-width: 530px;
+  max-width: 620px;
   width: 100%;
   top: 50%;
   left: 50%;
@@ -173,7 +206,7 @@ i.burgerx.active {
   transform: translate(-50%, -50%) scale(1);
 }
 
-.mobile-selections.active {
+.module.active {
   display: block;
 }
 
@@ -204,20 +237,22 @@ ul {
   background: #e0e0e0;
   border-radius: 5px;
   padding: 10px;
-  margin-top: 5px;
   overflow-y: scroll;
 }
 
-.requests-box {
+.requests-box,
+.offers-box {
   display: none;
 }
 
-.requests-box.active {
+.requests-box.active,
+.offers-box.active {
   display: block;
 }
 
 .list-item,
-.requests-form {
+.requests-form,
+.offers-form {
   position: relative;
   width: 100%;
   padding: 10px;
@@ -229,14 +264,16 @@ ul {
   font-size: 16px;
 }
 
-.requests-form {
+.requests-form,
+.offers-form {
   display: none;
 }
 
-.requests-form.active {
+.requests-form.active,
+.offers-form.active {
   display: block;
   position: sticky;
-  margin-top: 50%;
+  margin-top: 30%;
 }
 
 .cancelbtn {
@@ -245,7 +282,8 @@ ul {
   padding: 5px;
 }
 
-.cancel {
+.cancelr,
+.cancelo {
   cursor: pointer;
   font-size: 18px;
 }
@@ -424,22 +462,196 @@ li.selected {
   padding: 5px;
 }
 
+.down{
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+
+.field.address,
+.emergency-num{
+  display: none;
+}
+
+.field.address.active,
+.emergency-num.active{
+  display: block;
+  border: #7070704b solid 1px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  border-radius: 5px;
+}
+
+.field.address.drop.active,
+.phone-drop-cont{
+  display: block;
+  position: absolute;
+  width: 350px;
+  background-color: #fff;
+  border-radius: 6px;
+  height: 150px;
+  border: solid 1px #70707042;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+.burger-menu .button,
+.field.address.drop.active .button{
+  margin-top: 5px;
+  background: #0a7388;
+  border-radius: 10px;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.field.address.drop.active .button{
+  margin-left: 10px;
+  height:50px;
+  width: 95%;
+}
+
+.phone-drop-cont{
+  width: 250px;
+  font-size: 16px;
+}
+
+.numbers{
+  font-size: 18px;
+  text-align: left;
+  padding: 5px;
+}
+
+.numbers:hover{
+  background-color: #70707042;
+  border-radius: 6px;
+}
+
+.add-drop .add-drop-cont,
+.phone-drop .phone-drop-cont{
+  display: none;
+}
+
+.add-drop:hover .add-drop-cont,
+.phone-drop:hover .phone-drop-cont{
+  display: block;
+}
+
+.input-box {
+  position: relative;
+  margin-top: 5px;
+  padding: 5px;
+  transition: all 0.4s ease-out;
+  width: 100%;
+  height: 40px;
+}
+
+.field .check {
+  align-items: center;
+  margin-top: 6px;
+  color: #d93025;
+  font-size: 13px;
+  display: none;
+}
+
+.invalid .check {
+  display: block;
+  text-align: left;
+  margin-left: 10px;
+}
+
+.input-box input {
+  height: 100%;
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 0 30px;
+  color: #333;
+  transition: all 0.2s ease;
+  border-bottom: 1.5px solid #aaaaaa;
+}
+
+.input-box input:focus {
+  border-color: #0a7388;
+}
+
+.input-box i {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #707070;
+}
+
+.input-box i.address {
+  left: 10px;
+}
+
+.input-box input:focus~i.address{
+  color: #0a7388;
+}
+
 @media screen and (min-width:370px) {
   .button {
     font-size: 18px;
   }
 }
 
-@media screen and (min-width:780px) {}
-
-@keyframes slideInRight {
-  from {
-    transform: translateX(-100%);
+@media screen and (min-width:960px) {
+  .module {
+    max-width: none;
   }
 
-  to {
-    transform: translateX(0);
+  .button.burger,
+  .burger-container {
+    display: none;
   }
+
+  .nav {
+    justify-content: space-between;
+  }
+
+  .tab-control .button {
+    pointer-events: none;
+    cursor: not-allowed;
+    border-bottom: none;
+    font-weight: 500;
+    font-size: 20px;
+  }
+
+  .requests-tab,
+  .announcements-tab,
+  .offers-tab {
+    width: 33%;
+  }
+
+  .requests-tab {
+    margin-top: 10px;
+  }
+
+  .add-req.active {
+    font-size: 20px;
+    margin-top: 5px;
+  }
+
+  .requests-form.active {
+    margin-top: 45px;
+  }
+
+  .announcements-tab {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 55px;
+  }
+
+  .offers-tab {
+    margin-top: 55px;
+  }
+
+  .offers-form.active{
+    margin-top: 0;
+  }
+}
+
+.desktop-view {
+  display: flex;
 }
 
 .people-counter {
@@ -448,7 +660,7 @@ li.selected {
   align-items: center;
   justify-content: left;
   background: #FFF;
-  padding: 10px;
+  padding: 5px;
   border: none;
   border-bottom: 1px solid #7070708f;
 }
@@ -458,15 +670,18 @@ li.selected {
   font-size: 16px;
 }
 
-.plus,
-.minus {
+.plusr,
+.minusr,
+.pluso,
+.minuso {
   padding: 5px;
   text-align: center;
   font-weight: 600;
   cursor: pointer;
 }
 
-.people-counter span.num {
+.people-counter span.numr
+.people-counter span.numo {
   padding-right: 3px;
   padding-left: 3px;
   border-right: 2px solid rgba(0, 0, 0, 0.2);
@@ -474,8 +689,9 @@ li.selected {
   pointer-events: none;
 }
 
-.requests-form .button {
-  display: relative;
+.requests-form .button,
+.offers-form .button {
+  display: flex;
   justify-content: center;
   font-size: 16px;
   border-radius: 5px;

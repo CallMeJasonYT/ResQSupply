@@ -20,6 +20,36 @@
         <i class="fa-solid fa-xmark burgerx"></i>
       </button>
       <div class="nav_logo">ResQSupply</div>
+      <div class="nav-options">
+        <div class="add-drop"> 
+          <div class="option">Change Address</div>
+          <div class="add-drop-cont">
+            <div class="field address active drop" id="addressfielddesk">
+              <div class="input-box">
+                <input name="address" type="text" id="addressdesk" placeholder="Enter your Address (Street City)" required>
+                <i class="fa-solid fa-location-dot address"></i>
+              </div>
+              <span class="check address">
+                <p class="check-text">Please enter a Valid Address ex. Baker London</p>
+              </span>
+              <button type="button" class="button"> Submit </button>
+            </div>
+          </div>
+        </div>
+        <div class="phone-drop"> 
+          <div class="option">Emergency Numbers</div>
+          <div class="phone-drop-cont">
+            <ul>
+              <li class="numbers">Emergency: 112</li>
+              <li class="numbers">Ambulance: 166</li>
+              <li class="numbers">Fire Department: 199</li>
+              <li class="numbers">Police: 100</li>
+              <li class="numbers">Anti-drug Police: 109</li>
+              <li class="numbers">Coast Guard: 108</li>
+            </ul>
+          </div>
+        </div>
+      </div>
       <button class="button logout" type="button"><i class="fa-solid fa-right-from-bracket"></i></button>
     </nav>
   </header>
@@ -28,21 +58,36 @@
     <div class="burger-container">
       <div class="burger-menu">
         <ul>
-          <li class="burger-item">
-            <p>Change Address</p>
-          </li>
-          <li class="burger-item">
-            <p>Emergency Numbers</p>
-          </li>
+          <li class="burger-item address">Change Address</li>
+          <div class="field address" id="addressfieldmob">
+            <div class="input-box">
+              <input name="address" type="text" id="addressmob" placeholder="Enter your Address (Street City)" required>
+              <i class="fa-solid fa-location-dot address"></i>
+            </div>
+            <span class="check address">
+              <p class="check-text">Please enter a Valid Address ex. Baker London</p>
+            </span>
+            <button type="button" class="button"> Submit </button>
+          </div>
+          <li class="burger-item emergency">Emergency Numbers</li>
+          <div class="emergency-num">
+            <ul>
+              <li class="numbers">Emergency: 112</li>
+              <li class="numbers">Ambulance: 166</li>
+              <li class="numbers">Fire Department: 199</li>
+              <li class="numbers">Police: 100</li>
+              <li class="numbers">Anti-drug Police: 109</li>
+              <li class="numbers">Coast Guard: 108</li>
+            </ul>
+          </div>
         </ul>
       </div>
     </div>
-    <div class="mobile-selections active">
+    <div class="module active">
       <!-- Mobile Selections -->
       <div class="tab-control">
         <button type="button" id="reqBtn" class="button" onclick="toggleBottomBorder(this)">Requests</button>
-        <button type="button" id="annBtn" class="button selected"
-          onclick="toggleBottomBorder(this)">Announcements</button>
+        <button type="button" id="annBtn" class="button selected" onclick="toggleBottomBorder(this)">Announcements</button>
         <button type="button" id="offBtn" class="button" onclick="toggleBottomBorder(this)">Offers</button>
       </div>
       <div class="requests-tab">
@@ -51,7 +96,7 @@
         </div>
         <div class="requests-form">
           <div class="cancelbtn">
-            <i class="fa-solid fa-xmark cancel"></i>
+            <i class="fa-solid fa-xmark cancelr"></i>
           </div>
           <div class="item-select">
             <div class="item-drop-sel">
@@ -74,10 +119,6 @@
                   <li class="item">Water</li>
                   <li class="item">Water</li>
                   <li class="item">Water</li>
-                  <li class="item">Water</li>
-                  <li class="item">Water</li>
-                  <li class="item">Water</li>
-                  <li class="item">Water</li>
                 </ul>
               </div>
               <div class="category-options">
@@ -89,10 +130,6 @@
                   <li class="item">Water2</li>
                   <li class="item">Water2</li>
                   <li class="item">Water2</li>
-                  <li class="item">Water2</li>
-                  <li class="item">Water2</li>
-                  <li class="item">Water2</li>
-
                 </ul>
               </div>
             </div>
@@ -100,9 +137,9 @@
           <div class="itemAmount">
             <div class="people-counter">
               <div class="cntr-text"> People in Need: </div>
-              <span class="minus">-</span>
-              <span class="num">1</span>
-              <span class="plus">+</span>
+              <span class="minusr">-</span>
+              <span class="numr">1</span>
+              <span class="plusr">+</span>
             </div>
           </div>
           <button type="button" class="button"> Submit </button>
@@ -137,7 +174,57 @@
         </div>
       </div>
       <div class="offers-tab">
-        <div class="offers-box">
+        <div class="offers-form">
+          <div class="cancelbtn">
+            <i class="fa-solid fa-xmark cancelo"></i>
+          </div>
+          <div class="item-select">
+            <div class="item-drop-sel">
+              <div class="cat-btn">
+                <span class="item-text">Select Category</span>
+                <i class="fa-solid fa-chevron-down down"></i>
+              </div>
+              <div class="item-btn">
+                <span class="item-text">Select Item</span>
+                <i class="fa-solid fa-chevron-down down"></i>
+              </div>
+            </div>
+            <div class="content">
+              <div class="item-options">
+                <div class="search">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input type="text" placeholder="Search...">
+                </div>
+                <ul class="item-list">
+                  <li class="item">Water</li>
+                  <li class="item">Water</li>
+                  <li class="item">Water</li>
+                </ul>
+              </div>
+              <div class="category-options">
+                <div class="search">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input type="text" placeholder="Search...">
+                </div>
+                <ul class="category-list">
+                  <li class="item">Water2</li>
+                  <li class="item">Water2</li>
+                  <li class="item">Water2</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="itemAmount">
+            <div class="people-counter">
+              <div class="cntr-text"> Amount: </div>
+              <span class="minuso">-</span>
+              <span class="numo">1</span>
+              <span class="pluso">+</span>
+            </div>
+          </div>
+          <button type="button" class="button"> Submit </button>
+        </div>
+        <div class="offers-box active">
           <ul class="offers-list">
             <li class="list-item">
               <div class="item-title"><b>Pasta</b>
