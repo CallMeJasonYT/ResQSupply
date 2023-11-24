@@ -6,6 +6,7 @@ passChecklist = document.querySelectorAll('.list-item');
 signupForm = document.querySelector('.form.signup_form');
 loginForm = document.querySelector('.form.login_form');
 formAct = document.querySelector('#login-form');
+formActSign = document.querySelector('#signup-form');
 passField = document.querySelector('.field.password');
 passInput = document.querySelector('#pass');
 passLoginField = document.querySelector('.field.passwordlogin');
@@ -124,40 +125,40 @@ function checkAddress() {
 
 // AJAX Request to check the Database for Username Similarity
 function checkUsernameAvailability() {
-  if(!usernameField.classList.contains("invalid")){
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        var response = JSON.parse(xhr.responseText);
-        if (response.message != 'False') {
-          usernameField.classList.add("duplicate");
-        } else {
-          usernameField.classList.remove("duplicate");
-        }
-      }
-    };
-    xhr.open("GET", "check_username.php?username=" + usernameInput.value, true);
-    xhr.send();
-  }
+  var data = {username:usernameInput.value};
+  fetch('check_username.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  })
+  .then(response => response.json())
+  .then(result => {
+    if (result != 'False') {
+      usernameField.classList.add("duplicate");
+    } else {
+      usernameField.classList.remove("duplicate");
+    }
+  })
 }
 
 // AJAX Request to check the Database for Credentials
 function checkCredentials() {
-  var xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-      var response = JSON.parse(xhr.responseText);
-      if (response.message == "False") {
-        passLoginField.classList.add("invalid");
-      } else{
-        passLoginField.classList.remove("invalid");
-        formAct.action = response.message + ".html"
-        formAct.submit();
-      }
+  var data = {username:usernameLoginInput.value, password:passLoginInput.value};
+  fetch('check_credentials.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  })
+  .then(response => response.json())
+  .then(result => {
+    if (result == "False") {
+      passLoginField.classList.add("invalid");
+    } else{
+      passLoginField.classList.remove("invalid");
+      formAct.action = result + ".html"
+      formAct.submit();
     }
-  };
-  xhr.open("GET", "check_credentials.php?username=" + usernameLoginInput.value + "&password=" + passLoginInput.value, true);
-  xhr.send();
+  })
 }
 
 //Validation When Typing
@@ -182,6 +183,9 @@ signupForm.addEventListener("submit", (e) => {
     addressField.classList.contains("invalid") ||
     !passGood
   ) { e.preventDefault(); }
+  else{
+    formAct.submit();
+  }
 });
 
 //Login Form Validation When Submiting

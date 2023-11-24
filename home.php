@@ -35,9 +35,8 @@ if (isset($_POST["phone"])) {
         $registration_citizen = $conn->execute_query("INSERT INTO citizen (cit_id, cit_fullname, cit_tel, cit_email, cit_addr) 
         VALUES (?, ?, ?, ?, ?)", [$id, $fullname, $phone, $email, $address]);
     }
-} else {
-    $username = $_POST["username"];
-    $pass = $_POST["password"];
 }
+
+$conn->close();
 
 ?>

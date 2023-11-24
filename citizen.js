@@ -39,10 +39,12 @@ viewportW = window.innerWidth;
 let reqCount = 1;
 let offCount = 1;
 let cnt = 0;
+let current_announcement = 0;
 
 //When the window is resized or Loaded check the Viewport Width
 document.addEventListener("DOMContentLoaded", function () {
   checkWidth();
+  fetchAnnouncements();
 });
 window.addEventListener("resize", (e) => {
   checkWidth();
@@ -127,18 +129,20 @@ createReq.addEventListener("click", () => {
 });
 
 //Make Offer Button
-makeOffBtn.forEach(function(button) {
-  button.addEventListener('click', function() {
-      offForm.classList.add("active");
-      offBox.classList.remove("active");
-      offBtn.classList.add("selected");
-      offTab.classList.add("active");
-      annBtn.classList.remove("selected");
-    if((document.querySelector(".desktop-view")) == null){
-      annTab.classList.remove("active");
-    }
+function offerBtnListener(){
+  makeOffBtn.forEach(function(button) {
+    button.addEventListener('click', function() {
+        offForm.classList.add("active");
+        offBox.classList.remove("active");
+        offBtn.classList.add("selected");
+        offTab.classList.add("active");
+        annBtn.classList.remove("selected");
+      if((document.querySelector(".desktop-view")) == null){
+        annTab.classList.remove("active");
+      }
+    });
   });
-});
+}
 
 //Item Select Dropdowns
 itemSelButton.forEach(function(button){
@@ -304,3 +308,23 @@ function checkAddressDesk() {
 emmBtn.addEventListener("click",(e)=>{
   emmField.classList.toggle("active");
 })
+
+function fetchAnnouncements(){
+  fetch('fetch_announcements.php')
+  .then(response => {
+    return response.json();
+  })
+  .then(data => {
+    console.log(data);
+    data.forEach(res =>{
+    markup = `<li class="list-item" id=${res.ann_id}> <div class="item-title"><b>${res.ann_title}</b></div>` +
+    `<div class="datetime">${res.ann_date}</div>`+
+    `<div class="text">${res.ann_text}</div>`+
+    `<div class="make-offer"><p>Make Offer</p><i class="fa-solid fa-hand-holding-hand offer"></i></div>`+
+    `</li>`;
+    document.querySelector(".announcements-list").insertAdjacentHTML('beforeend', markup);
+    makeOffBtn = document.querySelectorAll(".offer");
+    offerBtnListener();
+    });
+  });
+}

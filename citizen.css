@@ -318,7 +318,7 @@ ul {
 }
 
 .text {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .add-req {
@@ -588,9 +588,92 @@ li.selected {
   color: #0a7388;
 }
 
+.desktop-view {
+  display: flex;
+}
+
+.people-counter {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  background: #FFF;
+  padding: 5px;
+  border: none;
+  border-bottom: 1px solid #7070708f;
+}
+
+.cntr-text {
+  display: flex;
+  font-size: 16px;
+}
+
+.plusr,
+.minusr,
+.pluso,
+.minuso {
+  padding: 5px;
+  text-align: center;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.people-counter span.numr
+.people-counter span.numo {
+  padding-right: 3px;
+  padding-left: 3px;
+  border-right: 2px solid rgba(0, 0, 0, 0.2);
+  border-left: 2px solid rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+}
+
+.requests-form .button,
+.offers-form .button {
+  display: flex;
+  justify-content: center;
+  font-size: 16px;
+  border-radius: 5px;
+  background: #0e505e;
+  border-color: #000000;
+  padding: 5px;
+  margin-top: 10px;
+  color: #fff;
+}
+
+.footer{
+  height: 50px;
+  border: none;
+  border-top: 2px solid #000000d0;
+  position: absolute;
+  bottom: 0%;
+  width: 100%;
+}
+
+.footer .welcome{
+  position: absolute;
+  font-size: 16px;
+  padding: 10px;
+  font-weight: 500;
+  right: 5%;
+}
+
+.footer .copyright{
+  position: relative;
+  display: none;
+  top: 25%;
+  font-size: 14px;
+  text-align: center;
+}
+
 @media screen and (min-width:370px) {
   .button {
     font-size: 18px;
+  }
+}
+
+@media screen and (min-width:630px) {
+  .footer .copyright{
+    display: block;
   }
 }
 
@@ -648,58 +731,6 @@ li.selected {
   .offers-form.active{
     margin-top: 0;
   }
-}
-
-.desktop-view {
-  display: flex;
-}
-
-.people-counter {
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: left;
-  background: #FFF;
-  padding: 5px;
-  border: none;
-  border-bottom: 1px solid #7070708f;
-}
-
-.cntr-text {
-  display: flex;
-  font-size: 16px;
-}
-
-.plusr,
-.minusr,
-.pluso,
-.minuso {
-  padding: 5px;
-  text-align: center;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.people-counter span.numr
-.people-counter span.numo {
-  padding-right: 3px;
-  padding-left: 3px;
-  border-right: 2px solid rgba(0, 0, 0, 0.2);
-  border-left: 2px solid rgba(0, 0, 0, 0.2);
-  pointer-events: none;
-}
-
-.requests-form .button,
-.offers-form .button {
-  display: flex;
-  justify-content: center;
-  font-size: 16px;
-  border-radius: 5px;
-  background: #0e505e;
-  border-color: #000000;
-  padding: 5px;
-  margin-top: 10px;
-  color: #fff;
 }
 
 ::-webkit-scrollbar {
