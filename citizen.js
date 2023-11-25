@@ -40,11 +40,13 @@ let reqCount = 1;
 let offCount = 1;
 let cnt = 0;
 let current_announcement = 0;
+let hasOfferItemsFetched = false;
 
 //When the window is resized or Loaded check the Viewport Width
 document.addEventListener("DOMContentLoaded", function () {
   checkWidth();
   fetchAnnouncements();
+  loadGoods();
 });
 window.addEventListener("resize", (e) => {
   checkWidth();
@@ -137,6 +139,8 @@ function offerBtnListener(){
         offBtn.classList.add("selected");
         offTab.classList.add("active");
         annBtn.classList.remove("selected");
+        offID = button.parentNode.parentNode.id;
+        fetchOfferItems(offID);
       if((document.querySelector(".desktop-view")) == null){
         annTab.classList.remove("active");
       }
@@ -315,16 +319,48 @@ function fetchAnnouncements(){
     return response.json();
   })
   .then(data => {
+    if(data != 'False'){
+      data.forEach(res =>{
+        needsList = res.needs_goodn.join(', ');
+        markup = `<li class="list-item" id=${res.ann_id}> <div class="item-title"><b>${res.ann_title}</b></div>` +
+        `<div class="datetime">${res.ann_date}</div>`+
+        `<div class="text">${res.ann_text}</div>`+
+        `<div class="needs"><p>Need for: ${needsList}</p></div>`+
+        `<div class="make-offer"><p>Make Offer</p><i class="fa-solid fa-hand-holding-hand offer"></i></div>`+
+        `</li>`;
+        document.querySelector(".announcements-list").insertAdjacentHTML('beforeend', markup);
+        makeOffBtn = document.querySelectorAll(".offer");
+        offerBtnListener();
+        });
+    }else{
+      markup = `<p>There aren't any Announcements Currently</p>`
+      document.querySelector(".announcements-list").insertAdjacentHTML('beforeend', markup);
+    }
+  });
+}
+
+function loadGoods(){
+  fetch('load_goods.php', {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+  })
+}
+
+function fetchOfferItems(offID){
+  fetch('fetch_OfferItems.php',  {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({id:offID})
+  })
+  .then(response => {
+    return response.json();
+  })
+  .then(data => {
     console.log(data);
-    data.forEach(res =>{
-    markup = `<li class="list-item" id=${res.ann_id}> <div class="item-title"><b>${res.ann_title}</b></div>` +
-    `<div class="datetime">${res.ann_date}</div>`+
-    `<div class="text">${res.ann_text}</div>`+
-    `<div class="make-offer"><p>Make Offer</p><i class="fa-solid fa-hand-holding-hand offer"></i></div>`+
-    `</li>`;
-    document.querySelector(".announcements-list").insertAdjacentHTML('beforeend', markup);
-    makeOffBtn = document.querySelectorAll(".offer");
-    offerBtnListener();
-    });
+      data.forEach(res =>{
+        
+        });
   });
 }
