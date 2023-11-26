@@ -47,7 +47,6 @@ div {
   display: none;
   justify-content: space-between;
   margin-right: 40px;
-  
 }
 
 .nav-options.active {
@@ -111,7 +110,9 @@ div {
 
 .button.logout:hover,
 .cancelr:hover,
-.cancelo:hover {
+.cancelo:hover,
+.broomr:hover,
+.broomo:hover {
   color: #ff0000;
 }
 
@@ -276,16 +277,28 @@ ul {
   margin-top: 30%;
 }
 
-.cancelbtn {
+.cancelbtn,
+.clrbtn {
   display: flex;
-  justify-content: right;
+  justify-content: space-between;
   padding: 5px;
 }
 
+.clr-text{
+  padding-left: 5px;
+  margin-bottom: 5px;
+}
+
 .cancelr,
-.cancelo {
+.cancelo,
+.broomr,
+.broomo {
   cursor: pointer;
   font-size: 18px;
+}
+.broomr,
+.broomo{
+  margin-top: 3px;
 }
 
 .item-title {

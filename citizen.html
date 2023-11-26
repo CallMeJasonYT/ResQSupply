@@ -21,12 +21,13 @@
       </button>
       <div class="nav_logo">ResQSupply</div>
       <div class="nav-options">
-        <div class="add-drop"> 
+        <div class="add-drop">
           <div class="option">Change Address</div>
           <div class="add-drop-cont">
             <div class="field address active drop" id="addressfielddesk">
               <div class="input-box">
-                <input name="address" type="text" id="addressdesk" placeholder="Enter your Address (Street City)" required>
+                <input name="address" type="text" id="addressdesk" placeholder="Enter your Address (Street City)"
+                  required autocomplete="on">
                 <i class="fa-solid fa-location-dot address"></i>
               </div>
               <span class="check address">
@@ -36,7 +37,7 @@
             </div>
           </div>
         </div>
-        <div class="phone-drop"> 
+        <div class="phone-drop">
           <div class="option">Emergency Numbers</div>
           <div class="phone-drop-cont">
             <ul>
@@ -61,7 +62,8 @@
           <li class="burger-item address">Change Address</li>
           <div class="field address" id="addressfieldmob">
             <div class="input-box">
-              <input name="address" type="text" id="addressmob" placeholder="Enter your Address (Street City)" required>
+              <input name="address" type="text" id="addressmob" placeholder="Enter your Address (Street City)" required
+                autocomplete="on">
               <i class="fa-solid fa-location-dot address"></i>
             </div>
             <span class="check address">
@@ -87,7 +89,8 @@
       <!-- Mobile Selections -->
       <div class="tab-control">
         <button type="button" id="reqBtn" class="button" onclick="toggleBottomBorder(this)">Requests</button>
-        <button type="button" id="annBtn" class="button selected" onclick="toggleBottomBorder(this)">Announcements</button>
+        <button type="button" id="annBtn" class="button selected"
+          onclick="toggleBottomBorder(this)">Announcements</button>
         <button type="button" id="offBtn" class="button" onclick="toggleBottomBorder(this)">Offers</button>
       </div>
       <div class="requests-tab">
@@ -96,6 +99,10 @@
         </div>
         <div class="requests-form">
           <div class="cancelbtn">
+            <div class="clrbtn">
+              <i class="fa-solid fa-broom broomr"></i>
+              <p class="clr-text">Clear</p>
+            </div>
             <i class="fa-solid fa-xmark cancelr"></i>
           </div>
           <div class="item-select">
@@ -116,9 +123,6 @@
                   <input type="text" placeholder="Search...">
                 </div>
                 <ul class="item-list">
-                  <li class="item">Water</li>
-                  <li class="item">Water</li>
-                  <li class="item">Water</li>
                 </ul>
               </div>
               <div class="category-options">
@@ -127,9 +131,6 @@
                   <input type="text" placeholder="Search...">
                 </div>
                 <ul class="category-list">
-                  <li class="item">Water2</li>
-                  <li class="item">Water2</li>
-                  <li class="item">Water2</li>
                 </ul>
               </div>
             </div>
@@ -146,15 +147,6 @@
         </div>
         <div class="requests-box active">
           <ul class="requests-list">
-            <li class="list-item">
-              <div class="item-title"><b>Water Bottle</b>
-                <i class="fa-regular fa-trash-can trash"></i>
-              </div>
-              <div class="people">20 People</div>
-              <div class="datetime">Creation Date: Monday 11th October</div>
-              <div class="datetime">Pickup Date: Monday 11th October</div>
-              <div class="status">Pending</div>
-            </li>
           </ul>
         </div>
       </div>
@@ -167,6 +159,10 @@
       <div class="offers-tab">
         <div class="offers-form">
           <div class="cancelbtn">
+            <div class="clrbtn">
+              <i class="fa-solid fa-broom broomo"></i>
+              <p class="clr-text">Clear</p>
+            </div>
             <i class="fa-solid fa-xmark cancelo"></i>
           </div>
           <div class="item-select">
@@ -181,26 +177,20 @@
               </div>
             </div>
             <div class="content">
-              <div class="item-options">
+              <div class="item-options offers">
                 <div class="search">
                   <i class="fa-solid fa-magnifying-glass"></i>
                   <input type="text" placeholder="Search...">
                 </div>
                 <ul class="item-list">
-                  <li class="item">Water</li>
-                  <li class="item">Water</li>
-                  <li class="item">Water</li>
                 </ul>
               </div>
-              <div class="category-options">
+              <div class="category-options offers">
                 <div class="search">
                   <i class="fa-solid fa-magnifying-glass"></i>
                   <input type="text" placeholder="Search...">
                 </div>
                 <ul class="category-list">
-                  <li class="item">Water2</li>
-                  <li class="item">Water2</li>
-                  <li class="item">Water2</li>
                 </ul>
               </div>
             </div>
@@ -217,15 +207,6 @@
         </div>
         <div class="offers-box active">
           <ul class="offers-list">
-            <li class="list-item">
-              <div class="item-title"><b>Pasta</b>
-                <i class="fa-regular fa-trash-can trash"></i>
-              </div>
-              <div class="quantity">Quantity: 50</div>
-              <div class="datetime">Creation Date: Monday 11th October</div>
-              <div class="datetime">Pickup Date: Monday 11th October</div>
-              <div class="status">Status: Complete</div>
-            </li>
           </ul>
         </div>
       </div>

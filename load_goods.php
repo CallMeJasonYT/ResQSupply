@@ -6,7 +6,7 @@ $password = "";
 $db_name = "resqsupply";
 $conn = mysqli_connect($sname, $unmae, $password, $db_name);
 
-$data = $data = json_decode(file_get_contents('goods.json'), true);
+$data = json_decode(file_get_contents('goods.json'), true);
 
 foreach ($data['categories'] as $category) {
     $categoryId = mysqli_real_escape_string($conn, $category['id']);

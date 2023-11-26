@@ -1,27 +1,7 @@
-formContainer = document.querySelector('.form_container'),
-signupBtn = document.querySelector('#signup-btn'),
-loginBtn = document.querySelector('#login'),
-pwShowHide = document.querySelectorAll('.pw_hide');
-passChecklist = document.querySelectorAll('.list-item');
-signupForm = document.querySelector('.form.signup_form');
-loginForm = document.querySelector('.form.login_form');
-formAct = document.querySelector('#login-form');
-formActSign = document.querySelector('#signup-form');
-passField = document.querySelector('.field.password');
-passInput = document.querySelector('#pass');
-passLoginField = document.querySelector('.field.passwordlogin');
-passLoginInput = document.getElementById('pass-login');
-usernameField = document.querySelector('.field.username');
-usernameInput = document.getElementById('username');
-usernameLoginInput = document.getElementById('username-login');
-fullnameField = document.querySelector('.field.fullname');
-fullnameInput = document.getElementById('fullname');
-phoneField = document.querySelector('.field.phone');
-phoneInput = document.getElementById('phone');
-addressField = document.querySelector('.field.address');
-addressInput = document.getElementById('address');
-
 //SignUp-Login Button
+const formContainer = document.querySelector(".form_container");
+const signupBtn = document.querySelector("#signup-btn");
+const loginBtn = document.querySelector("#login");
 signupBtn.addEventListener("click", (e) => {
   e.preventDefault();
   formContainer.classList.add("active");
@@ -32,6 +12,7 @@ loginBtn.addEventListener("click", (e) => {
 });
 
 //Show-Hide Password Icon
+const pwShowHide = document.querySelectorAll(".pw_hide");
 pwShowHide.forEach((icon) => {
   icon.addEventListener("click", () => {
     let getPwInput = icon.parentElement.querySelector("input");
@@ -50,54 +31,61 @@ let validationRegex = [
   { regex: /.{8,}/ },
   { regex: /[A-Z]/ },
   { regex: /[^A-Za-z0-9]/ },
-  { regex: /^[a-zA-Z0-9!@#$%^&*()-_=+{}\[\]:;<>,.?\/\\|]+$/ }
-]
+  { regex: /^[a-zA-Z0-9!@#$%^&*()-_=+{}\[\]:;<>,.?\/\\|]+$/ },
+];
 
 //Password Requirements Checklist
-passInput.addEventListener('keyup', () => {
+const passChecklist = document.querySelectorAll(".list-item");
+const passInput = document.querySelector("#pass");
+passInput.addEventListener("keyup", () => {
   validationRegex.forEach((item, i) => {
-    let isValid = item.regex.test(passInput.value)
+    let isValid = item.regex.test(passInput.value);
     if (isValid) {
-      passChecklist[i].classList.add('checked');
+      passChecklist[i].classList.add("checked");
     } else {
-      passChecklist[i].classList.remove('checked');
+      passChecklist[i].classList.remove("checked");
     }
-  })
-})
+  });
+});
 
 //Show-Hide Password Requirements
+const passField = document.querySelector(".field.password");
 passInput.addEventListener("focus", (e) => {
   e.preventDefault();
   passField.classList.add("active");
-})
+});
 passInput.addEventListener("blur", (e) => {
   e.preventDefault();
   passField.classList.remove("active");
-})
+});
 
 //Password Validation
 function checkPass() {
   for (var i = 0; i < passChecklist.length; i++) {
-    if (!passChecklist[i].classList.contains('checked')) {
+    if (!passChecklist[i].classList.contains("checked")) {
       passGood = false;
     } else passGood = true;
   }
 }
 
 //Username Validation
-const usernamePattern = /^[a-zA-Z0-9]+\s?[a-zA-Z0-9]+$/
+const usernamePattern = /^[a-zA-Z0-9]+\s?[a-zA-Z0-9]+$/;
+const usernameField = document.querySelector(".field.username");
+const usernameInput = document.querySelector("#username");
 function checkUsername() {
   if (!usernameInput.value.match(usernamePattern)) {
     usernameField.classList.add("invalid");
     usernameField.classList.remove("duplicate");
-  }else{
+  } else {
     usernameField.classList.remove("invalid");
     checkUsernameAvailability();
   }
 }
 
 //Fullname Validation
-const fullnamePattern = /[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+\s+[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+$/
+const fullnamePattern = /[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+\s+[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+$/;
+const fullnameField = document.querySelector(".field.fullname");
+const fullnameInput = document.querySelector("#fullname");
 function checkFullname() {
   if (!fullnameInput.value.match(fullnamePattern)) {
     return fullnameField.classList.add("invalid");
@@ -106,7 +94,9 @@ function checkFullname() {
 }
 
 //Phone Number Validation
-const phonePattern = /^[+0-9]+$/
+const phonePattern = /^[+0-9]+$/;
+const phoneField = document.querySelector(".field.phone");
+const phoneInput = document.querySelector("#phone");
 function checkPhone() {
   if (!phoneInput.value.match(phonePattern)) {
     return phoneField.classList.add("invalid");
@@ -115,7 +105,9 @@ function checkPhone() {
 }
 
 //Address Validation
-const addressPattern = /^[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+\s+[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+$/
+const addressPattern = /^[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+\s+[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+$/;
+const addressField = document.querySelector(".field.address");
+const addressInput = document.querySelector("#address");
 function checkAddress() {
   if (!addressInput.value.match(addressPattern)) {
     return addressField.classList.add("invalid");
@@ -125,40 +117,47 @@ function checkAddress() {
 
 // AJAX Request to check the Database for Username Similarity
 function checkUsernameAvailability() {
-  var data = {username:usernameInput.value};
-  fetch('check_username.php', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(data)
+  var data = { username: usernameInput.value };
+  fetch("check_username.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
   })
-  .then(response => response.json())
-  .then(result => {
-    if (result != 'False') {
-      usernameField.classList.add("duplicate");
-    } else {
-      usernameField.classList.remove("duplicate");
-    }
-  })
+    .then((response) => response.json())
+    .then((result) => {
+      if (result != "False") {
+        usernameField.classList.add("duplicate");
+      } else {
+        usernameField.classList.remove("duplicate");
+      }
+    });
 }
 
 // AJAX Request to check the Database for Credentials
+const formAct = document.querySelector("#login-form");
+const passLoginField = document.querySelector(".field.passwordlogin");
+const passLoginInput = document.querySelector("#pass-login");
+const usernameLoginInput = document.querySelector("#username-login");
 function checkCredentials() {
-  var data = {username:usernameLoginInput.value, password:passLoginInput.value};
-  fetch('check_credentials.php', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(data)
+  var data = {
+    username: usernameLoginInput.value,
+    password: passLoginInput.value,
+  };
+  fetch("check_credentials.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
   })
-  .then(response => response.json())
-  .then(result => {
-    if (result == "False") {
-      passLoginField.classList.add("invalid");
-    } else{
-      passLoginField.classList.remove("invalid");
-      formAct.action = result + ".html"
-      formAct.submit();
-    }
-  })
+    .then((response) => response.json())
+    .then((result) => {
+      if (result == "False") {
+        passLoginField.classList.add("invalid");
+      } else {
+        passLoginField.classList.remove("invalid");
+        formAct.action = result + ".html";
+        formAct.submit();
+      }
+    });
 }
 
 //Validation When Typing
@@ -168,13 +167,13 @@ phoneInput.addEventListener("keyup", checkPhone);
 addressInput.addEventListener("keyup", checkAddress);
 
 //Submit Form Validation When Submiting
+const signupForm = document.querySelector(".form.signup_form");
 signupForm.addEventListener("submit", (e) => {
   checkUsername();
   checkFullname();
   checkPhone();
   checkAddress();
   checkPass();
-
   if (
     usernameField.classList.contains("invalid") ||
     usernameField.classList.contains("duplicate") ||
@@ -182,13 +181,15 @@ signupForm.addEventListener("submit", (e) => {
     phoneField.classList.contains("invalid") ||
     addressField.classList.contains("invalid") ||
     !passGood
-  ) { e.preventDefault(); }
-  else{
+  ) {
+    e.preventDefault();
+  } else {
     formAct.submit();
   }
 });
 
 //Login Form Validation When Submiting
+const loginForm = document.querySelector(".form.login_form");
 loginForm.addEventListener("submit", (e) => {
   e.preventDefault();
   checkCredentials();
