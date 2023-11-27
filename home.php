@@ -1,4 +1,6 @@
 <?php
+session_destroy();
+session_start();
 
 $sname = "localhost";
 $unmae = "root";
@@ -22,6 +24,8 @@ if (isset($_POST["phone"])) {
     } else {
         $email = NULL;
     }
+
+    $_SESSION["username"] = $username;
 
     $check_result = 1;
     while ($check_result != NULL) {

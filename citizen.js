@@ -1,6 +1,7 @@
 //When the window is resized or Loaded do the following
 document.addEventListener("DOMContentLoaded", function () {
   checkWidth();
+  fetchUserInfo();
   fetchAnnouncements();
   fetchOffers();
   fetchRequests();
@@ -10,6 +11,31 @@ document.addEventListener("DOMContentLoaded", function () {
 window.addEventListener("resize", (e) => {
   checkWidth();
 });
+
+//Fetching the Connection between Categories and Items
+var catItemConnection;
+function itemCatConn() {
+  fetch("itemCatConn.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" }
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      catItemConnection = data;
+    });
+}
+
+//Loading Goods into the database
+function loadGoods() {
+  fetch("load_goods.php", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    }
+  });
+}
 
 /* ~~~~~~~~~~ Mobile/Desktop Layout ~~~~~~~~~~ */
 
@@ -248,7 +274,7 @@ catSelButton.forEach(function (button) {
 
 /* ~~~~~~~~~~ Offers ~~~~~~~~~~ */
 
-// Deleting the Items and the Categories from each Offer before the Fetch
+//Deleting the Items and the Categories from each Offer before the Fetch
 function deleteOffersItems() {
   offerList = document.querySelectorAll(".offers-form .item");
   offerList.forEach(function (item) {
@@ -276,6 +302,7 @@ function offerBtnListener() {
   });
 }
 
+//Adding Event Listeners to the Offers Form List Item Elements and Displaying the Selected Items Correctly
 var itemsOffBtn = document.querySelectorAll(".offers-form .item-list .item");
 var selCategory = null;
 const itemsOffText = document.querySelector(".offers-form .item-btn .item-text");
@@ -283,13 +310,11 @@ function itemsOffBtnListener() {
   itemsOffBtn.forEach(function (item) {
     item.addEventListener("click", function () {
       itemsOffText.textContent = item.textContent;
-
       const selectedItemText = item.textContent.toLowerCase();
 
       for (const category in catItemConnection.categories) {
         if (catItemConnection.categories.hasOwnProperty(category)) {
           var itemsInCat = catItemConnection.categories[category].items.map(item => item.toLowerCase());
-          console.log(itemsInCat);
           if (itemsInCat.includes(selectedItemText)) {
             selCategory = category;
             break;
@@ -301,9 +326,10 @@ function itemsOffBtnListener() {
   });
 }
 
+//Adding Event Listeners to the Offers Form List Category Elements and Displaying the Selected Categories Correctly
 var catOffBtn = document.querySelectorAll(".offers-form .category-list .item");
 const catOffText = document.querySelector(".offers-form .cat-btn .item-text");
-function catOffBtnListener(){
+function catOffBtnListener() {
   catOffBtn.forEach(function (cat) {
     cat.addEventListener("click", function () {
       catOffText.textContent = cat.textContent;
@@ -320,18 +346,21 @@ function catOffBtnListener(){
   });
 }
 
-function removeItemOff(){
+//Remove Items from Offers Form
+function removeItemOff() {
   itemsOffBtn.forEach(function (item) {
     item.remove();
   });
 }
 
-function removeCatOff(){
+//Remove Categories from Offers Form
+function removeCatOff() {
   catOffBtn.forEach(function (item) {
     item.remove();
   });
 }
 
+//Clear Offers Form Selections Button
 const broomO = document.querySelector(".broomo")
 broomO.addEventListener("click", (e) => {
   catOffText.textContent = "Select Category";
@@ -390,7 +419,7 @@ minusO.addEventListener("click", () => {
   }
 });
 
-// Fetching the Categories and the Items that each Offer requires
+//Fetching the Categories and the Items that each Offer requires
 var offItemCat;
 function fetchOfferItems(offID) {
   fetch("fetch_OfferItems.php", {
@@ -429,17 +458,11 @@ createReq.addEventListener("click", () => {
   reqForm.classList.add("active");
   reqBox.classList.remove("active");
   createReq.classList.remove("active");
-  deleteRequestsItems();
+  removeItemReq();
   fetchGoods();
 });
 
-function deleteRequestsItems() {
-  offerList = document.querySelectorAll(".requests-form .item");
-  offerList.forEach(function (item) {
-    item.remove();
-  });
-}
-
+//Adding Event Listeners to the Requests Form List Item Elements and Displaying the Selected Items Correctly
 var itemsReqBtn = document.querySelectorAll(".requests-form .item-list .item");
 var selCategory = null;
 const itemsReqText = document.querySelector(".requests-form .item-btn .item-text");
@@ -447,7 +470,6 @@ function itemsReqBtnListener() {
   itemsReqBtn.forEach(function (item) {
     item.addEventListener("click", function () {
       itemsReqText.textContent = item.textContent;
-
       const selectedItemText = item.textContent.toLowerCase();
 
       for (const category in catItemConnection.categories) {
@@ -464,9 +486,10 @@ function itemsReqBtnListener() {
   });
 }
 
+//Adding Event Listeners to the Requests Form List Category Elements and Displaying the Selected Categories Correctly
 var catReqBtn = document.querySelectorAll(".requests-form .category-list .item");
 const catReqText = document.querySelector(".requests-form .cat-btn .item-text");
-function catReqBtnListener(){
+function catReqBtnListener() {
   catReqBtn.forEach(function (cat) {
     cat.addEventListener("click", function () {
       catReqText.textContent = cat.textContent;
@@ -485,6 +508,7 @@ function catReqBtnListener(){
   });
 }
 
+//Clear Requests Form Selections Button
 const broomR = document.querySelector(".broomr")
 broomR.addEventListener("click", (e) => {
   catReqText.textContent = "Select Category";
@@ -494,13 +518,15 @@ broomR.addEventListener("click", (e) => {
   fetchGoods();
 });
 
-function removeItemReq(){
+//Remove Items from Requests Form
+function removeItemReq() {
   itemsReqBtn.forEach(function (item) {
     item.remove();
   });
 }
 
-function removeCatReq(){
+//Remove Categories from Requests Form
+function removeCatReq() {
   catReqBtn.forEach(function (item) {
     item.remove();
   });
@@ -550,6 +576,8 @@ minusR.addEventListener("click", () => {
   }
 });
 
+/* ~~~~~~~~~~ Data Fetching ~~~~~~~~~~ */
+
 //Fetching Announcements from the Database with FetchAPI
 function fetchAnnouncements() {
   fetch("fetch_Announcements.php")
@@ -579,6 +607,9 @@ function fetchAnnouncements() {
     });
 }
 
+//Fetching Offers from the Database with FetchAPI
+var trashBtn = document.querySelectorAll(".trash");
+var offList = document.querySelectorAll(".offers-list .list-item");
 function fetchOffers() {
   fetch("fetch_Offers.php")
     .then((response) => {
@@ -587,21 +618,24 @@ function fetchOffers() {
     .then((data) => {
       if (data != "False") {
         data.forEach((res) => {
-          if (res.task_date_pickup = "null"){
+          if (res.task_date_pickup = "null") {
             res.task_date_pickup = "Not Available";
           }
           markup =
-            `<li class="list-item" id=${res.task_id}>`+
-            `<div class="item-title"><b>${res.task_goodn}</b>`+
-            `<i class="fa-regular fa-trash-can trash"></i>`+
-            `</div>`+
-            `<div class="quantity">Quantity: ${res.task_goodv}</div>`+
-            `<div class="datetime">Creation Date: ${res.task_date_create}</div>`+
-            `<div class="datetime">Pickup Date: ${res.task_date_pickup}</div>`+
-            `<div class="status">Status: ${res.task_status}</div>`+
+            `<li class="list-item" id=${res.task_id}>` +
+            `<div class="item-title"><b>${res.task_goodn}</b>` +
+            `<i class="fa-regular fa-trash-can trash"></i>` +
+            `</div>` +
+            `<div class="quantity">Quantity: ${res.task_goodv}</div>` +
+            `<div class="datetime">Creation Date: ${res.task_date_create}</div>` +
+            `<div class="datetime">Pickup Date: ${res.task_date_pickup}</div>` +
+            `<div class="status">Status: ${res.task_status}</div>` +
             `</li>`
           document.querySelector(".offers-list").insertAdjacentHTML("beforeend", markup);
         });
+        trashBtn = document.querySelectorAll(".trash");
+        offList = document.querySelectorAll(".offers-list .list-item");
+        trashBtnListener();
       } else {
         //If there aren't any Offers Display the following Paragraph
         markup = `<p>There aren't any Offers Currently</p>`;
@@ -610,6 +644,8 @@ function fetchOffers() {
     });
 }
 
+//Fetching Requests from the Database with FetchAPI
+var reqList = document.querySelectorAll(".requests-list .list-item");
 function fetchRequests() {
   fetch("fetch_Requests.php")
     .then((response) => {
@@ -618,21 +654,24 @@ function fetchRequests() {
     .then((data) => {
       if (data != "False") {
         data.forEach((res) => {
-          if (res.task_date_pickup = "null"){
+          if (res.task_date_pickup = "null") {
             res.task_date_pickup = "Not Available";
           }
           markup =
-            `<li class="list-item" id=${res.task_id}>`+
-            `<div class="item-title"><b>${res.task_goodn}</b>`+
-            `<i class="fa-regular fa-trash-can trash"></i>`+
-            `</div>`+
-            `<div class="people">People: ${res.task_goodv}</div>`+
-            `<div class="datetime">Creation Date: ${res.task_date_create}</div>`+
-            `<div class="datetime">Pickup Date: ${res.task_date_pickup}</div>`+
-            `<div class="status">Status: ${res.task_status}</div>`+
+            `<li class="list-item" id=${res.task_id}>` +
+            `<div class="item-title"><b>${res.task_goodn}</b>` +
+            `<i class="fa-regular fa-trash-can trash"></i>` +
+            `</div>` +
+            `<div class="people">People: ${res.task_goodv}</div>` +
+            `<div class="datetime">Creation Date: ${res.task_date_create}</div>` +
+            `<div class="datetime">Pickup Date: ${res.task_date_pickup}</div>` +
+            `<div class="status">Status: ${res.task_status}</div>` +
             `</li>`
           document.querySelector(".requests-list").insertAdjacentHTML("beforeend", markup);
         });
+        trashBtn = document.querySelectorAll(".trash");
+        reqList = document.querySelectorAll(".requests-list .list-item");
+        trashBtnListener();
       } else {
         //If there aren't any Requests Display the following Paragraph
         markup = `<p>There aren't any Requests Currently</p>`;
@@ -641,20 +680,10 @@ function fetchRequests() {
     });
 }
 
-//Loading Goods into the database
-function loadGoods() {
-  fetch("load_goods.php", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-}
-
+//Fetching and Inserting Goods into the Requests Form
 function fetchGoods() {
   fetch("fetch_Goods.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: "POST"
   })
     .then((response) => {
       return response.json();
@@ -677,16 +706,80 @@ function fetchGoods() {
     });
 }
 
-var catItemConnection;
-function itemCatConn(){
-  fetch("itemCatConn.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" }
+function fetchUserInfo() {
+  fetch("fetch_UserInfo.php", {
+    method: "POST"
   })
     .then((response) => {
       return response.json();
     })
     .then((data) => {
-      catItemConnection = data;
+      markup =
+        `<div class="welcome">` +
+        `Welcome, ${data}!` +
+        `</div>`
+
+      document.querySelector(".footer").insertAdjacentHTML("afterBegin", markup);
     });
+}
+
+const logoutButton = document.querySelector(".button.logout");
+logoutButton.addEventListener("click", logoutUser);
+
+function logoutUser() {
+  fetch("logout_User.php", {
+    method: "POST",
+    credentials: 'include'
+  });
+  location.href = "home.html";
+}
+
+function trashBtnListener() {
+  trashBtn.forEach(function (btn) {
+    // Check if the listener has already been added
+    if (!btn.dataset.listenerAdded) {
+      btn.addEventListener("click", function () {
+        var type = "requests";
+        var id = btn.parentNode.parentNode.id;
+        if (btn.parentNode.parentNode.parentNode.className == "offers-list") {
+          type = "offers";
+        }
+        deleteOffReq(type, id);
+      });
+
+      // Set the flag to indicate that the listener has been added
+      btn.dataset.listenerAdded = true;
+    }
+  });
+}
+function deleteOffReq(type, reqOffID) {
+  fetch("delete_OffReq.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: reqOffID })
+  })
+  .then((response) => {
+    return response.json();
+  })
+  .then((data) => {
+    if (type == "requests") {
+      removeRequests();
+      fetchRequests();
+    } else {
+      removeOffers();
+      fetchOffers();
+    }
+  });
+}
+
+function removeRequests(){
+  reqList.forEach(function (reqListItem){
+    reqListItem.remove();
+  })
+}
+
+function removeOffers(){
+  offList.forEach(function (offListItem){
+    offListItem.remove();
+  })
 }

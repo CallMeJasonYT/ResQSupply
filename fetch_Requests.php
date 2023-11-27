@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 $sname = "localhost";
 $unmae = "root";
 $password = "";
@@ -14,9 +16,9 @@ if (!$conn) {
 $task_cat = "Request";
 
 // Fetch Requests from the database
-$query = "SELECT task_id, task_date_create, task_goodn, task_date_pickup, task_goodv, task_status FROM tasks WHERE task_cat=?";
+$query = "SELECT task_id, task_date_create, task_goodn, task_date_pickup, task_goodv, task_status FROM tasks INNER JOIN users ON user_id=task_cit_id WHERE username=? AND task_cat=?";
 $stmt = mysqli_prepare($conn, $query);
-mysqli_stmt_bind_param($stmt, "s", $task_cat);
+mysqli_stmt_bind_param($stmt, "ss", $_SESSION["username"], $task_cat);
 mysqli_stmt_execute($stmt);
 
 $result = mysqli_stmt_get_result($stmt);

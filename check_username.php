@@ -16,7 +16,11 @@ $username = $regData->username;
 $fetchUsername = $conn->execute_query("SELECT username FROM users WHERE username=?", [$username]);
 $usernameExists = $fetchUsername->fetch_assoc();
 
-if ($usernameExists) {$response = "True";}else{$response="False";}
+if ($usernameExists) {
+    $response = "True";
+} else {
+    $response = "False";
+}
 
 header('Content-Type: application/json');
 echo json_encode([$response]);

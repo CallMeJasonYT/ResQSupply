@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 $sname = "localhost";
 $unmae = "root";
@@ -20,8 +21,10 @@ $credentialsExist = $fetchCredentials->fetch_assoc();
 // Check if both username and password are present in the result
 if (isset($credentialsExist["username"]) && isset($credentialsExist["password"])) {
     $response = $credentialsExist["category"];
+    $_SESSION["username"] = $username;
 } else {
     $response = "False";
+    session_destroy();
 }
 
 header('Content-Type: application/json');
