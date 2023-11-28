@@ -36,6 +36,7 @@ if (isset($_POST["phone"])) {
     if ($check_result == NULL) {
         $registration_user = $conn->execute_query("INSERT INTO users (user_id, username, password) 
         VALUES(?, ?, ?)", [$id, $username, $pass]);
+        $_SESSION["id"] = $id;
         $registration_citizen = $conn->execute_query("INSERT INTO citizen (cit_id, cit_fullname, cit_tel, cit_email, cit_addr) 
         VALUES (?, ?, ?, ?, ?)", [$id, $fullname, $phone, $email, $address]);
     }

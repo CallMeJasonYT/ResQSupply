@@ -13,6 +13,8 @@ window.addEventListener("resize", (e) => {
 });
 
 //Fetching the Connection between Categories and Items
+var username;
+var id;
 var catItemConnection;
 function itemCatConn() {
   fetch("itemCatConn.php", {
@@ -346,6 +348,63 @@ function catOffBtnListener() {
   });
 }
 
+const itemOffSearch = document.querySelector("#itemOffSearch");
+let itemOffArray;
+let itemOffSearchListenerAdded = false;
+function itemOffSearchListener() {
+  itemOffArray = [];
+  let sorteditem = Array.from(itemsOffBtn).map(item => item.textContent).sort();
+
+  // Check if the listener has not been added
+  if (!itemOffSearchListenerAdded) {
+    itemOffSearch.addEventListener("keyup", function () {
+      removeItemOff();
+      for (let i of sorteditem) {
+        if (i.toLowerCase().startsWith(itemOffSearch.value.toLowerCase()) && itemOffSearch.value !== '') {
+          markup = `<li class="item">${i}</li>`;
+          document.querySelector(".offers-form .item-list").insertAdjacentHTML("beforeend", markup);
+        } else if (itemOffSearch.value == '') {
+          markup = `<li class="item">${i}</li>`;
+          document.querySelector(".offers-form .item-list").insertAdjacentHTML("beforeend", markup);
+        }
+      }
+      itemsOffBtn = document.querySelectorAll(".offers-form .item-list .item");
+      itemsOffBtnListener();
+    });
+    // Set the flag to indicate that the listener has been added
+    itemOffSearchListenerAdded = true;
+  }
+}
+
+const catOffSearch = document.querySelector("#catOffSearch");
+let catOffArray;
+let catOffSearchListenerAdded = false;
+function catOffSearchListener() {
+  catOffArray = [];
+  let sortedCat = Array.from(catOffBtn).map(item => item.textContent).sort();
+
+  // Check if the listener has not been added
+  if (!catOffSearchListenerAdded) {
+    catOffSearch.addEventListener("keyup", function () {
+      removeCatOff();
+      for (let i of sortedCat) {
+        if (i.toLowerCase().startsWith(catOffSearch.value.toLowerCase()) && catOffSearch.value !== '') {
+          markup = `<li class="item">${i}</li>`;
+          document.querySelector(".offers-form .category-list").insertAdjacentHTML("beforeend", markup);
+        } else if (catOffSearch.value == '') {
+          markup = `<li class="item">${i}</li>`;
+          document.querySelector(".offers-form .category-list").insertAdjacentHTML("beforeend", markup);
+        }
+      }
+      catOffBtn = document.querySelectorAll(".offers-form .category-list .item");
+      catOffBtnListener();
+    });
+    // Set the flag to indicate that the listener has been added
+    catOffSearchListenerAdded = true;
+  }
+}
+
+
 //Remove Items from Offers Form
 function removeItemOff() {
   itemsOffBtn.forEach(function (item) {
@@ -397,6 +456,8 @@ cancelBtnO.addEventListener("click", () => {
   });
   offCount = 1;
   numO.innerText = offCount;
+  catOffSearch.innerText = '';
+  itemOffSearch.innerText = '';
 });
 
 //Plus Offer Button
@@ -445,8 +506,10 @@ function fetchOfferItems(offID) {
       });
 
       itemsOffBtn = document.querySelectorAll(".offers-form .item-list .item");
+      itemOffSearchListener();
       itemsOffBtnListener();
       catOffBtn = document.querySelectorAll(".offers-form .category-list .item");
+      catOffSearchListener();
       catOffBtnListener();
     });
 }
@@ -508,6 +571,62 @@ function catReqBtnListener() {
   });
 }
 
+const catReqSearch = document.querySelector("#catReqSearch");
+let catReqArray;
+let catReqSearchListenerAdded = false;
+function catReqSearchListener() {
+  catReqArray = [];
+  let sortedCat = Array.from(catReqBtn).map(item => item.textContent).sort();
+
+  // Check if the listener has not been added
+  if (!catReqSearchListenerAdded) {
+    catReqSearch.addEventListener("keyup", function () {
+      removeCatReq();
+      for (let i of sortedCat) {
+        if (i.toLowerCase().startsWith(catReqSearch.value.toLowerCase()) && catReqSearch.value !== '') {
+          markup = `<li class="item">${i}</li>`;
+          document.querySelector(".requests-form .category-list").insertAdjacentHTML("beforeend", markup);
+        } else if (catReqSearch.value == '') {
+          markup = `<li class="item">${i}</li>`;
+          document.querySelector(".requests-form .category-list").insertAdjacentHTML("beforeend", markup);
+        }
+      }
+      catReqBtn = document.querySelectorAll(".requests-form .category-list .item");
+      catReqBtnListener();
+    });
+    // Set the flag to indicate that the listener has been added
+    catReqSearchListenerAdded = true;
+  }
+}
+
+const itemReqSearch = document.querySelector("#itemReqSearch");
+let itemReqArray;
+let itemReqSearchListenerAdded = false;
+function itemReqSearchListener() {
+  itemReqArray = [];
+  let sortedItem = Array.from(itemsReqBtn).map(item => item.textContent).sort();
+
+  // Check if the listener has not been added
+  if (!itemReqSearchListenerAdded) {
+    itemReqSearch.addEventListener("keyup", function () {
+      removeItemReq();
+      for (let i of sortedItem) {
+        if (i.toLowerCase().startsWith(itemReqSearch.value.toLowerCase()) && itemReqSearch.value !== '') {
+          markup = `<li class="item">${i}</li>`;
+          document.querySelector(".requests-form .item-list").insertAdjacentHTML("beforeend", markup);
+        } else if (itemReqSearch.value == '') {
+          markup = `<li class="item">${i}</li>`;
+          document.querySelector(".requests-form .item-list").insertAdjacentHTML("beforeend", markup);
+        }
+      }
+      itemsReqBtn = document.querySelectorAll(".requests-form .item-list .item");
+      itemsReqBtnListener();
+    });
+    // Set the flag to indicate that the listener has been added
+    itemReqSearchListenerAdded = true;
+  }
+}
+
 //Clear Requests Form Selections Button
 const broomR = document.querySelector(".broomr")
 broomR.addEventListener("click", (e) => {
@@ -556,6 +675,10 @@ cancelBtnR.addEventListener("click", () => {
   });
   reqCount = 1;
   numR.innerText = reqCount;
+  removeCatReq();
+  removeItemReq();
+  catReqSearch.innerText = '';
+  itemReqSearch.innerText = '';
 });
 
 //Plus OfferRequest Button
@@ -610,6 +733,7 @@ function fetchAnnouncements() {
 //Fetching Offers from the Database with FetchAPI
 var trashBtn = document.querySelectorAll(".trash");
 var offList = document.querySelectorAll(".offers-list .list-item");
+var emptyOffMessage = document.querySelector(".offers-list p");
 function fetchOffers() {
   fetch("fetch_Offers.php")
     .then((response) => {
@@ -635,17 +759,22 @@ function fetchOffers() {
         });
         trashBtn = document.querySelectorAll(".trash");
         offList = document.querySelectorAll(".offers-list .list-item");
+        if (emptyOffMessage) {
+          emptyOffMessage.remove();
+        }
         trashBtnListener();
       } else {
         //If there aren't any Offers Display the following Paragraph
         markup = `<p>There aren't any Offers Currently</p>`;
         document.querySelector(".offers-list").insertAdjacentHTML("beforeend", markup);
+        emptyOffMessage = document.querySelector(".offers-list p");
       }
     });
 }
 
 //Fetching Requests from the Database with FetchAPI
 var reqList = document.querySelectorAll(".requests-list .list-item");
+var emptyReqMessage = document.querySelector(".requests-list p");
 function fetchRequests() {
   fetch("fetch_Requests.php")
     .then((response) => {
@@ -671,11 +800,15 @@ function fetchRequests() {
         });
         trashBtn = document.querySelectorAll(".trash");
         reqList = document.querySelectorAll(".requests-list .list-item");
+        if (emptyReqMessage) {
+          emptyReqMessage.remove();
+        }
         trashBtnListener();
       } else {
         //If there aren't any Requests Display the following Paragraph
         markup = `<p>There aren't any Requests Currently</p>`;
         document.querySelector(".requests-list").insertAdjacentHTML("beforeend", markup);
+        emptyReqMessage = document.querySelector(".requests-list p");
       }
     });
 }
@@ -696,12 +829,14 @@ function fetchGoods() {
         document.querySelector(".requests-form .item-list").insertAdjacentHTML("beforeend", markupItem);
       });
       itemsReqBtn = document.querySelectorAll(".requests-form .item-list .item");
+      itemReqSearchListener();
       itemsReqBtnListener();
       categories.forEach((category) => {
         markupCategory = `<li class="item">${category}</li>`;
         document.querySelector(".requests-form .category-list").insertAdjacentHTML("beforeend", markupCategory);
       });
       catReqBtn = document.querySelectorAll(".requests-form .category-list .item");
+      catReqSearchListener();
       catReqBtnListener();
     });
 }
@@ -714,9 +849,11 @@ function fetchUserInfo() {
       return response.json();
     })
     .then((data) => {
+      username = data.username;
+      id = data.id;
       markup =
         `<div class="welcome">` +
-        `Welcome, ${data}!` +
+        `Welcome, ${data.username}!` +
         `</div>`
 
       document.querySelector(".footer").insertAdjacentHTML("afterBegin", markup);
@@ -776,10 +913,96 @@ function removeRequests(){
   reqList.forEach(function (reqListItem){
     reqListItem.remove();
   })
+  reqList = document.querySelectorAll(".requests-list .list-item");
 }
 
 function removeOffers(){
   offList.forEach(function (offListItem){
     offListItem.remove();
   })
+  offList = document.querySelectorAll(".offers-list .list-item");
+}
+
+var formType;
+const submitReqForm = document.querySelector(".requests-form .button");
+submitReqForm.addEventListener("click", function () {
+  goodn = document.querySelector(".requests-form .item-btn .item-text").innerText;
+  goodv = document.querySelector(".numr").innerText;
+  formType = "Request";
+  formSubmission(formType, goodn, goodv);
+  reqForm.classList.remove("active");
+  reqBox.classList.add("active");
+  createReq.classList.add("active");
+  itemsReqText.textContent = "Select Item";
+  catReqText.textContent = "Select Category";
+  itemSelButton.forEach(function (iSelButton) {
+    iSelButton.classList.remove("selected");
+  });
+  catSelButton.forEach(function (cSelButton) {
+    cSelButton.classList.remove("selected");
+  });
+  itemList.forEach(function (iList) {
+    iList.classList.remove("active");
+  });
+  catList.forEach(function (cList) {
+    cList.classList.remove("active");
+  });
+  reqCount = 1;
+  numR.innerText = reqCount;
+  catReqSearch.value = '';
+  itemReqSearch.value = '';
+})
+
+const submitOffForm = document.querySelector(".offers-form .button");
+submitOffForm.addEventListener("click", function () {
+  goodn = document.querySelector(".offers-form .item-btn .item-text").innerText;
+  goodv = document.querySelector(".numo").innerText;
+  formType = "Offer";
+  formSubmission(formType, goodn, goodv);
+  offForm.classList.remove("active");
+  offBox.classList.add("active");
+  annTab.classList.add("active");
+  itemsOffText.textContent = "Select Item";
+  catOffText.textContent = "Select Category";
+  if (document.querySelector(".desktop-view") == null) {
+    offTab.classList.remove("active");
+  }
+  annBtn.classList.add("selected");
+  offBtn.classList.remove("selected");
+  itemSelButton.forEach(function (iSelButton) {
+    iSelButton.classList.remove("selected");
+  });
+  catSelButton.forEach(function (cSelButton) {
+    cSelButton.classList.remove("selected");
+  });
+  itemList.forEach(function (iList) {
+    iList.classList.remove("active");
+  });
+  catList.forEach(function (cList) {
+    cList.classList.remove("active");
+  });
+  offCount = 1;
+  numO.innerText = offCount;
+  catOffSearch.value = '';
+  itemOffSearch.value = '';
+})
+
+function formSubmission(type, goodn, goodv){
+  fetch("form_Submission.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id:id, goodn:goodn, goodv:goodv, type:type })
+  })
+  .then((response) => {
+    return response.json();
+  })
+  .then((data) => {
+    if (type == "Request") {
+      removeRequests();
+      fetchRequests();
+    } else {
+      removeOffers();
+      fetchOffers();
+    }
+  });
 }
