@@ -1,3 +1,5 @@
+/* ~~~~~~~~~~ General Functions ~~~~~~~~~~ */
+
 //When the window is resized or Loaded do the following
 document.addEventListener("DOMContentLoaded", function () {
   checkWidth();
@@ -13,8 +15,6 @@ window.addEventListener("resize", (e) => {
 });
 
 //Fetching the Connection between Categories and Items
-var username;
-var id;
 var catItemConnection;
 function itemCatConn() {
   fetch("itemCatConn.php", {
@@ -37,6 +37,17 @@ function loadGoods() {
       "Content-Type": "application/json",
     }
   });
+}
+
+//Logging out Actions
+const logoutButton = document.querySelector(".button.logout");
+logoutButton.addEventListener("click", logoutUser);
+function logoutUser() {
+  fetch("logout_User.php", {
+    method: "POST",
+    credentials: 'include'
+  });
+  location.href = "home.html";
 }
 
 /* ~~~~~~~~~~ Mobile/Desktop Layout ~~~~~~~~~~ */
@@ -84,6 +95,7 @@ const burgerIco = document.querySelector(".burgeri");
 const burgerCont = document.querySelector(".burger-container");
 const moduleSel = document.querySelector(".module");
 const navOpt = document.querySelector(".nav .nav-options");
+const mobAdd = document.querySelector(".burger-menu .field.address");
 function deskCustomization() {
   reqTab.classList.add("active");
   annTab.classList.add("active");
@@ -93,6 +105,7 @@ function deskCustomization() {
   burgerCont.classList.remove("active");
   burgerIcox.classList.remove("active");
   burgerIco.classList.add("active");
+  deskAdd.classList.add("active");
 }
 
 //Removing desktop-view Div
@@ -116,6 +129,7 @@ function mobileApply() {
 const reqBtn = document.querySelector("#reqBtn");
 const annBtn = document.querySelector("#annBtn");
 const offBtn = document.querySelector("#offBtn");
+const deskAdd = document.querySelector(".nav-options .field.address");
 function mobileCustomization() {
   reqTab.classList.remove("active");
   offTab.classList.remove("active");
@@ -124,6 +138,7 @@ function mobileCustomization() {
   reqBtn.classList.remove("selected");
   annBtn.classList.add("selected");
   navOpt.classList.remove("active");
+  deskAdd.classList.remove("active");
 }
 
 /* ~~~~~~~~~~ Tab Buttons ~~~~~~~~~~ */
@@ -204,7 +219,7 @@ const addressInputMob = document.getElementById("addressmob");
 addressInputDesk.addEventListener("keyup", checkAddressDesk);
 addressInputMob.addEventListener("keyup", checkAddressMob);
 
-//Address Validation 
+//Address Mobile Validation 
 const addressPattern = /^[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+\s+[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+$/;
 const addressFieldMob = document.getElementById("addressfieldmob");
 function checkAddressMob() {
@@ -214,6 +229,7 @@ function checkAddressMob() {
   addressFieldMob.classList.remove("invalid");
 }
 
+//Address Desktop Validation 
 const addressFieldDesk = document.getElementById("addressfielddesk");
 function checkAddressDesk() {
   if (!addressInputDesk.value.match(addressPattern)) {
@@ -273,6 +289,104 @@ catSelButton.forEach(function (button) {
     });
   });
 });
+
+//Adding Listeners to the trash Buttons in the two Forms
+function trashBtnListener() {
+  trashBtn.forEach(function (btn) {
+    // Check if the listener has already been added
+    if (!btn.dataset.listenerAdded) {
+      btn.addEventListener("click", function () {
+        var type = "requests";
+        var id = btn.parentNode.parentNode.id;
+        if (btn.parentNode.parentNode.parentNode.className == "offers-list") {
+          type = "offers";
+        }
+        deleteOffReq(type, id);
+      });
+      // Set the flag to indicate that the listener has been added
+      btn.dataset.listenerAdded = true;
+    }
+  });
+}
+
+//Function that removes an Offer or Request
+function deleteOffReq(type, reqOffID) {
+  fetch("delete_OffReq.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: reqOffID })
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      if (data != "False") {
+        if (type == "requests") {
+          removeRequests();
+          fetchRequests();
+        } else {
+          removeOffers();
+          fetchOffers();
+        }
+      } else {
+        var statusElement = document.getElementById(reqOffID).querySelector(".status");
+        if (statusElement.innerText == "Status: Pending") {
+          if (type == "requests" && document.getElementById(reqOffID).querySelector(".error") == null) {
+            markup = `<p class=error style="color:red">The Status of the Request has changed. Please refresh the Page</p>`;
+            document.getElementById(reqOffID).insertAdjacentHTML("beforeend", markup);
+          } else if (type == "offers" && document.getElementById(reqOffID).querySelector(".error") == null) {
+            markup = `<p class=error style="color:red">The Status of the Offer has changed. Please refresh the Page</p>`;
+            document.getElementById(reqOffID).insertAdjacentHTML("beforeend", markup);
+          }
+        } else {
+          if (type == "requests" && document.getElementById(reqOffID).querySelector(".error") == null) {
+            markup = `<p class=error style="color:red">You cannot delete this request</p>`;
+            document.getElementById(reqOffID).insertAdjacentHTML("beforeend", markup);
+          } else if (type == "offers" && document.getElementById(reqOffID).querySelector(".error") == null) {
+            markup = `<p class=error style="color:red">You cannot delete this request</p>`;
+            document.getElementById(reqOffID).insertAdjacentHTML("beforeend", markup);
+          }
+        }
+      }
+    });
+}
+
+//Function that removes all requests from Requests List
+function removeRequests() {
+  reqList.forEach(function (reqListItem) {
+    reqListItem.remove();
+  })
+  reqList = document.querySelectorAll(".requests-list .list-item");
+}
+
+//Function that removes all offers from Offers List
+function removeOffers() {
+  offList.forEach(function (offListItem) {
+    offListItem.remove();
+  })
+  offList = document.querySelectorAll(".offers-list .list-item");
+}
+
+//Submission of the Forms
+function formSubmission(type, goodn, goodv) {
+  fetch("form_Submission.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ goodn: goodn, goodv: goodv, type: type })
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      if (type == "Request") {
+        removeRequests();
+        fetchRequests();
+      } else {
+        removeOffers();
+        fetchOffers();
+      }
+    });
+}
 
 /* ~~~~~~~~~~ Offers ~~~~~~~~~~ */
 
@@ -348,6 +462,7 @@ function catOffBtnListener() {
   });
 }
 
+//Adding Event Listner to the Item Search Input Field of the Offers Form
 const itemOffSearch = document.querySelector("#itemOffSearch");
 let itemOffArray;
 let itemOffSearchListenerAdded = false;
@@ -376,6 +491,7 @@ function itemOffSearchListener() {
   }
 }
 
+//Adding Event Listner to the Category Search Input Field of the Offers Form
 const catOffSearch = document.querySelector("#catOffSearch");
 let catOffArray;
 let catOffSearchListenerAdded = false;
@@ -403,7 +519,6 @@ function catOffSearchListener() {
     catOffSearchListenerAdded = true;
   }
 }
-
 
 //Remove Items from Offers Form
 function removeItemOff() {
@@ -435,6 +550,7 @@ cancelBtnO.addEventListener("click", () => {
   offForm.classList.remove("active");
   offBox.classList.add("active");
   annTab.classList.add("active");
+  offForm.classList.remove("invalid");
   itemsOffText.textContent = "Select Item";
   catOffText.textContent = "Select Category";
   if (document.querySelector(".desktop-view") == null) {
@@ -480,39 +596,45 @@ minusO.addEventListener("click", () => {
   }
 });
 
-//Fetching the Categories and the Items that each Offer requires
-var offItemCat;
-function fetchOfferItems(offID) {
-  fetch("fetch_OfferItems.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: offID })
-  })
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      const uniqueCategories = [...new Set(data.map(item => item.goodCatName))];
-      offItemCat = data;
-
-      data.forEach((res) => {
-        const markupItem = `<li class="item">${res.goodName}</li>`;
-        document.querySelector(".offers-form .item-list").insertAdjacentHTML("beforeend", markupItem);
-      });
-
-      uniqueCategories.forEach((category) => {
-        const markupCategory = `<li class="item">${category}</li>`;
-        document.querySelector(".offers-form .category-list").insertAdjacentHTML("beforeend", markupCategory);
-      });
-
-      itemsOffBtn = document.querySelectorAll(".offers-form .item-list .item");
-      itemOffSearchListener();
-      itemsOffBtnListener();
-      catOffBtn = document.querySelectorAll(".offers-form .category-list .item");
-      catOffSearchListener();
-      catOffBtnListener();
+//Adding Event Listner to the Submit Button of the Offers Form
+const submitOffForm = document.querySelector(".offers-form .button");
+submitOffForm.addEventListener("click", function () {
+  goodn = document.querySelector(".offers-form .item-btn .item-text").innerText;
+  goodv = document.querySelector(".numo").innerText;
+  formType = "Offer";
+  if (itemsOffText.innerText == "Select Item") {
+    offForm.classList.add("invalid");
+  } else {
+    formSubmission(formType, goodn, goodv);
+    offForm.classList.remove("invalid");
+    offForm.classList.remove("active");
+    offBox.classList.add("active");
+    annTab.classList.add("active");
+    itemsOffText.textContent = "Select Item";
+    catOffText.textContent = "Select Category";
+    if (document.querySelector(".desktop-view") == null) {
+      offTab.classList.remove("active");
+    }
+    annBtn.classList.add("selected");
+    offBtn.classList.remove("selected");
+    itemSelButton.forEach(function (iSelButton) {
+      iSelButton.classList.remove("selected");
     });
-}
+    catSelButton.forEach(function (cSelButton) {
+      cSelButton.classList.remove("selected");
+    });
+    itemList.forEach(function (iList) {
+      iList.classList.remove("active");
+    });
+    catList.forEach(function (cList) {
+      cList.classList.remove("active");
+    });
+    offCount = 1;
+    numO.innerText = offCount;
+    catOffSearch.value = '';
+    itemOffSearch.value = '';
+  }
+})
 
 /* ~~~~~~~~~~ Requests ~~~~~~~~~~ */
 
@@ -571,6 +693,7 @@ function catReqBtnListener() {
   });
 }
 
+//Adding Event Listner to the Category Search Input Field of the Requirements Form
 const catReqSearch = document.querySelector("#catReqSearch");
 let catReqArray;
 let catReqSearchListenerAdded = false;
@@ -599,6 +722,7 @@ function catReqSearchListener() {
   }
 }
 
+//Adding Event Listner to the Items Search Input Field of the Requirements Form
 const itemReqSearch = document.querySelector("#itemReqSearch");
 let itemReqArray;
 let itemReqSearchListenerAdded = false;
@@ -659,6 +783,7 @@ cancelBtnR.addEventListener("click", () => {
   reqForm.classList.remove("active");
   reqBox.classList.add("active");
   createReq.classList.add("active");
+  reqForm.classList.remove("invalid");
   itemsReqText.textContent = "Select Item";
   catReqText.textContent = "Select Category";
   itemSelButton.forEach(function (iSelButton) {
@@ -698,6 +823,42 @@ minusR.addEventListener("click", () => {
     numR.innerText = reqCount;
   }
 });
+
+//Adding Event Listner to the Submit Button of the Requirements Form
+var formType;
+const submitReqForm = document.querySelector(".requests-form .button");
+submitReqForm.addEventListener("click", function () {
+  goodn = document.querySelector(".requests-form .item-btn .item-text").innerText;
+  goodv = document.querySelector(".numr").innerText;
+  formType = "Request";
+  if (itemsReqText.innerText == "Select Item") {
+    reqForm.classList.add("invalid");
+  } else {
+    formSubmission(formType, goodn, goodv);
+    reqForm.classList.remove("invalid");
+    reqForm.classList.remove("active");
+    reqBox.classList.add("active");
+    createReq.classList.add("active");
+    itemsReqText.textContent = "Select Item";
+    catReqText.textContent = "Select Category";
+    itemSelButton.forEach(function (iSelButton) {
+      iSelButton.classList.remove("selected");
+    });
+    catSelButton.forEach(function (cSelButton) {
+      cSelButton.classList.remove("selected");
+    });
+    itemList.forEach(function (iList) {
+      iList.classList.remove("active");
+    });
+    catList.forEach(function (cList) {
+      cList.classList.remove("active");
+    });
+    reqCount = 1;
+    numR.innerText = reqCount;
+    catReqSearch.value = '';
+    itemReqSearch.value = '';
+  }
+})
 
 /* ~~~~~~~~~~ Data Fetching ~~~~~~~~~~ */
 
@@ -841,6 +1002,41 @@ function fetchGoods() {
     });
 }
 
+//Fetching the Categories and the Items that each Offer requires
+var offItemCat;
+function fetchOfferItems(offID) {
+  fetch("fetch_OfferItems.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: offID })
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      const uniqueCategories = [...new Set(data.map(item => item.goodCatName))];
+      offItemCat = data;
+
+      data.forEach((res) => {
+        const markupItem = `<li class="item">${res.goodName}</li>`;
+        document.querySelector(".offers-form .item-list").insertAdjacentHTML("beforeend", markupItem);
+      });
+
+      uniqueCategories.forEach((category) => {
+        const markupCategory = `<li class="item">${category}</li>`;
+        document.querySelector(".offers-form .category-list").insertAdjacentHTML("beforeend", markupCategory);
+      });
+
+      itemsOffBtn = document.querySelectorAll(".offers-form .item-list .item");
+      itemOffSearchListener();
+      itemsOffBtnListener();
+      catOffBtn = document.querySelectorAll(".offers-form .category-list .item");
+      catOffSearchListener();
+      catOffBtnListener();
+    });
+}
+
+//Fetching the Username of the User and displaying the Welcome Message
 function fetchUserInfo() {
   fetch("fetch_UserInfo.php", {
     method: "POST"
@@ -849,160 +1045,30 @@ function fetchUserInfo() {
       return response.json();
     })
     .then((data) => {
-      username = data.username;
-      id = data.id;
       markup =
         `<div class="welcome">` +
-        `Welcome, ${data.username}!` +
+        `Welcome, ${data}!` +
         `</div>`
 
       document.querySelector(".footer").insertAdjacentHTML("afterBegin", markup);
     });
 }
 
-const logoutButton = document.querySelector(".button.logout");
-logoutButton.addEventListener("click", logoutUser);
+var nAddressButtons = document.querySelectorAll(".field.address .button");
+nAddressButtons.forEach(function (nAddressButton) {
+  nAddressButton.addEventListener("click", function () {
+    var nAddress = document.querySelector(".field.address.active .address-text");
+    changeAddress(nAddress.value);
+  })
+});
 
-function logoutUser() {
-  fetch("logout_User.php", {
-    method: "POST",
-    credentials: 'include'
-  });
-  location.href = "home.html";
-}
-
-function trashBtnListener() {
-  trashBtn.forEach(function (btn) {
-    // Check if the listener has already been added
-    if (!btn.dataset.listenerAdded) {
-      btn.addEventListener("click", function () {
-        var type = "requests";
-        var id = btn.parentNode.parentNode.id;
-        if (btn.parentNode.parentNode.parentNode.className == "offers-list") {
-          type = "offers";
-        }
-        deleteOffReq(type, id);
-      });
-
-      // Set the flag to indicate that the listener has been added
-      btn.dataset.listenerAdded = true;
-    }
-  });
-}
-function deleteOffReq(type, reqOffID) {
-  fetch("delete_OffReq.php", {
+function changeAddress(newAddress) {
+  fetch("update_Location.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: reqOffID })
+    body: JSON.stringify({ newAddress: newAddress })
   })
-  .then((response) => {
-    return response.json();
-  })
-  .then((data) => {
-    if (type == "requests") {
-      removeRequests();
-      fetchRequests();
-    } else {
-      removeOffers();
-      fetchOffers();
-    }
-  });
-}
-
-function removeRequests(){
-  reqList.forEach(function (reqListItem){
-    reqListItem.remove();
-  })
-  reqList = document.querySelectorAll(".requests-list .list-item");
-}
-
-function removeOffers(){
-  offList.forEach(function (offListItem){
-    offListItem.remove();
-  })
-  offList = document.querySelectorAll(".offers-list .list-item");
-}
-
-var formType;
-const submitReqForm = document.querySelector(".requests-form .button");
-submitReqForm.addEventListener("click", function () {
-  goodn = document.querySelector(".requests-form .item-btn .item-text").innerText;
-  goodv = document.querySelector(".numr").innerText;
-  formType = "Request";
-  formSubmission(formType, goodn, goodv);
-  reqForm.classList.remove("active");
-  reqBox.classList.add("active");
-  createReq.classList.add("active");
-  itemsReqText.textContent = "Select Item";
-  catReqText.textContent = "Select Category";
-  itemSelButton.forEach(function (iSelButton) {
-    iSelButton.classList.remove("selected");
-  });
-  catSelButton.forEach(function (cSelButton) {
-    cSelButton.classList.remove("selected");
-  });
-  itemList.forEach(function (iList) {
-    iList.classList.remove("active");
-  });
-  catList.forEach(function (cList) {
-    cList.classList.remove("active");
-  });
-  reqCount = 1;
-  numR.innerText = reqCount;
-  catReqSearch.value = '';
-  itemReqSearch.value = '';
-})
-
-const submitOffForm = document.querySelector(".offers-form .button");
-submitOffForm.addEventListener("click", function () {
-  goodn = document.querySelector(".offers-form .item-btn .item-text").innerText;
-  goodv = document.querySelector(".numo").innerText;
-  formType = "Offer";
-  formSubmission(formType, goodn, goodv);
-  offForm.classList.remove("active");
-  offBox.classList.add("active");
-  annTab.classList.add("active");
-  itemsOffText.textContent = "Select Item";
-  catOffText.textContent = "Select Category";
-  if (document.querySelector(".desktop-view") == null) {
-    offTab.classList.remove("active");
-  }
-  annBtn.classList.add("selected");
-  offBtn.classList.remove("selected");
-  itemSelButton.forEach(function (iSelButton) {
-    iSelButton.classList.remove("selected");
-  });
-  catSelButton.forEach(function (cSelButton) {
-    cSelButton.classList.remove("selected");
-  });
-  itemList.forEach(function (iList) {
-    iList.classList.remove("active");
-  });
-  catList.forEach(function (cList) {
-    cList.classList.remove("active");
-  });
-  offCount = 1;
-  numO.innerText = offCount;
-  catOffSearch.value = '';
-  itemOffSearch.value = '';
-})
-
-function formSubmission(type, goodn, goodv){
-  fetch("form_Submission.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id:id, goodn:goodn, goodv:goodv, type:type })
-  })
-  .then((response) => {
-    return response.json();
-  })
-  .then((data) => {
-    if (type == "Request") {
-      removeRequests();
-      fetchRequests();
-    } else {
-      removeOffers();
-      fetchOffers();
-    }
-  });
+    .then((response) => {
+      return response.json();
+    })
 }

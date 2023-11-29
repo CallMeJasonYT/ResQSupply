@@ -10,13 +10,11 @@ $conn = mysqli_connect($sname, $unmae, $password, $db_name);
 
 $data = file_get_contents("php://input");
 
-$offReqFormData = json_decode($data);
+$citAddress = json_decode($data);
 $id = $_SESSION["id"];
-$goodn = $offReqFormData->goodn;
-$goodv = $offReqFormData->goodv;
-$type = $offReqFormData->type;
+$newAddress = $citAddress->newAddress;
 
-$registration_user = $conn->execute_query("INSERT INTO tasks (task_cit_id, task_goodn, task_goodv, task_cat, task_date_create) VALUES(?, ?, ?, ?, CURRENT_TIMESTAMP)", [$id, $goodn, $goodv, $type]);
+$update_citizen = $conn->execute_query("UPDATE citizen SET cit_addr = ? WHERE cit_id = ?", [$newAddress, $id]);
 
 $response = "OK";
 header('Content-Type: application/json');
