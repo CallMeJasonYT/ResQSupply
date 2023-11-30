@@ -168,6 +168,7 @@ addressInput.addEventListener("keyup", checkAddress);
 
 //Submit Form Validation When Submiting
 const signupForm = document.querySelector(".form.signup_form");
+const emailInput = document.querySelector("#emailInput");
 signupForm.addEventListener("submit", (e) => {
   checkUsername();
   checkFullname();
@@ -184,7 +185,15 @@ signupForm.addEventListener("submit", (e) => {
   ) {
     e.preventDefault();
   } else {
-    formAct.submit();
+    fetch("home.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: usernameInput.value, fullname: fullnameInput.value, phone: phoneInput.value, address: addressInput.value, password: passInput.value, email: emailInput.value }),
+    })
+      .then((response) => response.json())
+      .then((result) => {
+          formAct.submit();
+      });
   }
 });
 

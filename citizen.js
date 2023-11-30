@@ -106,6 +106,7 @@ function deskCustomization() {
   burgerIcox.classList.remove("active");
   burgerIco.classList.add("active");
   deskAdd.classList.add("active");
+  addressFieldMob.classList.remove("invalid");
 }
 
 //Removing desktop-view Div
@@ -139,6 +140,7 @@ function mobileCustomization() {
   annBtn.classList.add("selected");
   navOpt.classList.remove("active");
   deskAdd.classList.remove("active");
+  addressFieldDesk.classList.remove("invalid");
 }
 
 /* ~~~~~~~~~~ Tab Buttons ~~~~~~~~~~ */
@@ -340,10 +342,10 @@ function deleteOffReq(type, reqOffID) {
           }
         } else {
           if (type == "requests" && document.getElementById(reqOffID).querySelector(".error") == null) {
-            markup = `<p class=error style="color:red">You cannot delete this request</p>`;
+            markup = `<p class=error style="color:red">You cannot delete this Request</p>`;
             document.getElementById(reqOffID).insertAdjacentHTML("beforeend", markup);
           } else if (type == "offers" && document.getElementById(reqOffID).querySelector(".error") == null) {
-            markup = `<p class=error style="color:red">You cannot delete this request</p>`;
+            markup = `<p class=error style="color:red">You cannot delete this Offer</p>`;
             document.getElementById(reqOffID).insertAdjacentHTML("beforeend", markup);
           }
         }
@@ -539,6 +541,8 @@ const broomO = document.querySelector(".broomo")
 broomO.addEventListener("click", (e) => {
   catOffText.textContent = "Select Category";
   itemsOffText.textContent = "Select Item";
+  offCount = 1;
+  numO.innerText = offCount;
   removeItemOff();
   removeCatOff();
   fetchOfferItems(offID);
@@ -756,6 +760,8 @@ const broomR = document.querySelector(".broomr")
 broomR.addEventListener("click", (e) => {
   catReqText.textContent = "Select Category";
   itemsReqText.textContent = "Select Item";
+  reqCount = 1;
+  numR.innerText = reqCount;
   removeItemReq();
   removeCatReq();
   fetchGoods();
@@ -1063,12 +1069,14 @@ nAddressButtons.forEach(function (nAddressButton) {
 });
 
 function changeAddress(newAddress) {
-  fetch("update_Location.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ newAddress: newAddress })
-  })
-    .then((response) => {
-      return response.json();
+  if(!addressFieldMob.classList.contains("invalid") && !addressFieldDesk.classList.contains("invalid")){
+    fetch("update_Location.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ newAddress: newAddress })
     })
+      .then((response) => {
+        return response.json();
+      })
+  }
 }

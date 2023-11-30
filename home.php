@@ -12,35 +12,34 @@ if (!$conn) {
     echo "Connection failed!";
 }
 
-if (isset($_POST["phone"])) {
-    $username = $_POST["username"];
-    $fullname = $_POST["fullname"];
-    $phone = $_POST["phone"];
-    $address = $_POST["address"];
-    $pass = $_POST["password"];
-    $address = $_POST["address"];
-    if (isset($_POST["email"])) {
-        $email = $_POST["email"];
-    } else {
-        $email = NULL;
-    }
+$data = file_get_contents("php://input");
 
-    $_SESSION["username"] = $username;
+$RegData = json_decode($data);
 
-    $check_result = 1;
-    while ($check_result != NULL) {
-        $id = mt_rand(100000000, 999999999);
-        $fetch_id = $conn->execute_query("SELECT user_id FROM users WHERE user_id=?", [$id]);
-        $check_result = $fetch_id->fetch_assoc();
-    }
-    if ($check_result == NULL) {
-        $registration_user = $conn->execute_query("INSERT INTO users (user_id, username, password) 
-        VALUES(?, ?, ?)", [$id, $username, $pass]);
-        $_SESSION["id"] = $id;
-        $registration_citizen = $conn->execute_query("INSERT INTO citizen (cit_id, cit_fullname, cit_tel, cit_email, cit_addr) 
-        VALUES (?, ?, ?, ?, ?)", [$id, $fullname, $phone, $email, $address]);
-    }
+$username = $RegData->username;
+$fullname = $RegData->fullname;
+$phone = $RegData->phone;
+$address = $RegData->address;
+$pass = $RegData->password;
+
+if(isset($RegData->email)){
+    $email = $RegData->email;
+}else {
+    $email = null;
 }
+
+$_SESSION["username"] = $username;
+
+$check_result = true;
+while ($check_result) {
+    $id = mt_rand(100000000, 999999999);
+    $fetch_id = mysqli_query($conn, "SELECT user_id FROM users WHERE user_id='$id'");
+    $check_result = mysqli_num_rows($fetch_id);
+}
+
+$registration_user = mysqli_query($conn, "INSERT INTO users (user_id, username, password) VALUES('$id', '$username', '$pass')");
+$_SESSION["id"] = $id;
+$registration_citizen = mysqli_query($conn, "INSERT INTO citizen (cit_id, cit_fullname, cit_tel, cit_email, cit_addr) VALUES ('$id', '$fullname', '$phone', '$email', '$address')");
 
 $conn->close();
 
