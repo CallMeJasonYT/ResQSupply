@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResQSupply</title>
+  <link rel="stylesheet" href="rescuer.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin=""/>
+  <!-- Favicons -->
+  <script src="https://kit.fontawesome.com/67405e0868.js" crossorigin="anonymous"></script>
+  
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <nav class="nav">
+      <button class="button burger" type="button">
+        <i class="fa-solid fa-truck burgeri active"></i>
+        <i class="fa-solid fa-truck-fast burgerx"></i>
+      </button>
+      <div class="nav_logo">ResQSupply</div>
+      <button class="button logout" type="button"><i class="fa-solid fa-right-from-bracket"></i></button>
+    </nav>
+  </header>
+  <!-- Home -->
+  <section class="citizen-home">
+    <div class="burger-container">
+        <div class="truckInfo">
+            <p class="truckNum">Truck #1234</p>
+            <p class="truckOwner">Owner: Jason Pavlopoulos</p>
+        </div>
+        <div class="rescuer-tab-control">
+            <button type="button" id="loadBtn" class="button" onclick="toggleBottomBorder(this)">Load</button>
+            <button type="button" id="contentsBtn" class="button selected"
+              onclick="toggleBottomBorder(this)">Contents</button>
+            <button type="button" id="unloadBtn" class="button" onclick="toggleBottomBorder(this)">Unload</button>
+        </div>
+        <div class="load-tab active"></div>
+        <div class="contents-tab active">
+            <ul class="contents-list">
+                <li class="list-item">
+                    <div class="item-title"><b>Pasta</b> 
+                        <p class="quantity"> Quantity: 50 </p>
+                    </div>
+                </li>
+                <li class="list-item">
+                    <div class="item-title"><b>Water</b> 
+                        <p class="quantity"> Quantity: 3 </p>
+                    </div>
+                </li>
+                <li class="list-item">
+                    <div class="item-title"><b>Bandages</b> 
+                        <p class="quantity"> Quantity: 10 </p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="unload-tab"></div>
+    </div>
+    <div class="module active">
+        <!-- Mobile Selections -->
+        <div class="map-container">
+            <div class="search">
+            <i class="fa-solid fa-magnifying-glass mglass" id="search-icon"></i>
+            <input type="text" class="address-search" placeholder="Search...">
+            </div>
+            <div id="map"></div>
+        </div>
+        <div class="tasks-container">
+            <p class="active-tasks">  Active Tasks </p>
+            <div class="active-tasks-list active">
+                <ul class="tasks-list">
+                  <li class="list-item">
+                    <div class="item-title"><b>Pasta</b>
+                      <div class= "cancel">
+                        <p> Cancel </p>
+                      <i class="fa-solid fa-ban cancelt"></i> </div>
+                    </div>
+                    <div class="information">Citizen Information: Roumpini Angoura, 6948939730</div>
+                    <div class="quantity">Quantity: 50</div>
+                    <div class="datetime">Creation Date: Monday 11th October
+                        <div class="complete-box"> 
+                            <div class="complete">
+                                <p> Complete </p>
+                                <i class="fa-solid fa-check check"></i>
+                            </div>
+                        </div>
+                    </div>
+                  </li>
+                  <li class="list-item">
+                    <div class="item-title"><b>Water</b>
+                      <div class= "cancel">
+                        <p> Cancel </p>
+                      <i class="fa-solid fa-ban cancelt"></i> </div>
+                    </div>
+                    <div class="information">Citizen Information: Iasonas pavlopoulos, 6948939730</div>
+                    <div class="quantity">Quantity: 3</div>
+                    <div class="datetime">Creation Date: Friday 1st December
+                        <div class="complete-box"> 
+                            <div class="complete">
+                                <p> Complete </p>
+                                <i class="fa-solid fa-check check"></i>
+                            </div>
+                        </div>
+                    </div>
+                  </li>
+                  <li class="list-item">
+                    <div class="item-title"><b>Bandages</b>
+                      <div class= "cancel">
+                        <p> Cancel </p>
+                      <i class="fa-solid fa-ban cancelt"></i> </div>
+                    </div>
+                    <div class="information">Citizen Information: Roumpini Angoura, 6948939730</div>
+                    <div class="quantity">Quantity: 3</div>
+                    <div class="datetime">Creation Date: Monday 11th October
+                        <div class="complete-box"> 
+                            <div class="complete">
+                                <p> Complete </p>
+                                <i class="fa-solid fa-check check"></i>
+                            </div>
+                        </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+        </div> 
+    </div>
+    <div class="footer">
+        <div class="copyright">Copyright © 2023 ResQSupply</div>
+    </div>
+  </section>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+  <script src="rescuer.js"></script>
+</body>
+
+</html>
