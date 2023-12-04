@@ -8,11 +8,10 @@
   <title>ResQSupply</title>
   <link rel="stylesheet" href="rescuer.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-  crossorigin=""/>
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <!-- Favicons -->
   <script src="https://kit.fontawesome.com/67405e0868.js" crossorigin="anonymous"></script>
-  
+
 </head>
 
 <body>
@@ -28,115 +27,324 @@
     </nav>
   </header>
   <!-- Home -->
-  <section class="citizen-home">
+  <section class="rescuer-home">
     <div class="burger-container">
-        <div class="truckInfo">
-            <p class="truckNum">Truck #1234</p>
-            <p class="truckOwner">Owner: Jason Pavlopoulos</p>
+      <div class="truck-info">
+        <div class="truck-title">
+          <i class="fa-solid fa-circle-info"></i>
+          <p>Truck Info</p>
         </div>
-        <div class="rescuer-tab-control">
-            <button type="button" id="loadBtn" class="button" onclick="toggleBottomBorder(this)">Load</button>
-            <button type="button" id="contentsBtn" class="button selected"
-              onclick="toggleBottomBorder(this)">Contents</button>
-            <button type="button" id="unloadBtn" class="button" onclick="toggleBottomBorder(this)">Unload</button>
+        <p class="truckNum">Truck ID: #1234</p>
+        <p class="truckOwner">Owner: Jason Pavlopoulos</p>
+      </div>
+      <div class="rescuer-tab-control">
+        <button type="button" id="loadBtn" class="button" onclick="toggleBottomBorder(this)">Load</button>
+        <button type="button" id="truckloadBtn" class="button selected"
+          onclick="toggleBottomBorder(this)">Truckload</button>
+        <button type="button" id="unloadBtn" class="button" onclick="toggleBottomBorder(this)">Unload</button>
+      </div>
+      <!-- Load Tab -->
+      <div class="load-tab">
+        <div class="add-load active">
+          <p>Load Truck</p>
+          <i class="fa-regular fa-square-plus create" aria-hidden="true"></i>
         </div>
-        <div class="load-tab active"></div>
-        <div class="contents-tab active">
-            <ul class="contents-list">
-                <li class="list-item">
-                    <div class="item-title"><b>Pasta</b> 
-                        <p class="quantity"> Quantity: 50 </p>
-                    </div>
-                </li>
-                <li class="list-item">
-                    <div class="item-title"><b>Water</b> 
-                        <p class="quantity"> Quantity: 3 </p>
-                    </div>
-                </li>
-                <li class="list-item">
-                    <div class="item-title"><b>Bandages</b> 
-                        <p class="quantity"> Quantity: 10 </p>
-                    </div>
-                </li>
+        <div class="error">
+          <p>Your truck should be 100m or closer to the Base to be able to Load.</p>
+        </div>
+        <!-- Load Items -->
+        <div class="load-items-tab">
+          <div class="load-items-form active">
+            <div class="cancelbtn">
+              <div class="clrbtn">
+                <i class="fa-solid fa-broom broomr" aria-hidden="true"></i>
+                <p class="clr-text">Clear</p>
+              </div>
+              <i class="fa-solid fa-xmark cancell" aria-hidden="true"></i>
+            </div>
+            <div class="item-select">
+              <div class="item-drop-sel">
+                <div class="cat-btn">
+                  <span class="item-text">Baby Essentials</span>
+                  <i class="fa-solid fa-chevron-down down" aria-hidden="true"></i>
+                </div>
+                <div class="item-btn selected">
+                  <span class="item-text">Select Item</span>
+                  <i class="fa-solid fa-chevron-down down" aria-hidden="true"></i>
+                </div>
+              </div>
+              <div class="content active">
+                <div class="item-options active">
+                  <div class="search">
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                    <input id="itemReqSearch" type="text" placeholder="Search...">
+                  </div>
+                  <ul class="item-list">
+                    <li class="item">
+                      <div class="item-content">
+                        <p class="item-text">Baby bottle</p>
+                        <p class="item-available">Available: 6</p>
+                      </div>
+                    </li>
+                    <li class="item">
+                      <div class="item-content">
+                        <p class="item-text">Baby bottle</p>
+                        <p class="item-available">Available: 6</p>
+                      </div>
+                    </li>
+                    <li class="item">
+                      <div class="item-content">
+                        <p class="item-text">Baby bottle</p>
+                        <p class="item-available">Available: 6</p>
+                      </div>
+                    </li>
+                    <li class="item">
+                      <div class="item-content">
+                        <p class="item-text">Baby bottle</p>
+                        <p class="item-available">Available: 6</p>
+                      </div>
+                    </li>
+                    <li class="item">
+                      <div class="item-content">
+                        <p class="item-text">Baby bottle</p>
+                        <p class="item-available">Available: 6</p>
+                      </div>
+                    </li>
+                    <li class="item">
+                      <div class="item-content">
+                        <p class="item-text">Baby bottle</p>
+                        <p class="item-available">Available: 6</p>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <div class="category-options">
+                  <div class="search">
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                    <input id="catReqSearch" type="text" placeholder="Search...">
+                  </div>
+                  <ul class="category-list">
+                    <li class="item">Food</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="error">
+              <p>Please Select an Item</p>
+            </div>
+            <div class="error">
+              <p>Please only select Items that are Available.</p>
+            </div>
+            <button type="button" class="button next1"> Next </button>
+          </div>
+          <!-- Load Items Quantity -->
+          <div class="load-quantity-form">
+            <div class="cancelbtn">
+              <div class="clrbtn">
+                <i class="fa-solid fa-broom broomr" aria-hidden="true"></i>
+                <p class="clr-text">Clear</p>
+              </div>
+              <i class="fa-solid fa-xmark cancell" aria-hidden="true"></i>
+            </div>
+            <ul class="selected-items">
+              <li class="item">
+                <div class="item-count">
+                  <p class="item-text">Baby bottle</p>
+                  <div class="item-quantity">
+                    <p class="quantity-text">Quantity: </p>
+                    <input class="quantity-input" type="text" value="0">
+                  </div>
+                </div>
+                <div class="error">
+                  <p>Please select a Quantity greater than 0.</p>
+                </div>
+              </li>
             </ul>
+            <button type="button" class="button next2"> Next </button>
+          </div>
+          <!-- Confirm Load -->
+          <div class="load-confirm-form">
+            <div class="cancelbtn">
+              <i class="fa-solid fa-xmark cancell" aria-hidden="true"></i>
+            </div>
+            <ul class="selected-items">
+              <li class="item">
+                <div class="item-count">
+                  <p class="item-text">Baby bottle</p>
+                  <div class="item-quantity">
+                    <p class="quantity-text">Quantity: 5</p>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <div class=" error">
+              <p>You are trying to Load a bigger Quantity than what is Available in the Base.</p>
+            </div>
+            <button type="button" class="button submit1"> Submit </button>
+          </div>
         </div>
-        <div class="unload-tab"></div>
+      </div>
+      <!-- Truckload Tab -->
+      <div class="truckload-tab active">
+        <ul class="truckload-list">
+          <li class="list-item">
+            <div class="item-title"><b>Pasta</b>
+              <p class="quantity"> Quantity: 50 </p>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <!-- UnLoad Tab -->
+      <div class="unload-tab">
+        <div class="remove-load active">
+          <p>Unload Truck</p>
+          <i class="fa-regular fa-square-plus create" aria-hidden="true"></i>
+        </div>
+        <div class="error">
+          <p>Your truck should be 100m or closer to the Base to be able to Unload.</p>
+        </div>
+        <!-- UnLoad Items Quantity -->
+        <div class="unload-items-tab">
+          <div class="unload-quantity-form">
+            <div class="cancelbtn">
+              <div class="clrbtn">
+                <i class="fa-solid fa-broom broomr" aria-hidden="true"></i>
+                <p class="clr-text">Clear</p>
+              </div>
+              <i class="fa-solid fa-xmark cancelu" aria-hidden="true"></i>
+            </div>
+          <ul class="selected-items">
+            <li class="item">
+              <div class="item-count">
+                <p class="item-text">Baby bottle</p>
+                <div class="item-quantity">
+                  <p class="quantity-text">Quantity: </p>
+                  <input class="quantity-input" type="text" value="0">
+                  <p class="max-button"> Max </p>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <button type="button" class="button next3"> Next </button>
+          </div>
+          <!-- Confirm Unload -->
+          <div class="unload-confirm-form">
+            <div class="cancelbtn">
+              <i class="fa-solid fa-xmark cancelu" aria-hidden="true"></i>
+            </div>
+            <ul class="selected-items">
+              <li class="item">
+                <div class="item-count">
+                  <p class="item-text">Baby bottle</p>
+                  <div class="item-quantity">
+                    <p class="quantity-text">Quantity: 5</p>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <div class="error">
+              <p>You are trying to Unload a bigger Quantity than what is Available in your Truck.</p>
+            </div>
+            <button type="button" class="button submit2"> Submit </button>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="module active">
-        <!-- Mobile Selections -->
-        <div class="map-container">
-            <div class="search">
-            <i class="fa-solid fa-magnifying-glass mglass" id="search-icon"></i>
-            <input type="text" class="address-search" placeholder="Search...">
-            </div>
-            <div id="map"></div>
+      <!-- Mobile Selections -->
+      <div class="map-container">
+        <div class="search">
+          <i class="fa-solid fa-magnifying-glass mglass" id="search-icon"></i>
+          <input type="text" class="address-search" placeholder="Search...">
         </div>
-        <div class="tasks-container">
-            <p class="active-tasks">  Active Tasks </p>
-            <div class="active-tasks-list active">
-                <ul class="tasks-list">
-                  <li class="list-item">
-                    <div class="item-title"><b>Pasta</b>
-                      <div class= "cancel">
-                        <p> Cancel </p>
-                      <i class="fa-solid fa-ban cancelt"></i> </div>
-                    </div>
-                    <div class="information">Citizen Information: Roumpini Angoura, 6948939730</div>
-                    <div class="quantity">Quantity: 50</div>
-                    <div class="datetime">Creation Date: Monday 11th October
-                        <div class="complete-box"> 
-                            <div class="complete">
-                                <p> Complete </p>
-                                <i class="fa-solid fa-check check"></i>
-                            </div>
-                        </div>
-                    </div>
-                  </li>
-                  <li class="list-item">
-                    <div class="item-title"><b>Water</b>
-                      <div class= "cancel">
-                        <p> Cancel </p>
-                      <i class="fa-solid fa-ban cancelt"></i> </div>
-                    </div>
-                    <div class="information">Citizen Information: Iasonas pavlopoulos, 6948939730</div>
-                    <div class="quantity">Quantity: 3</div>
-                    <div class="datetime">Creation Date: Friday 1st December
-                        <div class="complete-box"> 
-                            <div class="complete">
-                                <p> Complete </p>
-                                <i class="fa-solid fa-check check"></i>
-                            </div>
-                        </div>
-                    </div>
-                  </li>
-                  <li class="list-item">
-                    <div class="item-title"><b>Bandages</b>
-                      <div class= "cancel">
-                        <p> Cancel </p>
-                      <i class="fa-solid fa-ban cancelt"></i> </div>
-                    </div>
-                    <div class="information">Citizen Information: Roumpini Angoura, 6948939730</div>
-                    <div class="quantity">Quantity: 3</div>
-                    <div class="datetime">Creation Date: Monday 11th October
-                        <div class="complete-box"> 
-                            <div class="complete">
-                                <p> Complete </p>
-                                <i class="fa-solid fa-check check"></i>
-                            </div>
-                        </div>
-                    </div>
-                  </li>
-                </ul>
+        <div id="map"></div>
+      </div>
+      <div class="tasks-container">
+        <p class="active-tasks"> Active Tasks </p>
+        <div class="active-tasks-list active">
+          <ul class="tasks-list">
+            <li class="list-item">
+              <div class="item-title"><b>Pasta</b>
+                <div class="cancel">
+                  <p> Cancel </p>
+                  <i class="fa-solid fa-ban cancelt"></i>
+                </div>
               </div>
-        </div> 
+              <div class="information">Citizen Information: Roumpini Angoura, 6948939730</div>
+              <div class="quantity">Quantity: 50</div>
+              <div class="datetime">Creation Date: Monday 11th October
+                <div class="complete-box">
+                  <div class="complete">
+                    <p> Complete </p>
+                    <i class="fa-solid fa-check check"></i>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="list-item">
+              <div class="item-title"><b>Pasta</b>
+                <div class="cancel">
+                  <p> Cancel </p>
+                  <i class="fa-solid fa-ban cancelt"></i>
+                </div>
+              </div>
+              <div class="information">Citizen Information: Roumpini Angoura, 6948939730</div>
+              <div class="quantity">Quantity: 50</div>
+              <div class="datetime">Creation Date: Monday 11th October
+                <div class="complete-box">
+                  <div class="complete">
+                    <p> Complete </p>
+                    <i class="fa-solid fa-check check"></i>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="list-item">
+              <div class="item-title"><b>Pasta</b>
+                <div class="cancel">
+                  <p> Cancel </p>
+                  <i class="fa-solid fa-ban cancelt"></i>
+                </div>
+              </div>
+              <div class="information">Citizen Information: Roumpini Angoura, 6948939730</div>
+              <div class="quantity">Quantity: 50</div>
+              <div class="datetime">Creation Date: Monday 11th October
+                <div class="complete-box">
+                  <div class="complete">
+                    <p> Complete </p>
+                    <i class="fa-solid fa-check check"></i>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="list-item">
+              <div class="item-title"><b>Pasta</b>
+                <div class="cancel">
+                  <p> Cancel </p>
+                  <i class="fa-solid fa-ban cancelt"></i>
+                </div>
+              </div>
+              <div class="information">Citizen Information: Roumpini Angoura, 6948939730</div>
+              <div class="quantity">Quantity: 50</div>
+              <div class="datetime">Creation Date: Monday 11th October
+                <div class="complete-box">
+                  <div class="complete">
+                    <p> Complete </p>
+                    <i class="fa-solid fa-check check"></i>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
     <div class="footer">
-        <div class="copyright">Copyright © 2023 ResQSupply</div>
+      <div class="copyright">Copyright © 2023 ResQSupply</div>
     </div>
   </section>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-     crossorigin=""></script>
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="rescuer.js"></script>
 </body>
 

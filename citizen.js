@@ -841,6 +841,8 @@ submitReqForm.addEventListener("click", function () {
     reqForm.classList.add("invalid");
   } else {
     formSubmission(formType, goodn, goodv);
+    removeCatReq();
+    removeItemReq();
     reqForm.classList.remove("invalid");
     reqForm.classList.remove("active");
     reqBox.classList.add("active");
@@ -1069,7 +1071,7 @@ nAddressButtons.forEach(function (nAddressButton) {
 });
 
 function changeAddress(newAddress) {
-  if(!addressFieldMob.classList.contains("invalid") && !addressFieldDesk.classList.contains("invalid")){
+  if (!addressFieldMob.classList.contains("invalid") && !addressFieldDesk.classList.contains("invalid")) {
     fetch("update_Location.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
