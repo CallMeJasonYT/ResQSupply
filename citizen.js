@@ -3,7 +3,7 @@
 //When the window is resized or Loaded do the following
 document.addEventListener("DOMContentLoaded", function () {
   checkWidth();
-  fetchUserInfo();
+  fetchCitInfo();
   fetchAnnouncements();
   fetchOffers();
   fetchRequests();
@@ -1045,8 +1045,8 @@ function fetchOfferItems(offID) {
 }
 
 //Fetching the Username of the User and displaying the Welcome Message
-function fetchUserInfo() {
-  fetch("fetch_UserInfo.php", {
+function fetchCitInfo() {
+  fetch("fetch_CitInfo.php", {
     method: "POST"
   })
     .then((response) => {

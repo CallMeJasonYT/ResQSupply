@@ -34,8 +34,6 @@
           <i class="fa-solid fa-circle-info"></i>
           <p>Truck Info</p>
         </div>
-        <p class="truckNum">Truck ID: #1234</p>
-        <p class="truckOwner">Owner: Jason Pavlopoulos</p>
       </div>
       <div class="rescuer-tab-control">
         <button type="button" id="loadBtn" class="button" onclick="toggleBottomBorder(this)">Load</button>
@@ -64,10 +62,6 @@
             </div>
             <div class="item-select">
               <div class="item-drop-sel">
-                <div class="cat-btn">
-                  <span class="item-text">Baby Essentials</span>
-                  <i class="fa-solid fa-chevron-down down" aria-hidden="true"></i>
-                </div>
                 <div class="item-btn selected">
                   <span class="item-text">Select Item</span>
                   <i class="fa-solid fa-chevron-down down" aria-hidden="true"></i>
@@ -75,56 +69,7 @@
               </div>
               <div class="content active">
                 <div class="item-options active">
-                  <div class="search">
-                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                    <input id="itemReqSearch" type="text" placeholder="Search...">
-                  </div>
                   <ul class="item-list">
-                    <li class="item">
-                      <div class="item-content">
-                        <p class="item-text">Baby bottle</p>
-                        <p class="item-available">Available: 6</p>
-                      </div>
-                    </li>
-                    <li class="item">
-                      <div class="item-content">
-                        <p class="item-text">Baby bottle</p>
-                        <p class="item-available">Available: 6</p>
-                      </div>
-                    </li>
-                    <li class="item">
-                      <div class="item-content">
-                        <p class="item-text">Baby bottle</p>
-                        <p class="item-available">Available: 6</p>
-                      </div>
-                    </li>
-                    <li class="item">
-                      <div class="item-content">
-                        <p class="item-text">Baby bottle</p>
-                        <p class="item-available">Available: 6</p>
-                      </div>
-                    </li>
-                    <li class="item">
-                      <div class="item-content">
-                        <p class="item-text">Baby bottle</p>
-                        <p class="item-available">Available: 6</p>
-                      </div>
-                    </li>
-                    <li class="item">
-                      <div class="item-content">
-                        <p class="item-text">Baby bottle</p>
-                        <p class="item-available">Available: 6</p>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-                <div class="category-options">
-                  <div class="search">
-                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                    <input id="catReqSearch" type="text" placeholder="Search...">
-                  </div>
-                  <ul class="category-list">
-                    <li class="item">Food</li>
                   </ul>
                 </div>
               </div>
@@ -146,20 +91,11 @@
               </div>
               <i class="fa-solid fa-xmark cancell" aria-hidden="true"></i>
             </div>
-            <ul class="selected-items">
-              <li class="item">
-                <div class="item-count">
-                  <p class="item-text">Baby bottle</p>
-                  <div class="item-quantity">
-                    <p class="quantity-text">Quantity: </p>
-                    <input class="quantity-input" type="text" value="0">
-                  </div>
-                </div>
-                <div class="error">
-                  <p>Please select a Quantity greater than 0.</p>
-                </div>
-              </li>
+            <ul class="selected-items-list">
             </ul>
+            <div class="error">
+              <p>Please select a Quantity greater than 0.</p>
+            </div>
             <button type="button" class="button next2"> Next </button>
           </div>
           <!-- Confirm Load -->
@@ -167,15 +103,7 @@
             <div class="cancelbtn">
               <i class="fa-solid fa-xmark cancell" aria-hidden="true"></i>
             </div>
-            <ul class="selected-items">
-              <li class="item">
-                <div class="item-count">
-                  <p class="item-text">Baby bottle</p>
-                  <div class="item-quantity">
-                    <p class="quantity-text">Quantity: 5</p>
-                  </div>
-                </div>
-              </li>
+            <ul class="selected-items-confirm">
             </ul>
             <div class=" error">
               <p>You are trying to Load a bigger Quantity than what is Available in the Base.</p>
@@ -187,11 +115,6 @@
       <!-- Truckload Tab -->
       <div class="truckload-tab active">
         <ul class="truckload-list">
-          <li class="list-item">
-            <div class="item-title"><b>Pasta</b>
-              <p class="quantity"> Quantity: 50 </p>
-            </div>
-          </li>
         </ul>
       </div>
       <!-- UnLoad Tab -->
@@ -213,17 +136,7 @@
               </div>
               <i class="fa-solid fa-xmark cancelu" aria-hidden="true"></i>
             </div>
-          <ul class="selected-items">
-            <li class="item">
-              <div class="item-count">
-                <p class="item-text">Baby bottle</p>
-                <div class="item-quantity">
-                  <p class="quantity-text">Quantity: </p>
-                  <input class="quantity-input" type="text" value="0">
-                  <p class="max-button"> Max </p>
-                </div>
-              </div>
-            </li>
+          <ul class="selected-items-list">
           </ul>
           <button type="button" class="button next3"> Next </button>
           </div>
@@ -232,15 +145,7 @@
             <div class="cancelbtn">
               <i class="fa-solid fa-xmark cancelu" aria-hidden="true"></i>
             </div>
-            <ul class="selected-items">
-              <li class="item">
-                <div class="item-count">
-                  <p class="item-text">Baby bottle</p>
-                  <div class="item-quantity">
-                    <p class="quantity-text">Quantity: 5</p>
-                  </div>
-                </div>
-              </li>
+            <ul class="selected-items-confirm">
             </ul>
             <div class="error">
               <p>You are trying to Unload a bigger Quantity than what is Available in your Truck.</p>

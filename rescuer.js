@@ -44,6 +44,8 @@ function setResultList(parsedResult) {
 //When the window is resized or Loaded do the following
 document.addEventListener("DOMContentLoaded", function () {
   checkWidth();
+  fetchResInfo();
+  fetchTruckLoad();
 });
 window.addEventListener("resize", (e) => {
   checkWidth();
@@ -83,7 +85,7 @@ function deskDivCreation() {
   parentContainer.insertBefore(desktopViewDiv, burgerCont);
   desktopViewDiv.appendChild(burgerCont);
   desktopViewDiv.appendChild(moduleSel);
-  unloadTab.insertAdjacentElement("afterend", tasksCont);
+  burgerCont.insertAdjacentElement("afterbegin", tasksCont);
   cnt++;
 }
 
@@ -120,7 +122,7 @@ function deskDivDeletion() {
   cnt--;
 }
 
-//Activating Announcements only and removes NavBar Options
+//Activating 
 const loadTab = document.querySelector(".load-tab");
 const truckloadTab = document.querySelector(".truckload-tab");
 const loadBtn = document.querySelector("#loadBtn");
@@ -141,6 +143,8 @@ function mobileCustomization() {
   burgerIco.classList.add("active");
   map.invalidateSize()
 }
+
+/* ~~~~~~~~~~ Truck Menu Functions ~~~~~~~~~~ */
 
 //Truck Open
 burgerIco.addEventListener("click", (e) => {
@@ -169,6 +173,7 @@ loadBtn.addEventListener("click", (e) => {
   unloadQuantity.classList.remove("active");
   unloadConfirm.classList.remove("active");
   unloadItemsTab.classList.remove("active");
+  removeUnloadConfirm();
   if (!loadItems.classList.contains("active") ) {
     loadTruckBtn.classList.add("active");
   }
@@ -186,6 +191,10 @@ truckloadBtn.addEventListener("click", (e) => {
   loadConfirm.classList.remove("active");
   unloadQuantity.classList.remove("active");
   unloadConfirm.classList.remove("active");
+  removeItemLoad();
+  removeQuantityLoad();
+  removeConfirmLoad();
+  removeUnloadConfirm();
 });
 
 //Unload Button
@@ -200,6 +209,9 @@ unloadBtn.addEventListener("click", (e) => {
   loadItemsForm.classList.remove("active");
   loadQuantity.classList.remove("active");
   loadConfirm.classList.remove("active");
+  removeItemLoad();
+  removeQuantityLoad();
+  removeConfirmLoad();
   if (!unloadItemsTab.classList.contains("active")) {
     unloadTruckBtn.classList.add("active");
   }
@@ -219,6 +231,7 @@ loadTruckBtn.addEventListener("click", (e) => {
   loadTruckBtn.classList.remove("active");
   loadItemsForm.classList.add("active");
   loadItems.classList.add("active");
+  fetchLoadItems();
 });
 
 //Load Truck Items
@@ -227,6 +240,7 @@ const nextButton1 = document.querySelector(".button.next1");
 nextButton1.addEventListener("click", (e) => {
   loadItemsForm.classList.remove("active");
   loadQuantity.classList.add("active");
+  selItemsLoad();
 });
 
 //Load Truck Quantity
@@ -235,13 +249,19 @@ const nextButton2 = document.querySelector(".button.next2");
 nextButton2.addEventListener("click", (e) => {
   loadQuantity.classList.remove("active");
   loadConfirm.classList.add("active");
+  submitLoad();
 });
 
 //Load Truck Confirm
-const submitButton = document.querySelector(".button.submit1");
-submitButton.addEventListener("click", (e) => {
+const submitButtonLoad = document.querySelector(".button.submit1");
+submitButtonLoad.addEventListener("click", (e) => {
   loadConfirm.classList.remove("active");
   loadTruckBtn.classList.add("active");
+  removeTruckLoad();
+  loadTruck();
+  removeItemLoad();
+  removeQuantityLoad();
+  removeConfirmLoad();
 });
 
 //Unload Truck Plus Button
@@ -249,6 +269,8 @@ unloadTruckBtn.addEventListener("click", (e) => {
   unloadTruckBtn.classList.remove("active");
   unloadQuantity.classList.add("active");
   unloadItemsTab.classList.add("active");
+  removeUnloadItems();
+  quantityUnLoad();
 });
 
 //Unload Truck Quantity
@@ -257,13 +279,17 @@ const unloadConfirm = document.querySelector(".unload-confirm-form");
 nextButton3.addEventListener("click", (e) => {
   unloadQuantity.classList.remove("active");
   unloadConfirm.classList.add("active");
+  submitUnload();
 });
 
 //Unload Truck Confirm
-const submitUnload = document.querySelector(".button.submit2");
-submitUnload.addEventListener("click", (e) => {
+const submitButtonUnload = document.querySelector(".button.submit2");
+submitButtonUnload.addEventListener("click", (e) => {
   unloadConfirm.classList.remove("active");
   unloadTruckBtn.classList.add("active");
+  removeTruckLoad();
+  removeUnloadConfirm();
+  unloadTruck();
 });
 
 //Cancel Button Load
@@ -275,6 +301,10 @@ cancelBtnL.forEach(function (button) {
     loadItemsForm.classList.remove("active");
     loadQuantity.classList.remove("active");
     loadConfirm.classList.remove("active");
+    removeItemLoad();
+    removeQuantityLoad();
+    removeConfirmLoad();
+    loadDataArray = [];
   })
 })
 
@@ -285,5 +315,278 @@ cancelBtnU.forEach(function (button) {
     unloadTruckBtn.classList.add("active");
     unloadQuantity.classList.remove("active");
     unloadConfirm.classList.remove("active");
+    removeUnloadConfirm();
+    unloadDataArray = [];
   })
 })
+
+/* ~~~~~~~~~~ Load Functions ~~~~~~~~~~ */
+
+//Item Select Dropdowns Load
+const itemSelButton = document.querySelector(".item-btn");
+const itemList = document.querySelector(".item-options");
+const itemContent = document.querySelector(".content");
+itemSelButton.addEventListener("click", (e) => {
+  itemSelButton.classList.toggle("selected");
+  itemContent.classList.add("active");
+  itemList.classList.toggle("active");
+});
+
+//Adding Event Listeners to the Load Form List Item Elements and Displaying the Selected Items Correctly
+var itemsLoadBtn = document.querySelectorAll(".load-items-form .item-list .item");
+function itemsLoadBtnListener() {
+  itemsLoadBtn.forEach(function (item) {
+    item.addEventListener("click", function () {
+      if (item.classList.contains("selected")) {
+        item.classList.remove("selected");
+      } else {
+        item.classList.add("selected");
+      }
+    });
+  });
+}
+
+//Choosing Quantity for Load
+function selItemsLoad(){
+  itemsLoadBtn.forEach(function (item) {
+      if (item.classList.contains("selected")) {
+        var itemText = item.querySelector(".item-text").textContent;
+        markup = 
+        `<li class="item">`+
+        `<div class="item-count">`+
+        `<p class="item-text">${itemText}</p>`+
+        `<div class="item-quantity">`+
+        `<p class="quantity-text">Quantity: </p>`+
+        `<input class="quantity-input" type="text" value="0">`+
+        `</div>`+
+        `</div>`+
+        `</li>`;
+        document.querySelector(".load-quantity-form .selected-items-list").insertAdjacentHTML("beforeend", markup);
+        itemsQuantityBtn = document.querySelectorAll(".load-quantity-form .selected-items-list .item");
+      }
+  });
+}
+
+//Remove Items from Load Items Form
+function removeItemLoad() {
+  itemsLoadBtn.forEach(function (item) {
+    item.remove();
+  });
+}
+
+//Remove Items from Load Quantity Form
+var itemsQuantityBtn = document.querySelectorAll(".load-quantity-form .selected-items-list .item");
+function removeQuantityLoad() {
+  itemsQuantityBtn.forEach(function (item) {
+    item.remove();
+  });
+}
+
+//Remove Items from Load Confirm Form
+var itemsConfirmBtn = document.querySelectorAll(".load-confirm-form .selected-items-confirm .item");
+function removeConfirmLoad() {
+  itemsConfirmBtn.forEach(function (item) {
+    item.remove();
+  });
+}
+
+//Adding the Items to Submit Form Load
+var loadDataArray = [];
+function submitLoad(){
+  itemsQuantityBtn.forEach(function (item) {
+    var itemText = item.querySelector(".item-text").textContent;
+    var itemQ = item.querySelector(".quantity-input").value;
+    markup = 
+    `<li class="item">`+
+    `<div class="item-count">`+
+    `<p class="item-text"> ${itemText} </p>`+
+    `<div class="item-quantity">`+
+    `<p class="quantity-text">Quantity: ${itemQ}</p>`+
+    `</div>`+
+    `</div>`+
+    `</li>`
+    document.querySelector(".load-confirm-form .selected-items-confirm").insertAdjacentHTML("beforeend", markup);
+    itemsConfirmBtn = document.querySelectorAll(".load-confirm-form .selected-items-confirm .item");
+    var itemData = {
+      "itemText": itemText,
+      "itemQ": itemQ
+    };
+    loadDataArray.push(itemData);
+  });
+}
+
+/* ~~~~~~~~~~ TruckLoad Functions ~~~~~~~~~~ */
+var truckLoadItems = document.querySelectorAll(".truckload-list .list-item");
+function removeTruckLoad(){
+  truckLoadItems.forEach(function (item) {
+    item.remove();
+  });
+}
+
+/* ~~~~~~~~~~ UnLoad Functions ~~~~~~~~~~ */
+//Choosing the Quantity of the Items you want to Unload
+var truckLoadArray = [];
+var unloadItems = document.querySelectorAll(".unload-quantity-form .selected-items-list .item");
+function quantityUnLoad(){
+  truckLoadArray.forEach((item) => {
+    markup =
+    `<li class="item">`+
+    `<div class="item-count">`+
+    `<p class="item-text">${item.itemText}</p>`+
+    `<div class="item-quantity">`+
+    `<p class="quantity-text">Quantity:</p>`+
+    `<input class="quantity-input" type="text" value="0">`+
+    `<p class="max-button"> Max </p>`+
+    `</div>`+
+    `</div>`+
+    `</li>`;
+    document.querySelector(".unload-quantity-form .selected-items-list").insertAdjacentHTML("beforeend", markup);
+  })
+  unloadItems = document.querySelectorAll(".unload-quantity-form .selected-items-list .item");
+}
+
+//Adding the Items to Submit Form Unload
+var unloadDataArray = [];
+var unloadConfirmBtn = document.querySelectorAll(".unload-confirm-form .selected-items-confirm .item");
+function submitUnload(){
+  unloadItems.forEach(function (item) {
+    var itemText = item.querySelector(".item-text").textContent;
+    var itemQ = item.querySelector(".quantity-input").value;
+    if(itemQ != 0){
+      markup =
+      `<li class="item">`+
+      `<div class="item-count">`+
+      `<p class="item-text"> ${itemText} </p>`+
+      `<div class="item-quantity">`+
+      `<p class="quantity-text">Quantity: ${itemQ}</p>`+
+      `</div>`+
+      `</div>`+
+      `</li>`
+      document.querySelector(".unload-confirm-form .selected-items-confirm").insertAdjacentHTML("beforeend", markup);
+      unloadConfirmBtn = document.querySelectorAll(".unload-confirm-form .selected-items-confirm .item");
+      var itemData = {
+        "itemText": itemText,
+        "itemQ": itemQ
+      };
+      unloadDataArray.push(itemData);
+    }
+  });
+}
+
+function removeUnloadItems(){
+  unloadItems.forEach(function (item) {
+    item.remove();
+  });
+}
+
+function removeUnloadConfirm(){
+  unloadConfirmBtn.forEach(function (item) {
+    item.remove();
+  });
+}
+
+/* ~~~~~~~~~~ Fetch Functions ~~~~~~~~~~ */
+//Fetching the Items that each Load requires
+var loadItemCat;
+function fetchLoadItems() {
+  fetch("fetch_BaseItems.php", {
+    method: "POST"
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      data.forEach((res) => {
+        const markupItem = 
+        `<li class="item">`+
+        `<div class="item-content">`+
+        `<p class="item-text">${res.strGoodN}</p>`+
+        `<p class="item-available">Available: ${res.strGoodV}</p>`+
+        `</div>`+
+        `</li>`;
+        document.querySelector(".load-items-form .item-list").insertAdjacentHTML("beforeend", markupItem);
+      });
+      itemsLoadBtn = document.querySelectorAll(".load-items-form .item-list .item");
+      itemsLoadBtnListener();
+    });
+}
+
+function loadTruck() {
+  fetch("load_Truck.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ data: loadDataArray })
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) =>{
+      loadDataArray = [];
+      truckLoadArray = [];
+      fetchTruckLoad();
+    })
+}
+
+function unloadTruck() {
+  fetch("unload_Truck.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ data: unloadDataArray })
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) =>{
+      unloadDataArray = [];
+      truckLoadArray = [];
+      fetchTruckLoad();
+    })
+}
+
+//Fetching the Items of the Truck
+function fetchTruckLoad() {
+  fetch("fetch_TruckLoad.php", {
+    method: "POST"
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      data.forEach((res) => {
+        const markupItem = 
+        `<li class="list-item">`+
+        `<div class="item-title"><b>${res.loadGoodN}</b>`+
+        `<p class="quantity"> Quantity: ${res.loadGoodV}</p>`+
+        `</div>`+
+        `</li>`
+        document.querySelector(".truckload-tab .truckload-list").insertAdjacentHTML("beforeend", markupItem);
+        var itemData = {
+          "itemText": res.loadGoodN,
+          "itemQ": res.loadGoodV
+        };
+        truckLoadArray.push(itemData);
+      });
+      truckLoadItems = document.querySelectorAll(".truckload-list .list-item");
+    });
+}
+
+//Fetching the Username and Vehicle of the User and displaying the Welcome Message
+function fetchResInfo() {
+  fetch("fetch_ResInfo.php", {
+      method: "POST"
+  })
+  .then((response) => response.json())
+  .then((data) => {
+      const userData = data.data[0];
+      if (userData) {
+          const markupWelcome = `<div class="welcome">Welcome, ${userData.username}!</div>`;
+          document.querySelector(".footer").insertAdjacentHTML("afterBegin", markupWelcome);
+
+          const markupVehicle = 
+          `<p class="truckNum">Truck ID: ${userData.vehicle}</p>`+
+          `<p class="truckOwner">Owner: ${userData.username}</p>`;
+
+          document.querySelector(".truck-info").insertAdjacentHTML("beforeEnd", markupVehicle);
+      }
+  });
+}
