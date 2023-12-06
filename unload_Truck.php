@@ -12,19 +12,18 @@ $data = file_get_contents("php://input");
 
 $dataArray = json_decode($data, true);
 
-$veh = "HEY1234";
+$veh = $_SESSION['veh_id'];
 
-foreach ($dataArray['data'] as $data) {
+foreach($dataArray['data'] as $data) {
     $itemText = $data['itemText'];
     $itemQ = $data['itemQ'];
 
-    // Check if the item already exists in the storage table
     $stmtSelect = $conn->prepare("SELECT str_goodv FROM storage WHERE str_goodn = ?");
     $stmtSelect->bind_param('s', $itemText);
     $stmtSelect->execute();
     $stmtSelect->bind_result($currentStrGoodv);
 
-    if ($stmtSelect->fetch()) {
+    if($stmtSelect->fetch()) {
         $stmtSelect->close();
 
         $newStrGoodv = $currentStrGoodv + $itemQ;
@@ -43,7 +42,7 @@ foreach ($dataArray['data'] as $data) {
 
 }
 
-foreach ($dataArray['data'] as $data) {
+foreach($dataArray['data'] as $data) {
     $itemText = $data['itemText'];
     $itemQ = $data['itemQ'];
 
@@ -52,15 +51,15 @@ foreach ($dataArray['data'] as $data) {
     $stmtSelect->execute();
     $stmtSelect->bind_result($currentLoadGoodv);
 
-    if ($stmtSelect->fetch()) {
+    if($stmtSelect->fetch()) {
         $stmtSelect->close();
         $newLoadGoodv = $currentLoadGoodv - $itemQ;
-        if ($newLoadGoodv != 0) {
+        if($newLoadGoodv != 0) {
             $stmtUpdate = $conn->prepare("UPDATE loads SET load_goodv = ? WHERE load_goodn = ? && load_veh = ?");
             $stmtUpdate->bind_param('iss', $newLoadGoodv, $itemText, $veh);
             $stmtUpdate->execute();
             $stmtUpdate->close();
-        }else{
+        } else {
             $stmtDelete = $conn->prepare("DELETE FROM loads WHERE load_goodn = ? && load_veh = ?");
             $stmtDelete->bind_param('ss', $itemText, $veh);
             $stmtDelete->execute();

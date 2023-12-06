@@ -8,7 +8,7 @@ $password = "";
 $db_name = "resqsupply";
 $conn = mysqli_connect($sname, $unmae, $password, $db_name);
 
-if (!$conn) {
+if(!$conn) {
     echo "Connection failed!";
 }
 
@@ -22,16 +22,16 @@ $phone = $RegData->phone;
 $address = $RegData->address;
 $pass = $RegData->password;
 
-if(isset($RegData->email)){
+if(isset($RegData->email)) {
     $email = $RegData->email;
-}else {
+} else {
     $email = null;
 }
 
 $_SESSION["username"] = $username;
 
 $check_result = true;
-while ($check_result) {
+while($check_result) {
     $id = mt_rand(100000000, 999999999);
     $fetch_id = mysqli_query($conn, "SELECT user_id FROM users WHERE user_id='$id'");
     $check_result = mysqli_num_rows($fetch_id);

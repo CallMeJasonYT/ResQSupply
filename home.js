@@ -192,7 +192,7 @@ signupForm.addEventListener("submit", (e) => {
     })
       .then((response) => response.json())
       .then((result) => {
-          formAct.submit();
+        formAct.submit();
       });
   }
 });

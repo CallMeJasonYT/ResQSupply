@@ -7,9 +7,8 @@ $db_name = "resqsupply";
 $conn = mysqli_connect($sname, $unmae, $password, $db_name);
 $response = [];
 
-// Check connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+if(!$conn) {
+    die("Connection failed: ".mysqli_connect_error());
 }
 
 $queryItems = "SELECT good_name FROM goods";
@@ -19,7 +18,7 @@ $resultItems = mysqli_stmt_get_result($stmtItems);
 
 $items = [];
 
-while ($row = mysqli_fetch_assoc($resultItems)) {
+while($row = mysqli_fetch_assoc($resultItems)) {
     $items[] = $row['good_name'];
 }
 
@@ -30,7 +29,7 @@ $resultCat = mysqli_stmt_get_result($stmtCat);
 
 $categories = [];
 
-while ($row = mysqli_fetch_assoc($resultCat)) {
+while($row = mysqli_fetch_assoc($resultCat)) {
     $categories[] = $row['cat_name'];
 }
 

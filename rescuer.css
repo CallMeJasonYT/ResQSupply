@@ -116,11 +116,11 @@ i.burgerx.active {
 }
 
 /* Home */
-.error{
+.error {
   display: none;
 }
 
-.error.active{
+.error.active {
   display: flex;
   padding: 5px;
   font-size: 15px;
@@ -155,7 +155,7 @@ i.burgerx.active {
   display: block;
 }
 
-.burger-container.desktop{
+.burger-container.desktop {
   position: absolute;
   height: 85vh;
   max-width: 40%;
@@ -227,7 +227,7 @@ i.burgerx.active {
   width: 100%;
 }
 
-.truckload-list{
+.truckload-list {
   margin-top: 10px;
   max-height: 315px;
   overflow-y: auto;
@@ -285,7 +285,7 @@ i.burgerx.active {
   position: sticky;
 }
 
-.load-items-form .item-list .item.selected{
+.load-items-form .item-list .item.selected {
   background: #1788a19f;
 }
 
@@ -297,7 +297,7 @@ i.burgerx.active {
 }
 
 .load-confirm-form .cancelbtn,
-.unload-confirm-form .cancelbtn{
+.unload-confirm-form .cancelbtn {
   justify-content: end;
 }
 
@@ -366,7 +366,7 @@ i.burgerx.active {
   padding: 5px;
 }
 
-.item-btn{
+.item-btn {
   display: flex;
   justify-content: space-between;
   cursor: pointer;
@@ -375,7 +375,7 @@ i.burgerx.active {
 }
 
 .item-btn:hover,
-.item-btn.selected{
+.item-btn.selected {
   border-bottom: 2px solid #0e505e;
 }
 
@@ -430,19 +430,19 @@ i.burgerx.active {
 
 .load-quantity-form .selected-items-list,
 .load-confirm-form .selected-items-confirm,
-.unload-confirm-form .selected-items-list{
+.unload-confirm-form .selected-items-list {
   margin: 0;
 }
 
-.item-options{
+.item-options {
   display: none;
 }
 
-.item-options.active{
+.item-options.active {
   display: block;
 }
 
-.item-options li{
+.item-options li {
   height: 30px;
   font-size: 14px;
   cursor: pointer;
@@ -458,12 +458,12 @@ i.burgerx.active {
 }
 
 .item-options li:hover,
-li.selected{
+li.selected {
   border-radius: 5px;
   background: #f2f2f2;
 }
 
-.item{
+.item {
   padding: 5px;
 }
 
@@ -482,7 +482,7 @@ li.selected{
 .load-quantity-form .button,
 .load-confirm-form .button,
 .unload-quantity-form .button,
-.unload-confirm-form .button{
+.unload-confirm-form .button {
   display: flex;
   justify-content: center;
   font-size: 16px;
@@ -526,7 +526,7 @@ li.selected{
   border: 1px solid #B3B3B3;
 }
 
-.max-button{
+.max-button {
   margin-left: 10px;
   padding: 5px;
   transition: all 0.4s ease-out;
@@ -569,7 +569,7 @@ li.selected{
   display: block;
 }
 
-.module.desktop{
+.module.desktop {
   position: absolute;
   height: 85vh;
   max-width: 60%;
@@ -660,7 +660,7 @@ ul {
   overflow-y: auto;
 }
 
-.tasks-container.desktop{
+.tasks-container.desktop {
   max-height: calc(85vh - 550px);
 }
 

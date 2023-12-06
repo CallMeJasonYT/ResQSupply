@@ -74,10 +74,10 @@
                 </div>
               </div>
             </div>
-            <div class="error">
+            <div class="error none">
               <p>Please Select an Item</p>
             </div>
-            <div class="error">
+            <div class="error available">
               <p>Please only select Items that are Available.</p>
             </div>
             <button type="button" class="button next1"> Next </button>
@@ -93,8 +93,11 @@
             </div>
             <ul class="selected-items-list">
             </ul>
-            <div class="error">
-              <p>Please select a Quantity greater than 0.</p>
+            <div class="error zero-quantity">
+              <p>Please set a Quantity greater than 0.</p>
+            </div>
+            <div class="error greater-quantity">
+              <p>You are trying to Load a bigger Quantity than what is Available in the Base.</p>
             </div>
             <button type="button" class="button next2"> Next </button>
           </div>
@@ -105,9 +108,6 @@
             </div>
             <ul class="selected-items-confirm">
             </ul>
-            <div class=" error">
-              <p>You are trying to Load a bigger Quantity than what is Available in the Base.</p>
-            </div>
             <button type="button" class="button submit1"> Submit </button>
           </div>
         </div>
@@ -136,9 +136,9 @@
               </div>
               <i class="fa-solid fa-xmark cancelu" aria-hidden="true"></i>
             </div>
-          <ul class="selected-items-list">
-          </ul>
-          <button type="button" class="button next3"> Next </button>
+            <ul class="selected-items-list">
+            </ul>
+            <button type="button" class="button next3"> Next </button>
           </div>
           <!-- Confirm Unload -->
           <div class="unload-confirm-form">
@@ -147,9 +147,6 @@
             </div>
             <ul class="selected-items-confirm">
             </ul>
-            <div class="error">
-              <p>You are trying to Unload a bigger Quantity than what is Available in your Truck.</p>
-            </div>
             <button type="button" class="button submit2"> Submit </button>
           </div>
         </div>
@@ -168,60 +165,6 @@
         <p class="active-tasks"> Active Tasks </p>
         <div class="active-tasks-list active">
           <ul class="tasks-list">
-            <li class="list-item">
-              <div class="item-title"><b>Pasta</b>
-                <div class="cancel">
-                  <p> Cancel </p>
-                  <i class="fa-solid fa-ban cancelt"></i>
-                </div>
-              </div>
-              <div class="information">Citizen Information: Roumpini Angoura, 6948939730</div>
-              <div class="quantity">Quantity: 50</div>
-              <div class="datetime">Creation Date: Monday 11th October
-                <div class="complete-box">
-                  <div class="complete">
-                    <p> Complete </p>
-                    <i class="fa-solid fa-check check"></i>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li class="list-item">
-              <div class="item-title"><b>Pasta</b>
-                <div class="cancel">
-                  <p> Cancel </p>
-                  <i class="fa-solid fa-ban cancelt"></i>
-                </div>
-              </div>
-              <div class="information">Citizen Information: Roumpini Angoura, 6948939730</div>
-              <div class="quantity">Quantity: 50</div>
-              <div class="datetime">Creation Date: Monday 11th October
-                <div class="complete-box">
-                  <div class="complete">
-                    <p> Complete </p>
-                    <i class="fa-solid fa-check check"></i>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li class="list-item">
-              <div class="item-title"><b>Pasta</b>
-                <div class="cancel">
-                  <p> Cancel </p>
-                  <i class="fa-solid fa-ban cancelt"></i>
-                </div>
-              </div>
-              <div class="information">Citizen Information: Roumpini Angoura, 6948939730</div>
-              <div class="quantity">Quantity: 50</div>
-              <div class="datetime">Creation Date: Monday 11th October
-                <div class="complete-box">
-                  <div class="complete">
-                    <p> Complete </p>
-                    <i class="fa-solid fa-check check"></i>
-                  </div>
-                </div>
-              </div>
-            </li>
             <li class="list-item">
               <div class="item-title"><b>Pasta</b>
                 <div class="cancel">
