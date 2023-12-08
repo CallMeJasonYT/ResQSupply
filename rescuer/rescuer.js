@@ -11,32 +11,122 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 const searchInput = document.querySelector('.address-search');
 const mapContainer = document.getElementById('map-container');
 const searchIcon = document.getElementById('search-icon');
-searchIcon.addEventListener("click", fetchGeo);
+searchIcon.addEventListener("click", fetchGeoSearch);
 
 searchInput.addEventListener("keyup", function (event) {
   if (event.key === "Enter") {
-    fetchGeo();
+    fetchGeoSearch();
   }
 });
 
-function fetchGeo() {
+function fetchGeoSearch() {
   const query = searchInput.value;
   fetch('https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + query + '&limit=1')
     .then(result => result.json())
     .then(parsedResult => {
-      console.log(parsedResult[0]);
       setResultList(parsedResult[0]);
     });
 }
 
 function setResultList(parsedResult) {
-  for (const marker of currentMarkers) {
-    map.removeLayer(marker);
-  }
   const latitude = parseFloat(parsedResult.lat);
   const longitude = parseFloat(parsedResult.lon);
   position = new L.LatLng(latitude, longitude);
   map.flyTo(position, 15);
+}
+
+function fetchGeoTasks(query){
+  var cat = query.category;
+  var task_id = query.task_id;
+  fetch('https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + query.address + '&limit=1')
+    .then(result => result.json())
+    .then(result => {
+      setMapMarkers(result[0], cat, task_id);
+    });
+}
+
+const categoryIcons = {
+  'Request': L.icon({
+    iconUrl: '/ResQSupply/icons/requestsIcon.svg',
+    iconSize: [25, 25],
+    iconAnchor: [15, 30],
+    popupAnchor: [0, -30]
+  }),
+  'Offer': L.icon({
+    iconUrl: '/ResQSupply/icons/offersIcon.svg',
+    iconSize: [25, 25],
+    iconAnchor: [15, 30],
+    popupAnchor: [0, -30]
+  }),
+  'Base': L.icon({
+    iconUrl: '/ResQSupply/icons/baseIcon.svg',
+    iconSize: [25, 25],
+    iconAnchor: [15, 30],
+    popupAnchor: [0, -30]
+  })
+};
+
+function fetchTasksLoc(){
+  fetch("fetch_TasksLoc.php", {
+    method: "POST"
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      data.forEach(entry => {
+        console.log(entry)
+        fetchGeoTasks(entry);
+      });
+    });
+}
+
+const taskMarkers = [];
+function setMapMarkers(result, cat, task_id) {
+  const latitude = parseFloat(result.lat);
+  const longitude = parseFloat(result.lon);
+  const marker = new L.Marker([latitude, longitude], { icon: categoryIcons[cat] });
+  marker.taskInfo = {
+    taskId: task_id
+  };
+  marker.on('click', function () {
+    if(cat != 'Base'){
+      showTaskPopup(this);
+    }
+  });
+  marker.addTo(map);
+  taskMarkers.push(marker);
+}
+
+function showTaskPopup(marker) {
+  console.log(marker.taskInfo)
+  fetch("fetch_TasksInfo.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ taskID: marker.taskInfo.taskId })
+  })
+    .then((response) => response.json())
+    .then((taskDetails) => {
+      
+      console.log(taskDetails)
+      const popupContent = ` 
+        <b>Citizen Fullname:</b> ${taskDetails[0].fullname}<br>
+        <b>Citizen Phone No.:</b> ${taskDetails[0].telephone}<br>
+        <b>Good Name:</b> ${taskDetails[0].goodName}<br>
+      `;
+  const popup = L.popup().setLatLng(marker.getLatLng()).setContent(popupContent);
+  marker.bindPopup(popup).openPopup();
+    }
+  )};
+
+function fetchBaseInfo(){
+  fetch("fetch_BaseInfo.php", {
+    method: "POST"
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      data.forEach(entry => {
+        fetchGeoTasks(entry);
+      });
+    });
 }
 
 /* ~~~~~~~~~~ General Functions ~~~~~~~~~~ */
@@ -45,7 +135,8 @@ function setResultList(parsedResult) {
 document.addEventListener("DOMContentLoaded", function () {
   checkWidth();
   fetchResInfo();
-
+  fetchTasksLoc();
+  fetchBaseInfo();
 });
 window.addEventListener("resize", (e) => {
   checkWidth();
@@ -708,9 +799,9 @@ function fetchResInfo() {
 const logoutButton = document.querySelector(".button.logout");
 logoutButton.addEventListener("click", logoutUser);
 function logoutUser() {
-  fetch("logout_User.php", {
+  fetch("/ResQSupply/logout_User.php", {
     method: "POST",
     credentials: 'include'
   });
-  location.href = "home.html";
+  location.href = "/" + "ResQSupply/home.html";
 }

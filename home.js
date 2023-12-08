@@ -154,7 +154,7 @@ function checkCredentials() {
         passLoginField.classList.add("invalid");
       } else {
         passLoginField.classList.remove("invalid");
-        formAct.action = result + ".html";
+        formAct.action = result + "/" + result + ".html";
         formAct.submit();
       }
     });

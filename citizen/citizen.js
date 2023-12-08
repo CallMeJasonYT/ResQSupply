@@ -43,11 +43,11 @@ function loadGoods() {
 const logoutButton = document.querySelector(".button.logout");
 logoutButton.addEventListener("click", logoutUser);
 function logoutUser() {
-  fetch("logout_User.php", {
+  fetch("/ResQSupply/logout_User.php", {
     method: "POST",
     credentials: 'include'
   });
-  location.href = "home.html";
+  location.href = "/" + "ResQSupply/home.html";
 }
 
 /* ~~~~~~~~~~ Mobile/Desktop Layout ~~~~~~~~~~ */
