@@ -129,6 +129,25 @@ function fetchBaseInfo(){
     });
 }
 
+//Creating Legend
+const legendContent = {
+  'Request': 'Requests',
+  'Offer': 'Offers',
+  'Base': 'Base Location'
+};
+
+const legend = L.control({ position: 'topleft' });
+
+legend.onAdd = function (map) {
+  const div = L.DomUtil.create('div', 'legend');
+  for (const category in categoryIcons) {
+    div.innerHTML += `<div><img src="${categoryIcons[category].options.iconUrl}" /> ${legendContent[category]}</div>`;
+  }
+  return div;
+};
+
+legend.addTo(map);
+
 /* ~~~~~~~~~~ General Functions ~~~~~~~~~~ */
 
 //When the window is resized or Loaded do the following

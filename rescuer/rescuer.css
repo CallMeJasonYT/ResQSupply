@@ -798,3 +798,55 @@ ul {
   border: 6px solid transparent;
   background-clip: content-box;
 }
+
+
+/* Add this CSS to your stylesheet */
+
+.legend {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+}
+
+.legend h4 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #333;
+}
+
+.legend div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.legend img {
+  width: 25px;
+  height: 25px;
+  margin-right: 8px;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.legend span {
+  font-size: 14px;
+  color: #555;
+}
+
+@media screen and (max-width: 960px) {
+  .legend {
+    font-size: 10px; 
+  }
+
+  .legend div {
+    margin-bottom: 4px; 
+  }
+
+  .legend img {
+    width: 10px; 
+    height: 10px; 
+  }
+}
