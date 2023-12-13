@@ -17,7 +17,7 @@ $veh = $_SESSION['veh_id'];
 
 $stmt = $conn->prepare("SELECT load_goodn, SUM(load_goodv) as total_load_goodv FROM loads
                         WHERE load_veh = ? GROUP BY load_goodn;");
-$stmt->bind_param('i', $veh);
+$stmt->bind_param('s', $veh);
 $stmt->execute();
 $result = $stmt->get_result();
 

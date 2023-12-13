@@ -12,20 +12,20 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-$stmtSelect = $conn->prepare(
-    "SELECT task_id, cit_addr, task_cat, task_status
-    FROM citizen 
-    INNER JOIN tasks 
-    ON cit_id = task_cit_id");
+$veh = $_SESSION['veh_id'];
 
+$stmtSelect = $conn->prepare(
+    "SELECT veh_loc FROM vehicles WHERE veh_id = ?");
+
+$stmtSelect->bind_param('s', $veh);
 $stmtSelect->execute();
 $result = $stmtSelect->get_result();
 
 if (mysqli_num_rows($result) > 0) {
     while ($row = mysqli_fetch_assoc($result)) {
         $response[] = [
-            'task_id' => $row['task_id'],
-            'address' => $row['cit_addr']
+            'address' => $row['veh_loc'],
+            'category' => 'Truck'
         ];
     }
 }

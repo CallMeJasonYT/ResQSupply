@@ -6,8 +6,8 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
+map.zoomControl.remove();
 
-//Search Only when pressing Enter or the Magnifing Glass Icon
 const searchInput = document.querySelector('.address-search');
 const mapContainer = document.getElementById('map-container');
 const searchIcon = document.getElementById('search-icon');
@@ -35,25 +35,35 @@ function setResultList(parsedResult) {
   map.flyTo(position, 15);
 }
 
-function fetchGeoTasks(query){
-  var cat = query.category;
-  var task_id = query.task_id;
+function fetchGeoTasks(query) {
   fetch('https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + query.address + '&limit=1')
     .then(result => result.json())
     .then(result => {
-      setMapMarkers(result[0], cat, task_id);
+      setMapMarkers(result[0], query.task_id);
     });
 }
 
 const categoryIcons = {
-  'Request': L.icon({
-    iconUrl: '/ResQSupply/icons/requestsIcon.svg',
+  'Pending Request': L.icon({
+    iconUrl: '/ResQSupply/icons/requestsIconPending.svg',
     iconSize: [25, 25],
     iconAnchor: [15, 30],
     popupAnchor: [0, -30]
   }),
-  'Offer': L.icon({
-    iconUrl: '/ResQSupply/icons/offersIcon.svg',
+  'Executing Request': L.icon({
+    iconUrl: '/ResQSupply/icons/requestsIconExecuting.svg',
+    iconSize: [25, 25],
+    iconAnchor: [15, 30],
+    popupAnchor: [0, -30]
+  }),
+  'Pending Offer': L.icon({
+    iconUrl: '/ResQSupply/icons/offersIconPending.svg',
+    iconSize: [25, 25],
+    iconAnchor: [15, 30],
+    popupAnchor: [0, -30]
+  }),
+  'Executing Offer': L.icon({
+    iconUrl: '/ResQSupply/icons/offersIconExecuting.svg',
     iconSize: [25, 25],
     iconAnchor: [15, 30],
     popupAnchor: [0, -30]
@@ -63,61 +73,28 @@ const categoryIcons = {
     iconSize: [25, 25],
     iconAnchor: [15, 30],
     popupAnchor: [0, -30]
+  }),
+  'Truck': L.icon({
+    iconUrl: '/ResQSupply/icons/truckIcon.svg',
+    iconSize: [25, 25],
+    iconAnchor: [15, 30],
+    popupAnchor: [0, -30]
   })
 };
 
-function fetchTasksLoc(){
+function fetchTasksLoc() {
   fetch("fetch_TasksLoc.php", {
     method: "POST"
   })
     .then((response) => response.json())
     .then((data) => {
       data.forEach(entry => {
-        console.log(entry)
         fetchGeoTasks(entry);
       });
     });
 }
 
-const taskMarkers = [];
-function setMapMarkers(result, cat, task_id) {
-  const latitude = parseFloat(result.lat);
-  const longitude = parseFloat(result.lon);
-  const marker = new L.Marker([latitude, longitude], { icon: categoryIcons[cat] });
-  marker.taskInfo = {
-    taskId: task_id
-  };
-  marker.on('click', function () {
-    if(cat != 'Base'){
-      showTaskPopup(this);
-    }
-  });
-  marker.addTo(map);
-  taskMarkers.push(marker);
-}
-
-function showTaskPopup(marker) {
-  console.log(marker.taskInfo)
-  fetch("fetch_TasksInfo.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ taskID: marker.taskInfo.taskId })
-  })
-    .then((response) => response.json())
-    .then((taskDetails) => {
-      
-      console.log(taskDetails)
-      const popupContent = ` 
-        <b>Citizen Fullname:</b> ${taskDetails[0].fullname}<br>
-        <b>Citizen Phone No.:</b> ${taskDetails[0].telephone}<br>
-        <b>Good Name:</b> ${taskDetails[0].goodName}<br>
-      `;
-  const popup = L.popup().setLatLng(marker.getLatLng()).setContent(popupContent);
-  marker.bindPopup(popup).openPopup();
-    }
-  )};
-
-function fetchBaseInfo(){
+function fetchBaseInfo() {
   fetch("fetch_BaseInfo.php", {
     method: "POST"
   })
@@ -129,11 +106,197 @@ function fetchBaseInfo(){
     });
 }
 
-//Creating Legend
+function fetchTruckLoc() {
+  fetch("fetch_TruckLoc.php", {
+    method: "POST"
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      data.forEach(entry => {
+        fetchGeoTruck(entry);
+      });
+    });
+}
+
+function fetchGeoTruck(query) {
+  fetch('https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + query.address + '&limit=1')
+    .then(result => result.json())
+    .then(result => {
+      setMapMarkers(result[0], query.category);
+    });
+}
+
+function revGeocode(query){
+  var lng = query.lng;
+  var lat = query.lat;
+  fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&limit=1&format=json')
+    .then(result => result.json())
+    .then(result => {
+      updateTruckLoc(parseDisplayName(result.display_name));
+    });
+}
+
+function parseDisplayName(displayName) {
+  const words = displayName.split(', ');
+  const address = words.slice(0, 2).join(', ');
+  return address;
+}
+
+function updateTruckLoc(position) {
+  fetch('update_TruckLoc.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      address: position
+    })
+  })
+    .then(response => response.json())
+}
+
+const taskMarkers = [];
+const truckMarkers = [];
+function setMapMarkers(result, task_id) {
+  if(task_id == undefined){task_id = null;}
+    fetch("fetch_TasksInfo.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ taskID: task_id })
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        data.forEach(res => {
+          if (res.status != undefined) {
+            var iconName = "" + res.status + " " + res.category + "";
+          } else {
+            var iconName = res.category;
+          };
+          const latitude = parseFloat(result.lat);
+          const longitude = parseFloat(result.lon);
+
+          if(res.category != 'Truck' && res.category != 'Base'){
+            const marker = new L.Marker([latitude, longitude], { icon: categoryIcons[iconName] });
+            marker.taskInfo = {
+              taskId: task_id,
+              latitude: latitude,
+              longitude: longitude
+            };
+            marker.addTo(map);
+            marker.on('click', function () {
+              showTaskPopup(marker, res.status);
+            });
+            taskMarkers.push(marker);
+            if(res.veh == veh_id && truckMarkers.length != 0){
+              drawLineOnce(task_id);
+            }
+          }else if(res.category == 'Truck'){
+            const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Truck'], draggable: true });
+            marker.truckInfo = {
+              vehId: veh_id,
+              latitude: latitude,
+              longitude: longitude
+            };
+            marker.addTo(map);
+            truckMarkers.push(marker);
+            drawLine();
+
+            marker.on('dragend', function (e) {
+              removeAllPolylines();
+              var position = marker.getLatLng();
+              marker.setLatLng(position).update();
+              map.panTo(position);
+              revGeocode(position);
+              drawLine();
+            });
+          }else{
+            const marker = new L.Marker([latitude, longitude], { icon: categoryIcons[iconName] });
+            marker.addTo(map);
+          }
+        });
+      });
+}
+
+function showTaskPopup(marker, status) {
+  fetch("fetch_TasksPopup.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ taskID: marker.taskInfo.taskId })
+  })
+    .then((response) => response.json())
+    .then((taskDetails) => {
+      var popupContent = `
+        <b>Citizen Fullname:</b> ${taskDetails[0].fullname}<br>
+        <b>Citizen Phone No.:</b> ${taskDetails[0].telephone}<br>
+        <b>Creation Date:</b> ${taskDetails[0].creationDate}<br>
+        <b>Good Name:</b> ${taskDetails[0].goodName}<br>
+        <b>Quantity:</b> ${taskDetails[0].goodValue}<br>
+        <b>Pickup Date:</b> ${taskDetails[0].pickupDate}<br>
+        <b>Vehicle ID:</b> ${taskDetails[0].vehicle}<br>
+      `;
+
+      if (status !== "Executing") {
+        popupContent += `<button class="custom-button" onclick="handleButtonClick(${marker.taskInfo.taskId})">Take on Task</button>`;
+      }
+
+      var popup = L.popup().setLatLng(marker.getLatLng()).setContent(popupContent);
+      marker.bindPopup(popup).openPopup();
+    });
+}
+
+function handleButtonClick(taskId) {
+  fetch("update_Task.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ taskId: taskId })
+  })
+    .then((response) => response.json())
+    .then((result) => {
+    })
+    const marker = taskMarkers.find((marker) => marker.taskInfo.taskId === taskId);
+    var loc = { lat: marker.getLatLng().lat.toString(), lon: marker.getLatLng().lng.toString() };
+    setMapMarkers(loc, taskId);
+    removeAllPolylines();
+    drawLine();
+    removeTaskMarker(marker);
+    fetchActiveTasks();
+}
+
+function removeTaskMarker(marker){
+    map.removeLayer(marker);
+    const index = taskMarkers.indexOf(marker);
+    if (index !== -1) {
+      taskMarkers.splice(index, 1);
+    }
+}
+
+const filters = L.control({ position: 'topleft' });
+
+filters.onAdd = function (map) {
+  const div = L.DomUtil.create('div', 'filters');
+  div.innerHTML += `<div class="filter-btn"><i class="fa-solid fa-filter filter-ico"></i>
+  <p class="filter-text">Filters</p></div>`;
+
+  const filterBtn = div.querySelector('.filter-btn');
+  filterBtn.addEventListener('click', function () {
+  });
+
+  const filterText = div.querySelector('.filter-text');
+  filterText.addEventListener('click', function () {
+    
+  });
+  return div;
+};
+
+filters.addTo(map);
+
 const legendContent = {
-  'Request': 'Requests',
-  'Offer': 'Offers',
-  'Base': 'Base Location'
+  'Pending Request': 'Pending Requests',
+  'Executing Request': 'Executing Requests',
+  'Pending Offer': 'Pending Offers',
+  'Executing Offer': 'Executing Offers',
+  'Base': 'Base Location',
+  'Truck': 'Truck Location'
 };
 
 const legend = L.control({ position: 'topleft' });
@@ -148,6 +311,49 @@ legend.onAdd = function (map) {
 
 legend.addTo(map);
 
+L.control.zoom({
+  position: 'bottomright'
+}).addTo(map);
+
+const polylines = [];
+var veh_id;
+function drawLine() {
+  const truckMarker = truckMarkers.find((marker) => marker.truckInfo.vehId == veh_id);
+  const truckLat = truckMarker.getLatLng().lat;
+  const truckLon = truckMarker.getLatLng().lng;
+  const pointA = [truckLat, truckLon];
+  const activeTasks = document.querySelectorAll(".tasks-list .list-item");
+  activeTasks.forEach(function (task) {
+    const taskMarker = taskMarkers.find((marker) => marker.taskInfo.taskId == task.id);
+    if (!taskMarker) {
+      return;
+    }
+    const taskLat = taskMarker.getLatLng().lat;
+    const taskLon = taskMarker.getLatLng().lng;
+    const pointB = [taskLat, taskLon];
+    const polyline = L.polyline([pointA, pointB], { color: '#0e505e' }).addTo(map);
+    polylines.push(polyline);
+  });
+}
+
+function drawLineOnce(task_id) {
+  const truckMarker = truckMarkers.find((marker) => marker.truckInfo.vehId == veh_id);
+  const truckLat = truckMarker.getLatLng().lat;
+  const truckLon = truckMarker.getLatLng().lng;
+  const pointA = [truckLat, truckLon];
+  const taskMarker = taskMarkers.find((marker) => marker.taskInfo.taskId == task_id);
+  const taskLat = taskMarker.getLatLng().lat;
+  const taskLon = taskMarker.getLatLng().lng;
+  const pointB = [taskLat, taskLon];
+  const polyline = L.polyline([pointA, pointB], { color: '#0e505e' }).addTo(map);
+  polylines.push(polyline);
+}
+
+function removeAllPolylines() {
+  polylines.forEach(polyline => map.removeLayer(polyline));
+  polylines.length = 0;
+}
+
 /* ~~~~~~~~~~ General Functions ~~~~~~~~~~ */
 
 //When the window is resized or Loaded do the following
@@ -156,6 +362,8 @@ document.addEventListener("DOMContentLoaded", function () {
   fetchResInfo();
   fetchTasksLoc();
   fetchBaseInfo();
+  fetchTruckLoc();
+  fetchActiveTasks();
 });
 window.addEventListener("resize", (e) => {
   checkWidth();
@@ -800,6 +1008,7 @@ function fetchResInfo() {
     .then((response) => response.json())
     .then((data) => {
       const userData = data.data[0];
+      veh_id = userData.vehicle;
       if (userData) {
         const markupWelcome = `<div class="welcome">Welcome, ${userData.username}!</div>`;
         document.querySelector(".footer").insertAdjacentHTML("afterBegin", markupWelcome);
@@ -811,6 +1020,77 @@ function fetchResInfo() {
         document.querySelector(".truck-info").insertAdjacentHTML("beforeEnd", markupVehicle);
       }
       fetchTruckLoad();
+    });
+}
+
+//Fetching Active Tasks
+function fetchActiveTasks() {
+  document.querySelector(".tasks-list").innerHTML = "";
+  fetch("fetch_ActiveTasks.php")
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      if (data != "False") {
+        data.forEach((res) => {
+          markup =
+            `<li class="list-item" id=${res.id}>`+
+            `<div class="item-title"><b>${res.goodName}</b>`+
+            `<div class="cancel">`+
+            `<p> Cancel </p>`+
+            `<i class="fa-solid fa-ban cancelt"></i>`+
+            `</div>`+
+            `</div>`+
+            `<div class="information">Citizen Information: ${res.fullname}, ${res.telephone}</div>`+
+            `<div class="quantity">Quantity: ${res.goodValue}</div>`+
+            `<div class="datetime">Creation Date: ${res.creationDate}`+
+            `<div class="complete-box">`+
+            `<div class="complete">`+
+            `<p> Complete </p>`+
+            `<i class="fa-solid fa-check check"></i>`+
+            `</div>`+
+            `</div>`+
+            `</div>`+
+            `</li>`
+          document.querySelector(".tasks-list").insertAdjacentHTML("beforeend", markup);
+        });
+        cancelBtn = document.querySelectorAll(".tasks-list .list-item .cancel");
+        cancelBtnListener();
+      } else {
+        markup = `<p>There aren't any Active Tasks assigned to your Truck</p>`;
+        document.querySelector(".tasks-list").insertAdjacentHTML("beforeend", markup);
+      }
+    });
+}
+
+//Adding Listeners to the cancel Buttons
+var cancelBtn = document.querySelectorAll(".tasks-list .list-item .cancel");
+function cancelBtnListener() {
+  cancelBtn.forEach(function (btn) {
+    if (!btn.dataset.listenerAdded) {
+      btn.addEventListener("click", function () {
+        var id = btn.parentNode.parentNode.id;
+        cancelTask(id);
+      });
+      btn.dataset.listenerAdded = true;
+    }
+  });
+}
+
+//Function that cancels a Task
+function cancelTask(taskID) {
+  fetch("cancel_Task.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({taskId: taskID }),
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      fetchActiveTasks();
     });
 }
 
