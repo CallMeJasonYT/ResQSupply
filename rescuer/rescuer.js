@@ -11,6 +11,9 @@ map.zoomControl.remove();
 const searchInput = document.querySelector('.address-search');
 const mapContainer = document.getElementById('map-container');
 const searchIcon = document.getElementById('search-icon');
+const map_desktop = document.getElementById('map');
+map_desktop.classList.add("map");
+map_desktop.classList.add("active");
 searchIcon.addEventListener("click", fetchGeoSearch);
 
 searchInput.addEventListener("keyup", function (event) {
@@ -126,7 +129,7 @@ function fetchGeoTruck(query) {
     });
 }
 
-function revGeocode(query){
+function revGeocode(query) {
   var lng = query.lng;
   var lat = query.lat;
   fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&limit=1&format=json')
@@ -157,25 +160,28 @@ function updateTruckLoc(position) {
 
 const taskMarkers = [];
 const truckMarkers = [];
+const baseMarkers = [];
 function setMapMarkers(result, task_id) {
-  if(task_id == undefined){task_id = null;}
-    fetch("fetch_TasksInfo.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ taskID: task_id })
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        data.forEach(res => {
-          if (res.status != undefined) {
-            var iconName = "" + res.status + " " + res.category + "";
-          } else {
-            var iconName = res.category;
-          };
-          const latitude = parseFloat(result.lat);
-          const longitude = parseFloat(result.lon);
+  if (task_id == undefined) { task_id = null; }
+  fetch("fetch_TasksInfo.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ taskID: task_id })
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      data.forEach(res => {
+        var iconName= "";
+        if (res.status != undefined && res.status != 'Completed') {
+          iconName = "" + res.status + " " + res.category + "";
+        } else if (res.status != 'Completed'){
+          iconName = res.category;
+        };
+        const latitude = parseFloat(result.lat);
+        const longitude = parseFloat(result.lon);
 
-          if(res.category != 'Truck' && res.category != 'Base'){
+        if (iconName != ""){
+          if (res.category != 'Truck' && res.category != 'Base') {
             const marker = new L.Marker([latitude, longitude], { icon: categoryIcons[iconName] });
             marker.taskInfo = {
               taskId: task_id,
@@ -187,10 +193,10 @@ function setMapMarkers(result, task_id) {
               showTaskPopup(marker, res.status);
             });
             taskMarkers.push(marker);
-            if(res.veh == veh_id && truckMarkers.length != 0){
+            if (res.veh == veh_id && truckMarkers.length != 0) {
               drawLineOnce(task_id);
             }
-          }else if(res.category == 'Truck'){
+          } else if (res.category == 'Truck') {
             const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Truck'], draggable: true });
             marker.truckInfo = {
               vehId: veh_id,
@@ -200,7 +206,7 @@ function setMapMarkers(result, task_id) {
             marker.addTo(map);
             truckMarkers.push(marker);
             drawLine();
-
+  
             marker.on('dragend', function (e) {
               removeAllPolylines();
               var position = marker.getLatLng();
@@ -209,12 +215,18 @@ function setMapMarkers(result, task_id) {
               revGeocode(position);
               drawLine();
             });
-          }else{
+          } else {
             const marker = new L.Marker([latitude, longitude], { icon: categoryIcons[iconName] });
+            marker.baseInfo = {
+              latitude: latitude,
+              longitude: longitude
+            };
             marker.addTo(map);
+            baseMarkers.push(marker);
           }
-        });
+        }
       });
+    });
 }
 
 function showTaskPopup(marker, status) {
@@ -236,7 +248,7 @@ function showTaskPopup(marker, status) {
       `;
 
       if (status !== "Executing") {
-        popupContent += `<button class="custom-button" onclick="handleButtonClick(${marker.taskInfo.taskId})">Take on Task</button>`;
+        popupContent += `<button class="custom-button" onclick="handleButtonClick(event, ${marker.taskInfo.taskId})">Take on Task</button>`;
       }
 
       var popup = L.popup().setLatLng(marker.getLatLng()).setContent(popupContent);
@@ -244,34 +256,48 @@ function showTaskPopup(marker, status) {
     });
 }
 
-function handleButtonClick(taskId) {
-  fetch("update_Task.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ taskId: taskId })
-  })
-    .then((response) => response.json())
-    .then((result) => {
+var activeTasks = document.querySelectorAll(".tasks-list li");
+function handleButtonClick(event, taskId) {
+  if (activeTasks.length + 1 < 4) {
+    console.log(activeTasks.length)
+    fetch("update_Task.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ taskId: taskId })
     })
-    const marker = taskMarkers.find((marker) => marker.taskInfo.taskId === taskId);
-    var loc = { lat: marker.getLatLng().lat.toString(), lon: marker.getLatLng().lng.toString() };
-    setMapMarkers(loc, taskId);
-    removeAllPolylines();
-    drawLine();
-    removeTaskMarker(marker);
-    fetchActiveTasks();
+      .then((response) => response.json())
+      .then((result) => {
+        const marker = taskMarkers.find((marker) => marker.taskInfo.taskId == taskId);
+        var loc = { lat: marker.getLatLng().lat.toString(), lon: marker.getLatLng().lng.toString() };
+        removeTaskMarker(marker);
+        setMapMarkers(loc, taskId);
+        removeAllPolylines();
+        drawLine();
+        fetchActiveTasks();
+      });
+  } else {
+    event.stopPropagation();
+    console.log(activeTasks.length)
+    const marker = taskMarkers.find((marker) => marker.taskInfo.taskId == taskId);
+    console.log(marker);
+    const popupContent = `
+      <p class="error activeTasks active"><b>Error:&nbsp;</b> You have reached the maximum number of active tasks.<p>
+    `;
+    marker.getPopup().setContent(marker.getPopup().getContent() + popupContent);
+    marker.getPopup().update();
+    console.log(marker.getPopup().getContent());
+  }
 }
 
-function removeTaskMarker(marker){
-    map.removeLayer(marker);
-    const index = taskMarkers.indexOf(marker);
-    if (index !== -1) {
-      taskMarkers.splice(index, 1);
-    }
+function removeTaskMarker(marker) {
+  map.removeLayer(marker);
+  const index = taskMarkers.indexOf(marker);
+  if (index !== -1) {
+    taskMarkers.splice(index, 1);
+  }
 }
 
 const filters = L.control({ position: 'topleft' });
-
 filters.onAdd = function (map) {
   const div = L.DomUtil.create('div', 'filters');
   div.innerHTML += `<div class="filter-btn"><i class="fa-solid fa-filter filter-ico"></i>
@@ -279,16 +305,120 @@ filters.onAdd = function (map) {
 
   const filterBtn = div.querySelector('.filter-btn');
   filterBtn.addEventListener('click', function () {
-  });
-
-  const filterText = div.querySelector('.filter-text');
-  filterText.addEventListener('click', function () {
-    
+    replaceMapWithMenu();
   });
   return div;
 };
 
 filters.addTo(map);
+
+//Replace the Map with the Filter Menu
+const filtersmenu = document.querySelector(".filters-menu");
+const search = document.querySelector(".map-container .search");
+function replaceMapWithMenu() {
+  map_desktop.classList.remove("active");
+  filtersmenu.classList.add("active");
+  search.classList.remove("active");
+}
+
+//Add or Remove Markers when the xmark is clicked
+document.addEventListener("DOMContentLoaded", function () {
+  const xmark = document.querySelector(".cancelr");
+  xmark.addEventListener('click', () => {
+    var checkboxes = document.querySelectorAll('.filters-list input[type="checkbox"]');
+    checkboxes.forEach(function (checkbox) {
+      var parentFilter = checkbox.closest('.filter');
+      var filterName = parentFilter.querySelector('.name').textContent;
+
+      switch (filterName) {
+        case 'Pending Requests':
+          if (!checkbox.checked) {
+            removeMarkersByCategory('Pending Request');
+          } else {
+            addMarkersByCategory('Pending Request');
+          }
+          break;
+        case 'Executing Requests':
+          if (!checkbox.checked) {
+            removeMarkersByCategory('Executing Request');
+          } else {
+            addMarkersByCategory('Executing Request');
+          }
+          break;
+        case 'Pending Offers':
+          if (!checkbox.checked) {
+            removeMarkersByCategory('Pending Offer');
+          } else {
+            addMarkersByCategory('Pending Offer');
+          }
+          break;
+        case 'Executing Offers':
+          if (!checkbox.checked) {
+            removeMarkersByCategory('Executing Offer');
+          } else {
+            addMarkersByCategory('Executing Offer');
+          }
+          break;
+        case 'Tasks Lines':
+          if (!checkbox.checked) {
+            hidePolylines();
+          } else {
+            showPolylines();
+          }
+          break;
+      }
+    });
+    search.classList.add("active");
+    filtersmenu.classList.remove("active");
+    map_desktop.classList.add("active");
+  });
+});
+
+function removeMarkersByCategory(category) {
+  taskMarkers.forEach(marker => {
+    const iconName = getIconName(marker);
+    if (iconName.includes(category)) {
+      map.removeLayer(marker);
+    }
+  });
+}
+
+function addMarkersByCategory(category) {
+  taskMarkers.forEach(marker => {
+    const iconName = getIconName(marker);
+    if (iconName.includes(category)) {
+      map.addLayer(marker);
+    }
+  });
+}
+
+function getIconName(marker) {
+  const iconUrl = marker.options.icon.options.iconUrl;
+  const iconName = Object.keys(categoryIcons).find(key => categoryIcons[key].options.iconUrl == iconUrl);
+  return iconName; 
+}
+
+function hidePolylines(){
+  polylines.forEach(polyline => {
+    map.removeLayer(polyline);
+  })
+}
+
+function showPolylines(){
+  polylines.forEach(polyline => {
+    map.addLayer(polyline);
+  })
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  var filterItems = document.querySelectorAll('.filters-list li .name');
+  filterItems.forEach(function (item) {
+    var checkbox = item.parentNode.querySelector('input[type="checkbox"]');
+    item.addEventListener('click', function() {
+      checkbox.checked = !checkbox.checked;
+    });
+  })
+});
 
 const legendContent = {
   'Pending Request': 'Pending Requests',
@@ -331,7 +461,10 @@ function drawLine() {
     const taskLat = taskMarker.getLatLng().lat;
     const taskLon = taskMarker.getLatLng().lng;
     const pointB = [taskLat, taskLon];
-    const polyline = L.polyline([pointA, pointB], { color: '#0e505e' }).addTo(map);
+    const polyline = L.polyline([pointA, pointB], { color: '#350052' }).addTo(map);
+    polyline.taskInfo = {
+      task_id: task.id
+    };
     polylines.push(polyline);
   });
 }
@@ -345,7 +478,10 @@ function drawLineOnce(task_id) {
   const taskLat = taskMarker.getLatLng().lat;
   const taskLon = taskMarker.getLatLng().lng;
   const pointB = [taskLat, taskLon];
-  const polyline = L.polyline([pointA, pointB], { color: '#0e505e' }).addTo(map);
+  const polyline = L.polyline([pointA, pointB], { color: '#350052' }).addTo(map);
+  polyline.taskInfo = {
+    task_id: task_id
+  };
   polylines.push(polyline);
 }
 
@@ -354,10 +490,20 @@ function removeAllPolylines() {
   polylines.length = 0;
 }
 
+function removePolyline(task_id){
+  const polylineToRemove = polylines.find(polyline => polyline.taskInfo.task_id == task_id);
+  map.removeLayer(polylineToRemove);
+  const index = polylines.indexOf(polylineToRemove);
+  if (index !== -1) {
+    polylines.splice(index, 1);
+  }
+}
+
 /* ~~~~~~~~~~ General Functions ~~~~~~~~~~ */
 
 //When the window is resized or Loaded do the following
 document.addEventListener("DOMContentLoaded", function () {
+  map.invalidateSize();
   checkWidth();
   fetchResInfo();
   fetchTasksLoc();
@@ -420,7 +566,7 @@ function deskCustomization() {
   burgerCont.classList.add("desktop");
   burgerIcox.classList.remove("active");
   burgerIco.classList.remove("active");
-  map.invalidateSize()
+  map.invalidateSize();
 }
 
 //Mobile Layout Changes
@@ -485,6 +631,7 @@ const loadTruckBtn = document.querySelector(".add-load");
 const loadItems = document.querySelector(".load-items-tab");
 const loadItemsForm = document.querySelector(".load-items-form");
 loadBtn.addEventListener("click", (e) => {
+  distanceErrorUnload.classList.remove("active");
   loadTab.classList.add("active");
   truckloadTab.classList.remove("active");
   unloadTab.classList.remove("active");
@@ -499,6 +646,8 @@ loadBtn.addEventListener("click", (e) => {
 
 //Truckload Button
 truckloadBtn.addEventListener("click", (e) => {
+  distanceErrorUnload.classList.remove("active");
+  distanceErrorLoad.classList.remove("active");
   truckloadTab.classList.add("active");
   loadTab.classList.remove("active");
   unloadTab.classList.remove("active");
@@ -520,6 +669,7 @@ const unloadTruckBtn = document.querySelector(".remove-load");
 const unloadQuantity = document.querySelector(".unload-quantity-form");
 const unloadItemsTab = document.querySelector(".unload-items-tab");
 unloadBtn.addEventListener("click", (e) => {
+  distanceErrorLoad.classList.remove("active");
   unloadTab.classList.add("active");
   loadTab.classList.remove("active");
   truckloadTab.classList.remove("active");
@@ -545,11 +695,18 @@ function toggleBottomBorder(clickedButton) {
 }
 
 //Load Truck Plus Button
+const distanceErrorLoad = document.querySelector(".load-tab .error.distance")
 loadTruckBtn.addEventListener("click", (e) => {
-  loadTruckBtn.classList.remove("active");
-  loadItemsForm.classList.add("active");
-  loadItems.classList.add("active");
-  fetchLoadItems();
+  const distance = calculateDistance(truckMarkers[0].getLatLng(), baseMarkers[0].getLatLng());
+  if (distance <= 100) {
+    distanceErrorLoad.classList.remove("active");
+    loadTruckBtn.classList.remove("active");
+    loadItemsForm.classList.add("active");
+    loadItems.classList.add("active");
+    fetchLoadItems();
+  }else {
+    distanceErrorLoad.classList.add("active");
+  }
 });
 
 //Load Truck Items
@@ -579,14 +736,21 @@ submitButtonLoad.addEventListener("click", (e) => {
 });
 
 //Unload Truck Plus Button
+const distanceErrorUnload = document.querySelector(".unload-tab .error.distance")
 unloadTruckBtn.addEventListener("click", (e) => {
-  unloadTruckBtn.classList.remove("active");
-  unloadQuantity.classList.add("active");
-  unloadItemsTab.classList.add("active");
-  removeUnloadItems();
-  quantityUnLoad();
-  unloadEventListener();
-  maxBtnEventListener();
+  const distance = calculateDistance(truckMarkers[0].getLatLng(), baseMarkers[0].getLatLng());
+  if (distance <= 100) {
+    distanceErrorUnload.classList.remove("active");
+    unloadTruckBtn.classList.remove("active");
+    unloadQuantity.classList.add("active");
+    unloadItemsTab.classList.add("active");
+    removeUnloadItems();
+    quantityUnLoad();
+    unloadEventListener();
+    maxBtnEventListener();
+  }else{
+    distanceErrorUnload.classList.add("active");
+  }
 });
 
 //Unload Truck Quantity
@@ -1034,31 +1198,133 @@ function fetchActiveTasks() {
       if (data != "False") {
         data.forEach((res) => {
           markup =
-            `<li class="list-item" id=${res.id}>`+
-            `<div class="item-title"><b>${res.goodName}</b>`+
-            `<div class="cancel">`+
-            `<p> Cancel </p>`+
-            `<i class="fa-solid fa-ban cancelt"></i>`+
-            `</div>`+
-            `</div>`+
-            `<div class="information">Citizen Information: ${res.fullname}, ${res.telephone}</div>`+
-            `<div class="quantity">Quantity: ${res.goodValue}</div>`+
-            `<div class="datetime">Creation Date: ${res.creationDate}`+
-            `<div class="complete-box">`+
-            `<div class="complete">`+
-            `<p> Complete </p>`+
-            `<i class="fa-solid fa-check check"></i>`+
-            `</div>`+
-            `</div>`+
-            `</div>`+
+            `<li class="list-item" id=${res.id}>` +
+            `<div class="item-title"><b>${res.goodName}</b>` +
+            `<div class="cancel">` +
+            `<p> Cancel </p>` +
+            `<i class="fa-solid fa-ban cancelt"></i>` +
+            `</div>` +
+            `</div>` +
+            `<div class="information">Citizen Information: ${res.fullname}, ${res.telephone}</div>` +
+            `<div class="quantity">Quantity: ${res.goodValue}</div>` +
+            `<div class="datetime">Creation Date: ${res.creationDate}</div>` +
+            `<div class="type">Type: ${res.category}`+
+            `<div class="complete-box">` +
+            `<div class="complete">` +
+            `<p> Complete </p>` +
+            `<i class="fa-solid fa-check check"></i>` +
+            `</div>` +
+            `</div>` +
+            `</div>` +
             `</li>`
           document.querySelector(".tasks-list").insertAdjacentHTML("beforeend", markup);
         });
         cancelBtn = document.querySelectorAll(".tasks-list .list-item .cancel");
         cancelBtnListener();
+        completeBtn = document.querySelectorAll(".tasks-list .list-item .complete");
+        completeBtnListener();
+        activeTasks = document.querySelectorAll(".tasks-list li");
       } else {
         markup = `<p>There aren't any Active Tasks assigned to your Truck</p>`;
         document.querySelector(".tasks-list").insertAdjacentHTML("beforeend", markup);
+      }
+    });
+}
+
+//Adding Listeners to the complete Buttons
+var completeBtn = document.querySelectorAll(".tasks-list .list-item .complete");
+function completeBtnListener() {
+  completeBtn.forEach(function (btn) {
+    if (!btn.dataset.listenerAdded) {
+      btn.addEventListener("click", function () {
+        var id = btn.parentNode.parentNode.parentNode.id;
+        const taskMarker = taskMarkers.find((marker) => marker.taskInfo.taskId == id);
+
+        if (truckMarkers.length > 0 && taskMarker) {
+          const truckMarker = truckMarkers[0];
+          const distance = calculateDistance(truckMarker.getLatLng(), taskMarker.getLatLng());
+
+          const taskToBeCompleted = document.getElementById("" + id + "");
+          const existingDistanceError = taskToBeCompleted.querySelector('.error.distance');
+          const existingLoadError = taskToBeCompleted.querySelector('.error.load');
+
+          if (distance <= 50) {
+            completeTask(id);
+            if (existingDistanceError) {
+              existingDistanceError.remove();
+            }
+          } else {
+            if (existingLoadError) {
+              existingLoadError.remove();
+            }
+            if (!existingDistanceError) {
+              const markup =
+                `<div class="error distance active">` +
+                `<p><b>Error:&nbsp;</b>Your truck must be 50m away or closer to the Task Location.</p>` +
+                `</div>`;
+              taskToBeCompleted.insertAdjacentHTML("beforeend", markup);
+            }
+          }
+        }
+      });
+      btn.dataset.listenerAdded = true;
+    }
+  });
+}
+
+//Calculate the distance between the truck and the task
+function calculateDistance(point1, point2) {
+  const R = 6371000;
+  const lat1 = (point1.lat * Math.PI) / 180;
+  const lon1 = (point1.lng * Math.PI) / 180;
+  const lat2 = (point2.lat * Math.PI) / 180;
+  const lon2 = (point2.lng * Math.PI) / 180;
+  const dLat = lat2 - lat1;
+  const dLon = lon2 - lon1;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const distance = R * c; 
+  return distance;
+}
+
+// Function that completes a Task
+function completeTask(taskID) {
+  fetch("complete_Task.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ taskId: taskID })
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      const taskToBeCompleted = document.getElementById("" + taskID + "");
+      const existingError = taskToBeCompleted.querySelector('.error');
+      
+      if (data != false) {
+        const marker = taskMarkers.find((marker) => marker.taskInfo.taskId == taskID);
+        removeTaskMarker(marker);
+        removePolyline(taskID);
+        fetchActiveTasks();
+        removeTruckLoad();
+        truckLoadArray = [];
+        fetchTruckLoad();
+
+        if (existingError) {
+          existingError.remove();
+        }
+      } else {
+        if (!existingError) {
+          const markup =
+            `<div class="error load active">` +
+            `<p><b>Error:&nbsp;</b> There aren't enough resources in your Truck to Complete this Task.</p>` +
+            `</div>`;
+          taskToBeCompleted.insertAdjacentHTML("beforeend", markup);
+        }
       }
     });
 }
@@ -1084,12 +1350,17 @@ function cancelTask(taskID) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({taskId: taskID }),
+    body: JSON.stringify({ taskId: taskID }),
   })
     .then((response) => {
       return response.json();
     })
     .then((data) => {
+      const marker = taskMarkers.find((marker) => marker.taskInfo.taskId == taskID);
+      var loc = { lat: marker.getLatLng().lat.toString(), lon: marker.getLatLng().lng.toString() };
+      removeTaskMarker(marker);
+      setMapMarkers(loc, taskID);
+      removePolyline(taskID);
       fetchActiveTasks();
     });
 }

@@ -911,7 +911,7 @@ function fetchOffers() {
     .then((data) => {
       if (data != "False") {
         data.forEach((res) => {
-          if (res.task_date_pickup = "null") {
+          if (res.task_date_pickup == "null") {
             res.task_date_pickup = "Not Available";
           }
           markup =
@@ -952,7 +952,7 @@ function fetchRequests() {
     .then((data) => {
       if (data != "False") {
         data.forEach((res) => {
-          if (res.task_date_pickup = "null") {
+          if (res.task_date_pickup == "null") {
             res.task_date_pickup = "Not Available";
           }
           markup =

@@ -16,7 +16,7 @@ $data = file_get_contents("php://input");
 $veh = $_SESSION['veh_id'];
 
 $stmtSelect = $conn->prepare(
-    "SELECT cit_fullname, cit_tel, task_date_create, task_goodn, task_goodv, task_id
+    "SELECT cit_fullname, cit_tel, task_date_create, task_goodn, task_goodv, task_id, task_cat
     FROM citizen 
     INNER JOIN tasks 
     ON cit_id = task_cit_id
@@ -35,7 +35,8 @@ if (mysqli_num_rows($result) > 0) {
             'creationDate' => $row['task_date_create'],
             'goodName' => $row['task_goodn'],
             'goodValue' => $row['task_goodv'],
-            'id' => $row['task_id']
+            'id' => $row['task_id'],
+            'category' => $row['task_cat'],
         ];
     }
 } else {

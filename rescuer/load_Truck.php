@@ -9,7 +9,6 @@ $db_name = "resqsupply";
 $conn = mysqli_connect($sname, $unmae, $password, $db_name);
 
 $data = file_get_contents("php://input");
-
 $dataArray = json_decode($data, true);
 
 $veh = $_SESSION['veh_id'];

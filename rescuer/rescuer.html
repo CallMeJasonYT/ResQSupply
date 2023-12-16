@@ -47,8 +47,8 @@
           <p>Load Truck</p>
           <i class="fa-regular fa-square-plus create" aria-hidden="true"></i>
         </div>
-        <div class="error">
-          <p>Your truck should be 100m or closer to the Base to be able to Load.</p>
+        <div class="error distance">
+          <p><b>Error:&nbsp;</b>Your truck must be 100m away or closer to the Base to be able to Load.</p>
         </div>
         <!-- Load Items -->
         <div class="load-items-tab">
@@ -94,10 +94,10 @@
             <ul class="selected-items-list">
             </ul>
             <div class="error zero-quantity">
-              <p>Please set a Quantity greater than 0.</p>
+              <p><b>Error:&nbsp;</b>Please set a Quantity greater than 0.</p>
             </div>
             <div class="error greater-quantity">
-              <p>You are trying to Load a bigger Quantity than what is Available in the Base.</p>
+              <p><b>Error:&nbsp;</b>You are trying to Load a bigger Quantity than what is Available in the Base.</p>
             </div>
             <button type="button" class="button next2"> Next </button>
           </div>
@@ -123,8 +123,8 @@
           <p>Unload Truck</p>
           <i class="fa-regular fa-square-plus create" aria-hidden="true"></i>
         </div>
-        <div class="error">
-          <p>Your truck should be 100m or closer to the Base to be able to Unload.</p>
+        <div class="error distance">
+          <p><b>Error:&nbsp;</b>Your truck must be 100m away or closer to the Base to be able to Unload.</p>
         </div>
         <!-- UnLoad Items Quantity -->
         <div class="unload-items-tab">
@@ -155,9 +155,51 @@
     <div class="module active">
       <!-- Mobile Selections -->
       <div class="map-container">
-        <div class="search">
+        <div class="search active">
           <i class="fa-solid fa-magnifying-glass mglass" id="search-icon"></i>
           <input type="text" class="address-search" placeholder="Search...">
+        </div>
+        <div class="filters-menu">
+          <div  class="cancelx" > 
+            <i class="fa-solid fa-xmark cancelr"></i>
+          </div>
+          <ul class="filters-list">
+            <li class="filter">
+              <div class="pending-request">
+                <input type="checkbox" checked>
+                <img src="/ResQSupply/icons/requestsIconPending.svg" alt="Pending Request Icon" width="25" height="25">
+                <p class="name">Pending Requests</p>
+              </div>
+            </li>
+            <li class="filter">
+              <div class="executing-request">
+                <input type="checkbox" checked>
+                <img src="/ResQSupply/icons/requestsIconExecuting.svg" alt="Executing Request Icon" width="25" height="25">
+                <p class="name">Executing Requests</p>
+              </div>
+            </li>
+            <li class="filter">
+              <div class="pending-offer">
+                <input type="checkbox" checked>
+                <img src="/ResQSupply/icons/offersIconPending.svg" alt="Pending Offer Icon" width="25" height="25">
+                <p class="name">Pending Offers</p>
+              </div>
+            </li>
+            <li class="filter">
+              <div class="executing-offer">
+                <input type="checkbox" checked>
+                <img src="/ResQSupply/icons/offersIconExecuting.svg" alt="Executing Offer Icon" width="25" height="25">
+                <p class="name">Executing Offers</p>
+              </div>
+            </li>
+            <li class="filter">
+              <div class="line">
+                <input type="checkbox" checked>
+                <img src="/ResQSupply/icons/linesIcon.svg" alt="Polyline Icon" width="25" height="25">
+                <p class="name">Tasks Lines</p>
+              </div>
+            </li>
+          </ul>
         </div>
         <div id="map"></div>
       </div>

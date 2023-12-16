@@ -214,6 +214,7 @@ form .input-box {
 /* Login Form Styling */
 .checkbox {
   display: flex;
+  align-items: center;
   column-gap: 8px;
   white-space: nowrap;
 }
@@ -260,10 +261,12 @@ form .input-box {
 .invalid .check,
 .invalid .checklogin {
   display: flex;
+  align-items: center;
 }
 
 .duplicate .check1 {
   display: flex;
+  align-items: center;
 }
 
 .check-title {

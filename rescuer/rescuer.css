@@ -50,6 +50,7 @@ div {
 
 .nav-options.active {
   display: flex;
+  align-items: center;
   justify-content: space-between;
 }
 
@@ -122,9 +123,12 @@ i.burgerx.active {
 
 .error.active {
   display: flex;
-  padding: 5px;
-  font-size: 15px;
+  font-size: 14px;
   color: red;
+}
+
+.leaflet-popup-content-wrapper .error{
+  font-size: 12px;
 }
 
 .rescuer-home {
@@ -179,6 +183,7 @@ i.burgerx.active {
   width: 100%;
   color: #ffffff;
   display: flex;
+  align-items: center;
 }
 
 .truck-title i {
@@ -224,6 +229,7 @@ i.burgerx.active {
   padding: 10px 0px;
   padding-top: 20px;
   display: flex;
+  align-items: center;
   width: 100%;
 }
 
@@ -235,6 +241,7 @@ i.burgerx.active {
 
 .truckload-list .list-item .quantity {
   display: flex;
+  align-items: center;
   justify-content: right;
   font-size: 13px;
   margin-top: 4px;
@@ -292,6 +299,7 @@ i.burgerx.active {
 .cancelbtn,
 .clrbtn {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   padding: 5px;
 }
@@ -317,12 +325,6 @@ i.burgerx.active {
   margin-top: 3px;
 }
 
-.item-title {
-  display: flex;
-  justify-content: space-between;
-  font-size: 18px;
-}
-
 .item-title i.trash {
   color: #9e1414;
   cursor: pointer;
@@ -336,6 +338,7 @@ i.burgerx.active {
 .add-load.active,
 .remove-load.active {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   padding: 5px;
   font-weight: 700;
@@ -362,12 +365,14 @@ i.burgerx.active {
 
 .item-drop-sel {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   padding: 5px;
 }
 
 .item-btn {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   cursor: pointer;
   font-size: 16px;
@@ -450,6 +455,7 @@ i.burgerx.active {
 
 .item-content {
   display: flex;
+  align-items: center;
   justify-content: space-between;
 }
 
@@ -484,6 +490,7 @@ li.selected {
 .unload-quantity-form .button,
 .unload-confirm-form .button {
   display: flex;
+  align-items: center;
   justify-content: center;
   font-size: 16px;
   border-radius: 5px;
@@ -496,6 +503,7 @@ li.selected {
 
 .item-count {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   height: 30px;
   align-items: center;
@@ -512,6 +520,7 @@ li.selected {
 
 .quantity-text {
   display: flex;
+  align-items: center;
   font-size: 16px;
 }
 
@@ -601,6 +610,7 @@ ul {
 
 .desktop-view {
   display: flex;
+  align-items: center;
 }
 
 .map-container {
@@ -610,6 +620,14 @@ ul {
 .map-container.desktop {
   top: 50%;
   height: 100%;
+}
+
+.map-container .search{
+  display: none;
+}
+
+.map-container .search.active{
+  display: block;
 }
 
 .search .mglass {
@@ -646,12 +664,95 @@ ul {
   color: #bfbfbf;
 }
 
-#map {
-  height: 400px;
-}
-
 #map_desktop {
   height: 82vh;
+}
+
+.map{
+  height: 400px;
+  display: none;
+}
+
+.map.active{
+  display: block;
+}
+
+.filters-menu{
+  display:none;
+}
+
+.filters-menu.active{
+  display:block;
+  position: relative;
+}
+
+.pending-request, .executing-request,
+.pending-offer, .executing-offer, .line{
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.cancelr{
+  position: absolute;
+  cursor: pointer;
+  top: 50px;
+  left: 33px;
+  height: 30px;
+  color: #0e505e;
+  font-size: 17px;
+  cursor: pointer;
+  transform: translateY(-50%);
+  position: fixed;
+  z-index: 501;
+}
+
+.filters-list {
+  position: relative;
+  list-style-type: none;
+  top:30px;
+  left: 50px;
+  margin-bottom: 30px;
+}
+
+.filter {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #0e505e;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #0e505e; 
+}
+
+.pending-request, .executing-request, .pending-offer, .executing-offer, .line {
+  display: flex;
+  align-items: center;
+}
+
+.pending-request img,
+.executing-request img,
+.pending-offer img,
+.executing-offer img,
+.line img {
+  margin-right: 10px;
+}
+
+.name {
+  margin: 0;
 }
 
 /* Active Tasks Styling*/
@@ -700,12 +801,14 @@ ul {
 
 .item-title {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   font-size: 18px;
 }
 
 .item-title .cancel {
   display: flex;
+  align-items: center;
   color: black;
   font-size: 16px;
   font-weight: 450;
@@ -722,12 +825,14 @@ ul {
 
 .information,
 .quantity,
-.datetime {
+.datetime,
+.type {
   font-size: 13px;
 }
 
-.datetime {
+.type {
   display: flex;
+  align-items: center;
   justify-content: space-between;
 }
 
@@ -737,6 +842,7 @@ ul {
 
 .complete-box {
   display: flex;
+  align-items: center;
   justify-content: right;
 }
 
@@ -752,6 +858,7 @@ ul {
 
 .check {
   display: flex;
+  align-items: center;
   font-size: 18px;
   margin-left: 5px;
   color: green;
@@ -805,13 +912,6 @@ ul {
   border: 1px solid #ddd;
   border-radius: 5px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  font-family: 'Arial', sans-serif;
-}
-
-.legend h4 {
-  margin-bottom: 10px;
-  font-size: 18px;
-  color: #333;
 }
 
 .legend div {
@@ -824,13 +924,6 @@ ul {
   width: 25px;
   height: 25px;
   margin-right: 8px;
-  border-radius: 50%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.legend span {
-  font-size: 14px;
-  color: #555;
 }
 
 @media screen and (max-width: 960px) {
@@ -850,6 +943,7 @@ ul {
 
 .filter-btn{
   display: flex;
+  align-items: center;
 }
 
 .filter-text{

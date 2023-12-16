@@ -51,6 +51,7 @@ div {
 
 .nav-options.active {
   display: flex;
+  align-items: center;
   justify-content: space-between;
 }
 
@@ -136,6 +137,7 @@ i.burgerx.active {
   padding: 10px 0px;
   padding-top: 20px;
   display: flex;
+  align-items: center;
   width: 100%;
 }
 
@@ -282,6 +284,7 @@ ul {
 .cancelbtn,
 .clrbtn {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   padding: 5px;
 }
@@ -306,6 +309,7 @@ ul {
 
 .item-title {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   font-size: 18px;
 }
@@ -344,6 +348,7 @@ ul {
 .add-req.active,
 .make-offer {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   padding: 5px;
   font-weight: 700;
@@ -378,6 +383,7 @@ ul {
 
 .item-drop-sel {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   padding: 5px;
 }
@@ -385,6 +391,7 @@ ul {
 .item-btn,
 .cat-btn {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   cursor: pointer;
   font-size: 16px;
@@ -634,6 +641,7 @@ li.selected {
 
 .cntr-text {
   display: flex;
+  align-items: center;
   font-size: 16px;
 }
 
@@ -658,6 +666,7 @@ li.selected {
 .requests-form .button,
 .offers-form .button {
   display: flex;
+  align-items: center;
   justify-content: center;
   font-size: 16px;
   border-radius: 5px;

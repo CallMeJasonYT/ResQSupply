@@ -192,6 +192,7 @@ signupForm.addEventListener("submit", (e) => {
     })
       .then((response) => response.json())
       .then((result) => {
+        formAct.action = "citizen/citizen.html";
         formAct.submit();
       });
   }
