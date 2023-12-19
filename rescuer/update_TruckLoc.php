@@ -8,8 +8,8 @@ $db_name = "resqsupply";
 $conn = mysqli_connect($sname, $unmae, $password, $db_name);
 $response = [];
 
-if(!$conn) {
-    die("Connection failed: ".mysqli_connect_error());
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
 }
 
 $veh = $_SESSION['veh_id'];

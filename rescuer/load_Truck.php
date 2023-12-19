@@ -13,7 +13,7 @@ $dataArray = json_decode($data, true);
 
 $veh = $_SESSION['veh_id'];
 
-foreach($dataArray['data'] as $data) {
+foreach ($dataArray['data'] as $data) {
     $itemText = $data['itemText'];
     $itemQ = $data['itemQ'];
 
@@ -22,7 +22,7 @@ foreach($dataArray['data'] as $data) {
     $stmtSelect->execute();
     $stmtSelect->bind_result($currentLoadGoodv);
 
-    if($stmtSelect->fetch()) {
+    if ($stmtSelect->fetch()) {
         $stmtSelect->close();
         $newLoadGoodv = $currentLoadGoodv + $itemQ;
         $stmtUpdate = $conn->prepare("UPDATE loads SET load_goodv = ? WHERE load_goodn = ? && load_veh = ?");
@@ -40,7 +40,7 @@ foreach($dataArray['data'] as $data) {
     }
 }
 
-foreach($dataArray['data'] as $data) {
+foreach ($dataArray['data'] as $data) {
     $itemText = $data['itemText'];
     $itemQ = $data['itemQ'];
 
@@ -49,7 +49,7 @@ foreach($dataArray['data'] as $data) {
     $stmtSelect->execute();
     $stmtSelect->bind_result($currentStrGoodv);
 
-    if($stmtSelect->fetch()) {
+    if ($stmtSelect->fetch()) {
         $stmtSelect->close();
         $newStrGoodv = $currentStrGoodv - $itemQ;
         $stmtUpdate = $conn->prepare("UPDATE storage SET str_goodv = ? WHERE str_goodn = ?");

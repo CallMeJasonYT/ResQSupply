@@ -23,7 +23,7 @@ $result = $stmtSelect->get_result();
 
 if (mysqli_num_rows($result) > 0) {
     while ($row = mysqli_fetch_assoc($result)) {
-        if ($row["task_status"] != "Completed"){
+        if ($row["task_status"] != "Completed") {
             $response[] = [
                 'task_id' => $row['task_id'],
                 'address' => $row['cit_addr']

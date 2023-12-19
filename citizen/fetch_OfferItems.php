@@ -7,8 +7,8 @@ $db_name = "resqsupply";
 $conn = mysqli_connect($sname, $unmae, $password, $db_name);
 $response = [];
 
-if(!$conn) {
-    die("Connection failed: ".mysqli_connect_error());
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
 }
 
 $data = file_get_contents("php://input");
@@ -26,7 +26,7 @@ mysqli_stmt_execute($stmt);
 
 $result = mysqli_stmt_get_result($stmt);
 
-while($row = mysqli_fetch_assoc($result)) {
+while ($row = mysqli_fetch_assoc($result)) {
     $response[] = [
         'goodName' => $row['good_name'],
         'goodCatId' => $row['good_cat_id'],

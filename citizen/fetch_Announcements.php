@@ -8,20 +8,20 @@ $conn = mysqli_connect($sname, $unmae, $password, $db_name);
 $response = [];
 
 // Check connection
-if(!$conn) {
-    die("Connection failed: ".mysqli_connect_error());
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
 }
 
 $query = "SELECT ann_id, ann_title, ann_text, ann_date, needs_goodn FROM announcements INNER JOIN needs WHERE ann_id=needs_ann_id";
 $result = mysqli_query($conn, $query);
 
-if(mysqli_num_rows($result) > 0) {
+if (mysqli_num_rows($result) > 0) {
     $groupedData = array();
-    while($row = mysqli_fetch_assoc($result)) {
+    while ($row = mysqli_fetch_assoc($result)) {
 
         $key = $row['ann_id'];
 
-        if(!isset($groupedData[$key])) {
+        if (!isset($groupedData[$key])) {
             $groupedData[$key] = $row;
             $groupedData[$key]['needs_goodn'] = array($row['needs_goodn']);
         } else {

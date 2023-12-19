@@ -9,8 +9,8 @@ $db_name = "resqsupply";
 $conn = mysqli_connect($sname, $unmae, $password, $db_name);
 $response = [];
 
-if(!$conn) {
-    die("Connection failed: ".mysqli_connect_error());
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
 }
 
 $task_cat = "Offer";
@@ -22,8 +22,8 @@ mysqli_stmt_execute($stmt);
 
 $result = mysqli_stmt_get_result($stmt);
 
-if(mysqli_num_rows($result) > 0) {
-    while($row = mysqli_fetch_assoc($result)) {
+if (mysqli_num_rows($result) > 0) {
+    while ($row = mysqli_fetch_assoc($result)) {
         $response[] = [
             'task_id' => $row['task_id'],
             'task_date_create' => $row['task_date_create'],

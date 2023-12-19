@@ -24,7 +24,7 @@ searchInput.addEventListener("keyup", function (event) {
 
 function fetchGeoSearch() {
   const query = searchInput.value;
-  fetch('https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + query + '&limit=1')
+  fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + query + '&limit=1')
     .then(result => result.json())
     .then(parsedResult => {
       setResultList(parsedResult[0]);
@@ -39,7 +39,7 @@ function setResultList(parsedResult) {
 }
 
 function fetchGeoTasks(query) {
-  fetch('https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + query.address + '&limit=1')
+  fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + query.address + '&limit=1')
     .then(result => result.json())
     .then(result => {
       setMapMarkers(result[0], query.task_id);
@@ -171,16 +171,16 @@ function setMapMarkers(result, task_id) {
     .then((response) => response.json())
     .then((data) => {
       data.forEach(res => {
-        var iconName= "";
+        var iconName = "";
         if (res.status != undefined && res.status != 'Completed') {
           iconName = "" + res.status + " " + res.category + "";
-        } else if (res.status != 'Completed'){
+        } else if (res.status != 'Completed') {
           iconName = res.category;
         };
         const latitude = parseFloat(result.lat);
         const longitude = parseFloat(result.lon);
 
-        if (iconName != ""){
+        if (iconName != "") {
           if (res.category != 'Truck' && res.category != 'Base') {
             const marker = new L.Marker([latitude, longitude], { icon: categoryIcons[iconName] });
             marker.taskInfo = {
@@ -206,7 +206,7 @@ function setMapMarkers(result, task_id) {
             marker.addTo(map);
             truckMarkers.push(marker);
             drawLine();
-  
+
             marker.on('dragend', function (e) {
               removeAllPolylines();
               var position = marker.getLatLng();
@@ -395,26 +395,26 @@ function addMarkersByCategory(category) {
 function getIconName(marker) {
   const iconUrl = marker.options.icon.options.iconUrl;
   const iconName = Object.keys(categoryIcons).find(key => categoryIcons[key].options.iconUrl == iconUrl);
-  return iconName; 
+  return iconName;
 }
 
-function hidePolylines(){
+function hidePolylines() {
   polylines.forEach(polyline => {
     map.removeLayer(polyline);
   })
 }
 
-function showPolylines(){
+function showPolylines() {
   polylines.forEach(polyline => {
     map.addLayer(polyline);
   })
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   var filterItems = document.querySelectorAll('.filters-list li .name');
   filterItems.forEach(function (item) {
     var checkbox = item.parentNode.querySelector('input[type="checkbox"]');
-    item.addEventListener('click', function() {
+    item.addEventListener('click', function () {
       checkbox.checked = !checkbox.checked;
     });
   })
@@ -490,7 +490,7 @@ function removeAllPolylines() {
   polylines.length = 0;
 }
 
-function removePolyline(task_id){
+function removePolyline(task_id) {
   const polylineToRemove = polylines.find(polyline => polyline.taskInfo.task_id == task_id);
   map.removeLayer(polylineToRemove);
   const index = polylines.indexOf(polylineToRemove);
@@ -704,7 +704,7 @@ loadTruckBtn.addEventListener("click", (e) => {
     loadItemsForm.classList.add("active");
     loadItems.classList.add("active");
     fetchLoadItems();
-  }else {
+  } else {
     distanceErrorLoad.classList.add("active");
   }
 });
@@ -748,7 +748,7 @@ unloadTruckBtn.addEventListener("click", (e) => {
     quantityUnLoad();
     unloadEventListener();
     maxBtnEventListener();
-  }else{
+  } else {
     distanceErrorUnload.classList.add("active");
   }
 });
@@ -1208,7 +1208,7 @@ function fetchActiveTasks() {
             `<div class="information">Citizen Information: ${res.fullname}, ${res.telephone}</div>` +
             `<div class="quantity">Quantity: ${res.goodValue}</div>` +
             `<div class="datetime">Creation Date: ${res.creationDate}</div>` +
-            `<div class="type">Type: ${res.category}`+
+            `<div class="type">Type: ${res.category}` +
             `<div class="complete-box">` +
             `<div class="complete">` +
             `<p> Complete </p>` +
@@ -1285,7 +1285,7 @@ function calculateDistance(point1, point2) {
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = R * c; 
+  const distance = R * c;
   return distance;
 }
 
@@ -1304,7 +1304,7 @@ function completeTask(taskID) {
     .then((data) => {
       const taskToBeCompleted = document.getElementById("" + taskID + "");
       const existingError = taskToBeCompleted.querySelector('.error');
-      
+
       if (data != false) {
         const marker = taskMarkers.find((marker) => marker.taskInfo.taskId == taskID);
         removeTaskMarker(marker);

@@ -17,9 +17,9 @@ $data = file_get_contents("php://input");
 $dataObject = json_decode($data);
 $task_id = $dataObject->taskID;
 
-if($task_id != 'Truck' && $task_id != null) {
+if ($task_id != 'Truck' && $task_id != null) {
     $stmtSelect = $conn->prepare(
-    "SELECT task_cat, task_status, task_veh
+        "SELECT task_cat, task_status, task_veh
     FROM citizen
     INNER JOIN tasks
     ON cit_id = task_cit_id
@@ -40,9 +40,11 @@ if($task_id != 'Truck' && $task_id != null) {
         }
     }
     $stmtSelect->close();
-}else if($task_id == 'Truck'){
+} else if ($task_id == 'Truck') {
     $response[] = ['category' => 'Truck'];
-}else{$response[] = ['category' => 'Base'];}
+} else {
+    $response[] = ['category' => 'Base'];
+}
 
 header('Content-Type: application/json');
 echo json_encode($response);

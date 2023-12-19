@@ -9,8 +9,8 @@ $conn = mysqli_connect($sname, $unmae, $password, $db_name);
 $response = [];
 
 // Check connection
-if(!$conn) {
-    die("Connection failed: ".mysqli_connect_error());
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
 }
 
 $veh = $_SESSION['veh_id'];
@@ -21,7 +21,7 @@ $stmt->bind_param('s', $veh);
 $stmt->execute();
 $result = $stmt->get_result();
 
-while($row = mysqli_fetch_assoc($result)) {
+while ($row = mysqli_fetch_assoc($result)) {
     $response[] = [
         'loadGoodN' => $row['load_goodn'],
         'loadGoodV' => $row['total_load_goodv']

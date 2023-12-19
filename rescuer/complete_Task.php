@@ -37,37 +37,36 @@ $stmtSelect->bind_param('ss', $veh, $goodname);
 $stmtSelect->execute();
 $stmtSelect->bind_result($goodvalueload);
 
-if($stmtSelect->fetch()) {
+if ($stmtSelect->fetch()) {
     $stmtSelect->close();
-    if($category == 'Request'){
-        if($goodvalueload >= $goodvalue){
+    if ($category == 'Request') {
+        if ($goodvalueload >= $goodvalue) {
             $newvalue = $goodvalueload - $goodvalue;
-            if($newvalue != 0){
+            if ($newvalue != 0) {
                 $stmtUpdate = $conn->prepare("UPDATE loads SET load_goodv = ? WHERE load_veh = ? && load_goodn = ?");
                 $stmtUpdate->bind_param("iss", $newvalue, $veh, $goodname);
                 $stmtUpdate->execute();
                 $stmtUpdate->close();
-            }else{
+            } else {
                 $stmtDelete = $conn->prepare("DELETE FROM loads WHERE load_goodn = ? && load_veh = ?");
                 $stmtDelete->bind_param('ss', $goodname, $veh);
                 $stmtDelete->execute();
                 $stmtDelete->close();
             }
-        }
-        else{
+        } else {
             $continue = false;
         }
-    }else{
+    } else {
         $newvalue = $goodvalueload + $goodvalue;
         $stmtUpdate = $conn->prepare("UPDATE loads SET load_goodv = ? WHERE load_veh = ? && load_goodn = ?");
         $stmtUpdate->bind_param("iss", $newvalue, $veh, $goodname);
         $stmtUpdate->execute();
         $stmtUpdate->close();
     }
-}else {
-    if($category == 'Request'){
+} else {
+    if ($category == 'Request') {
         $continue = false;
-    }else{
+    } else {
         $stmtInsert = $conn->prepare("INSERT INTO loads (load_goodv, load_veh, load_goodn) VALUES (?,?,?)");
         $stmtInsert->bind_param("iss", $goodvalue, $veh, $goodname);
         $stmtInsert->execute();
@@ -75,7 +74,7 @@ if($stmtSelect->fetch()) {
     }
 }
 
-if($continue != false){
+if ($continue != false) {
     $stmtUpdate = $conn->prepare("UPDATE tasks SET task_status = 'Completed' WHERE task_id = ?");
     $stmtUpdate->bind_param("i", $taskId);
     $stmtUpdate->execute();

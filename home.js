@@ -167,9 +167,9 @@ phoneInput.addEventListener("keyup", checkPhone);
 addressInput.addEventListener("keyup", checkAddress);
 
 //Submit Form Validation When Submiting
-const signupForm = document.querySelector(".form.signup_form");
+const submitBtn = document.querySelector("#submit");
 const emailInput = document.querySelector("#emailInput");
-signupForm.addEventListener("submit", (e) => {
+submitBtn.addEventListener("click", (e) => {
   checkUsername();
   checkFullname();
   checkPhone();
@@ -185,18 +185,31 @@ signupForm.addEventListener("submit", (e) => {
   ) {
     e.preventDefault();
   } else {
-    fetch("home.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: usernameInput.value, fullname: fullnameInput.value, phone: phoneInput.value, address: addressInput.value, password: passInput.value, email: emailInput.value }),
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        formAct.action = "citizen/citizen.html";
-        formAct.submit();
+    e.preventDefault();
+    var lat;
+    var lon;
+    fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + addressInput.value + '&limit=1')
+      .then(result => result.json())
+      .then(result => {
+            lat = result[0].lat;
+            lon = result[0].lon;
+            submit(lat,lon);
       });
   }
 });
+
+const regFormAct = document.querySelector("#signup-form");
+function submit(lat, lon){
+  fetch("home.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: usernameInput.value, fullname: fullnameInput.value, phone: phoneInput.value, address: addressInput.value, password: passInput.value, email: emailInput.value, latitude: lat, longitude: lon}),
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      window.location.href = "citizen/citizen.html";
+    });
+}
 
 //Login Form Validation When Submiting
 const loginForm = document.querySelector(".form.login_form");

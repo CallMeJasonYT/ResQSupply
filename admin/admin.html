@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResQSupply</title>
+  <link rel="stylesheet" href="admin.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <!-- Favicons -->
+  <script src="https://kit.fontawesome.com/67405e0868.js" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <nav class="nav">
+      <button class="button burger" type="button">
+        <i class="fa-solid fa-bars burgeri active"></i>
+        <i class="fa-solid fa-xmark burgerx"></i>
+      </button>
+      <div class="nav_logo">ResQSupply</div>
+      <button class="button logout" type="button"><i class="fa-solid fa-right-from-bracket"></i></button>
+    </nav>
+  </header>
+  <!-- Home -->
+  <section class="admin-home">
+    <div class="burger-container">
+        <ul class="burger-menu active">
+            <li class="burger-item" id="stats">Statistics</li>
+            <li class="burger-item" id="resacc">Rescuer Account Creation</li>
+            <li class="burger-item" id="announcement">Announcement Creation</li>
+            <li class="burger-item" id="storage">Storage Management</li>
+        </ul>
+        <div class="statistics"> stats </div>
+        <div class="rescuer-account"> 
+            <div class="form-container">
+                <div class="form signup_form">
+                    <div class="title">
+                      <h2>Rescuer Signup Form</h2>
+                    </div>
+                    <form id="signup-form" action="" method="post">
+                      <div class="field username">
+                        <div class="input-box">
+                          <input name="username" type="text" id="username" placeholder="Enter Rescuer's Username" minlength="8"
+                            maxlength="20" required autocomplete="on" />
+                          <i class="fa-solid fa-star user"></i>
+                        </div>
+                        <span class="check username">
+                          <p class="check-text">Please enter a Valid Username</p>
+                        </span>
+                        <span class="check1 username">
+                          <p class="check-text">This username is taken</p>
+                        </span>
+                      </div>
+                      <div class="field fullname">
+                        <div class="input-box">
+                          <input name="fullname" type="text" id="fullname" placeholder="Enter Rescuer's Full Name" minlength="5"
+                            maxlength="50" required autocomplete="on" />
+                          <i class="fa-solid fa-user fname"></i>
+                        </div>
+                        <span class="check fullname">
+                          <p class="check-text">Please enter a Valid Fullname</p>
+                        </span>
+                      </div>
+                      <div class="field phone">
+                        <div class="input-box">
+                          <input name="phone" type="tel" id="phone" placeholder="Enter Rescuer's Phone Number" minlength="10"
+                            maxlength="15" required autocomplete="on" />
+                          <i class="fa-solid fa-phone phone"></i>
+                        </div>
+                        <span class="check phone">
+                          <p class="check-text">Please enter a Valid Phone Number</p>
+                        </span>
+                      </div>
+                      <div class="field truck-id">
+                        <div class="input-box">
+                          <input name="truck-id" type="truck-id" id="truckid" placeholder="Enter Rescuer's Truck ID"
+                            autocomplete="on" />
+                          <i class="fa-solid fa-truck truck"></i>
+                        </div>
+                      </div>
+                      <div class="field address">
+                        <div class="input-box">
+                          <input name="address" type="text" id="address" placeholder="Enter Rescuer's Truck Address" required
+                            autocomplete="on" />
+                          <i class="fa-solid fa-location-dot address"></i>
+                        </div>
+                        <span class="check address">
+                          <p class="check-text">Please enter a Valid Address ex. Baker London</p>
+                        </span>
+                      </div>
+                      <div class="field password">
+                        <div class="input-box">
+                          <input name="password" type="password" id="pass" placeholder="Create Rescuer's Password" maxlength="12" required />
+                          <i class="fa-solid fa-lock password"></i>
+                          <i class="fa-solid fa-eye-slash pw_hide"></i>
+                        </div>
+                        <span class="password-check">
+                          <h3 class="check-title">Password should be:</h3>
+                          <ul class="checklist">
+                            <li class="checklist-item">8-12 Characters Long </li>
+                            <li class="checklist-item">Containing 1 Uppercase Character </li>
+                            <li class="checklist-item">Containing 1 Special Character </li>
+                            <li class="checklist-item">Containing English Characters </li>
+                          </ul>
+                        </span>
+                      </div>
+                      <button type="submit" class="button">Signup Now</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="announcement-creation"> ann </div>
+        <div class="storage-mngmt"> strg </div>
+    </div>
+    <div class="module active">
+      <!-- Mobile Selections -->
+      <div class="map-container">
+        <div class="search active">
+          <i class="fa-solid fa-magnifying-glass mglass" id="search-icon"></i>
+          <input type="text" class="address-search" placeholder="Search...">
+        </div>
+        <div class="filters-menu">
+          <div class="cancelx">
+            <i class="fa-solid fa-xmark cancelr"></i>
+          </div>
+          <ul class="filters-list">
+            <li class="filter">
+              <div class="pending-request">
+                <input type="checkbox" checked>
+                <img src="/ResQSupply/icons/requestsIconPending.svg" alt="Pending Request Icon" width="25" height="25">
+                <p class="name">Pending Requests</p>
+              </div>
+            </li>
+            <li class="filter">
+              <div class="executing-request">
+                <input type="checkbox" checked>
+                <img src="/ResQSupply/icons/requestsIconExecuting.svg" alt="Executing Request Icon" width="25"
+                  height="25">
+                <p class="name">Executing Requests</p>
+              </div>
+            </li>
+            <li class="filter">
+              <div class="pending-offer">
+                <input type="checkbox" checked>
+                <img src="/ResQSupply/icons/offersIconPending.svg" alt="Pending Offer Icon" width="25" height="25">
+                <p class="name">Pending Offers</p>
+              </div>
+            </li>
+            <li class="filter">
+              <div class="executing-offer">
+                <input type="checkbox" checked>
+                <img src="/ResQSupply/icons/offersIconExecuting.svg" alt="Executing Offer Icon" width="25" height="25">
+                <p class="name">Executing Offers</p>
+              </div>
+            </li>
+            <li class="filter">
+              <div class="line">
+                <input type="checkbox" checked>
+                <img src="/ResQSupply/icons/linesIcon.svg" alt="Polyline Icon" width="25" height="25">
+                <p class="name">Tasks Lines</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div id="map"></div>
+      </div>
+      <div class="storage-container">
+        <p class="storage-status"> Storage Status </p>
+        <table>
+            <thead>
+                <tr>
+                    <th> Item </th>
+                    <th> 
+                        <div class="dropdown">
+                            <button class="dropbtn">Category</button>
+                            <div class="dropdown-content">
+                                <div class="cat-selection">
+                                    <input type="checkbox"> <p> Drinks </p>
+                                </div>
+                                <div class="cat-selection">
+                                    <input type="checkbox"> <p> Fruits </p>
+                                </div>
+                                <div class="cat-selection">
+                                    <input type="checkbox"> <p> Medicine </p>
+                                </div>
+                            </div>
+                        </div> 
+                    </th>
+                    <th> Location </th>
+                    <th> Quantity </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td> Coca Cola </td>
+                    <td> Drinks </td>
+                    <td> Base </td>
+                    <td> 50 </td>
+                </tr>
+                <tr>
+                    <td> Coca Cola </td>
+                    <td> Drinks </td>
+                    <td> Base </td>
+                    <td> 50 </td>
+                </tr>
+                <tr>
+                    <td> Coca Cola </td>
+                    <td> Drinks </td>
+                    <td> Base </td>
+                    <td> 50 </td>
+                </tr>
+                <tr>
+                    <td> Coca Cola </td>
+                    <td> Drinks </td>
+                    <td> Truck </td>
+                    <td> 50 </td>
+                </tr>
+                <tr>
+                    <td> Coca Cola </td>
+                    <td> Drinks </td>
+                    <td> Truck </td>
+                    <td> 50 </td>
+                </tr>
+            </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="copyright">Copyright © 2023 ResQSupply</div>
+    </div>
+  </section>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="admin.js"></script>
+</body>
+
+</html>

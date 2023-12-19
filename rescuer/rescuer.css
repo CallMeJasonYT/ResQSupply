@@ -40,20 +40,6 @@ div {
   font-weight: 550;
 }
 
-.nav-options {
-  font-size: 16px;
-  font-weight: 450;
-  display: none;
-  justify-content: space-between;
-  margin-right: 40px;
-}
-
-.nav-options.active {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
 .nav .button {
   border: 0;
   cursor: pointer;
@@ -127,7 +113,7 @@ i.burgerx.active {
   color: red;
 }
 
-.leaflet-popup-content-wrapper .error{
+.leaflet-popup-content-wrapper .error {
   font-size: 12px;
 }
 
@@ -622,11 +608,11 @@ ul {
   height: 100%;
 }
 
-.map-container .search{
+.map-container .search {
   display: none;
 }
 
-.map-container .search.active{
+.map-container .search.active {
   display: block;
 }
 
@@ -668,32 +654,35 @@ ul {
   height: 82vh;
 }
 
-.map{
+.map {
   height: 400px;
   display: none;
 }
 
-.map.active{
+.map.active {
   display: block;
 }
 
-.filters-menu{
-  display:none;
+.filters-menu {
+  display: none;
 }
 
-.filters-menu.active{
-  display:block;
+.filters-menu.active {
+  display: block;
   position: relative;
 }
 
-.pending-request, .executing-request,
-.pending-offer, .executing-offer, .line{
+.pending-request,
+.executing-request,
+.pending-offer,
+.executing-offer,
+.line {
   display: flex;
   align-items: center;
   cursor: pointer;
 }
 
-.cancelr{
+.cancelr {
   position: absolute;
   cursor: pointer;
   top: 50px;
@@ -710,7 +699,7 @@ ul {
 .filters-list {
   position: relative;
   list-style-type: none;
-  top:30px;
+  top: 30px;
   left: 50px;
   margin-bottom: 30px;
 }
@@ -735,10 +724,14 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"]:checked {
-  background-color: #0e505e; 
+  background-color: #0e505e;
 }
 
-.pending-request, .executing-request, .pending-offer, .executing-offer, .line {
+.pending-request,
+.executing-request,
+.pending-offer,
+.executing-offer,
+.line {
   display: flex;
   align-items: center;
 }
@@ -928,34 +921,34 @@ input[type="checkbox"]:checked {
 
 @media screen and (max-width: 960px) {
   .legend {
-    font-size: 10px; 
+    font-size: 10px;
   }
 
   .legend div {
-    margin-bottom: 4px; 
+    margin-bottom: 4px;
   }
 
   .legend img {
-    width: 10px; 
-    height: 10px; 
+    width: 10px;
+    height: 10px;
   }
 }
 
-.filter-btn{
+.filter-btn {
   display: flex;
   align-items: center;
 }
 
-.filter-text{
+.filter-text {
   font-size: 20px;
   font-weight: 600;
 }
 
-.filter-ico{
+.filter-ico {
   margin-top: 5px;
   margin-right: 5px;
   font-size: 20px;
-  color:#0a7388;
+  color: #0a7388;
 }
 
 .custom-button {
@@ -964,7 +957,7 @@ input[type="checkbox"]:checked {
   height: 30px;
   border: none;
   color: white;
-  text-align: center; 
+  text-align: center;
   display: block;
   font-size: 16px;
   cursor: pointer;

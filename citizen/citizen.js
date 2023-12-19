@@ -1072,13 +1072,25 @@ nAddressButtons.forEach(function (nAddressButton) {
 
 function changeAddress(newAddress) {
   if (!addressFieldMob.classList.contains("invalid") && !addressFieldDesk.classList.contains("invalid")) {
-    fetch("update_Location.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ newAddress: newAddress })
-    })
-      .then((response) => {
-        return response.json();
-      })
+    var lat;
+    var lon;
+    fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + newAddress + '&limit=1')
+      .then(result => result.json())
+      .then(result => {
+            lat = result[0].lat;
+            lon = result[0].lon;
+            updateLoc(newAddress, lat, lon);
+      });
   }
+}
+
+function updateLoc(newAddress, lat, lon){
+  fetch("update_Location.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ address: newAddress, latitude: lat, longitude: lon })
+  })
+    .then((response) => {
+      return response.json();
+    })
 }
