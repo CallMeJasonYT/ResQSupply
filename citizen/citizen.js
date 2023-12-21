@@ -982,7 +982,7 @@ function fetchRequests() {
     });
 }
 
-//Fetching and Inserting Goods into the Requests Form
+// Fetching and Inserting Goods into the Requests Form
 function fetchGoods() {
   fetch("fetch_Goods.php", {
     method: "POST"
@@ -993,17 +993,25 @@ function fetchGoods() {
     .then((data) => {
       var items = data.items;
       var categories = data.categories;
+      var uniqueCategories = new Set();
+
       items.forEach((item) => {
         markupItem = `<li class="item">${item}</li>`;
         document.querySelector(".requests-form .item-list").insertAdjacentHTML("beforeend", markupItem);
       });
+
       itemsReqBtn = document.querySelectorAll(".requests-form .item-list .item");
       itemReqSearchListener();
       itemsReqBtnListener();
+
       categories.forEach((category) => {
-        markupCategory = `<li class="item">${category}</li>`;
-        document.querySelector(".requests-form .category-list").insertAdjacentHTML("beforeend", markupCategory);
+        if (!uniqueCategories.has(category)) {
+          markupCategory = `<li class="item">${category}</li>`;
+          document.querySelector(".requests-form .category-list").insertAdjacentHTML("beforeend", markupCategory);
+          uniqueCategories.add(category);
+        }
       });
+
       catReqBtn = document.querySelectorAll(".requests-form .category-list .item");
       catReqSearchListener();
       catReqBtnListener();

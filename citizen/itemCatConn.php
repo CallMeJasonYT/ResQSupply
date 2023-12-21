@@ -11,24 +11,28 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-$query = "SELECT good_name, cat_name FROM goods INNER JOIN categories ON good_cat_id = cat_id";
-$stmt = mysqli_prepare($conn, $query);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
+$stmtSelect = $conn->prepare(
+    "SELECT str_goodn, cat_name FROM storage 
+    INNER JOIN goods 
+    ON str_goodn = good_name 
+    INNER JOIN categories 
+    ON good_cat_id = cat_id");
+$stmtSelect->execute();
+$result = $stmtSelect->get_result();
 
 $categories = [];
+if (mysqli_num_rows($result) > 0) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $goodName = $row['str_goodn'];
+        $catName = $row['cat_name'];
 
-while ($row = mysqli_fetch_assoc($result)) {
-    $goodName = $row['good_name'];
-    $catName = $row['cat_name'];
-
-    if (!isset($categories[$catName])) {
-        $categories[$catName] = ['items' => []];
+        if (!isset($categories[$catName])) {
+            $categories[$catName] = ['items' => []];
+        }
+        $categories[$catName]['items'][] = $goodName;
     }
-    $categories[$catName]['items'][] = $goodName;
 }
-
-mysqli_close($conn);
+$stmtSelect->close();
 
 header('Content-Type: application/json');
 echo json_encode(['categories' => $categories]);

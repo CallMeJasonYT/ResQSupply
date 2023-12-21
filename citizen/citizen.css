@@ -171,12 +171,15 @@ i.burgerx.active {
 }
 
 .burger-menu {
-  position: fixed;
+  display: none;
+  position: relative;
   text-align: center;
   padding: 35px;
   max-width: 620px;
   width: 100%;
-  top: 20%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .burger-item {

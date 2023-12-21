@@ -141,7 +141,7 @@ i.burgerx.active {
 
 .burger-container {
   position: absolute;
-  height: 85vh;
+  height: 80vh;
   max-width: 620px;
   width: 100%;
   top: 50%;
@@ -185,12 +185,13 @@ i.burgerx.active {
 
 .clr-text {
   padding-left: 5px;
-  margin-bottom: 5px;
 }
 
 .cancell,
 .cancelu,
-.broomr {
+.cancela,
+.cancels
+.brooma {
   cursor: pointer;
   font-size: 18px;
 }
@@ -589,7 +590,6 @@ input[type="checkbox"]:checked {
 
 .filter-btn {
   display: flex;
-  align-items: center;
 }
 
 .filter-text {
@@ -687,7 +687,9 @@ thead th.active,tbody td.active {
     padding: 35px;
     max-width: 620px;
     width: 100%;
-    top: 20%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
 }
 
 .burger-menu.active{
@@ -739,107 +741,113 @@ thead th.active,tbody td.active {
     pointer-events: auto;
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
-  }
+}
   
-  .signup_form {
-    display: block;
-  }
+.signup_form {
+  display: block;
+}
+
+.form .title {
+  font-size: 18px;
+  color: #0b0217;
+  text-align: center;
+}
+
+.input-box {
+  position: relative;
+  margin-top: 5px;
+  transition: all 0.4s ease-out;
+  width: 100%;
+  height: 40px;
+}
+
+.input-box input {
+  height: 100%;
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 0 30px;
+  color: #333;
+  transition: all 0.2s ease;
+  border-bottom: 1.5px solid #aaaaaa;
+}
+
+.input-box input:focus {
+  border-color: #0a7388;
+}
+
+.input-box i {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #707070;
+}
+
+.input-box i.user,
+.input-box i.fname,
+.input-box i.phone,
+.input-box i.address,
+.input-box i.truck,
+.input-box i.password {
+  left: 0;
+}
+
+.input-box input:focus~i.user,
+.input-box input:focus~i.fname,
+.input-box input:focus~i.phone,
+.input-box input:focus~i.truck,
+.input-box input:focus~i.address,
+.input-box input:focus~i.password,
+.input-box input:focus~i.pw_hide {
+  color: #0a7388;
+}
+
+.input-box i.pw_hide {
+  right: 0;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.option_field {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
   
-  .form .title {
-    font-size: 18px;
-    color: #0b0217;
-    text-align: center;
-  }
+.field {
+  margin-bottom: 10px;
+  margin-top: 10px
+}
   
-  .input-box {
-    position: relative;
-    margin-top: 5px;
-    transition: all 0.4s ease-out;
-    width: 100%;
-    height: 40px;
-  }
+form .input-box {
+  position: relative;
+  height: 40px;
+  width: 100%;
+}
+
+.form-container a {
+  color: #0a7388;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.form-container a:hover {
+  text-decoration: underline;
+}
   
-  .input-box input {
-    height: 100%;
-    width: 100%;
-    border: none;
-    outline: none;
-    padding: 0 30px;
-    color: #333;
-    transition: all 0.2s ease;
-    border-bottom: 1.5px solid #aaaaaa;
-  }
-  
-  .input-box input:focus {
-    border-color: #0a7388;
-  }
-  
-  .input-box i {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 20px;
-    color: #707070;
-  }
-  
-  .input-box i.user,
-  .input-box i.fname,
-  .input-box i.phone,
-  .input-box i.address,
-  .input-box i.truck,
-  .input-box i.password {
-    left: 0;
-  }
-  
-  .input-box input:focus~i.user,
-  .input-box input:focus~i.fname,
-  .input-box input:focus~i.phone,
-  .input-box input:focus~i.truck,
-  .input-box input:focus~i.address,
-  .input-box input:focus~i.password,
-  .input-box input:focus~i.pw_hide {
-    color: #0a7388;
-  }
-  
-  .input-box i.pw_hide {
-    right: 0;
-    font-size: 20px;
-    cursor: pointer;
-  }
-  
-  .option_field {
-    margin-top: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  form .field {
-    margin-bottom: 10px;
-    margin-top: 10px
-  }
-  
-  form .input-box {
-    position: relative;
-    height: 40px;
-    width: 100%;
-  }
-  
-  .form-container a {
-    color: #0a7388;
-    font-size: 12px;
-    text-decoration: none;
-  }
-  
-  .form-container a:hover {
-    text-decoration: underline;
-  }
-  
-  .form-container .button {
+.form-container .button,
+.ann-text-form .button,
+.ann-items-form .button,
+.ann-confirm-form .button,
+.transfered-items-tab .button,
+.storage-managment-tab .button,
+.storage-confirm-form .button {
     background: #0a7388;
     margin-top: 5px;
     width: 100%;
-    padding: 10px 0;
+    padding: 5px 0;
     transition: all 0.4s ease-out;
     border-radius: 10px;
     color: #fff;
@@ -914,3 +922,213 @@ thead th.active,tbody td.active {
     content: '\f00c \00a0';
     color: #00000046;
   }
+
+.ann-tab,
+.storage-managment-tab,
+.transfered-items-tab
+ {
+  display: none;
+}
+
+.storage-managment-tab{
+  margin-top: 50px;
+}
+
+.ann-tab.active,
+.storage-managment-tab.active,
+.transfered-items-tab.active {
+  display: block;
+}
+
+.add-ann,
+.remove-load {
+  display: none;
+}
+
+.add-ann.active{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 5px;
+  font-weight: 700;
+  font-size: 15px;
+  margin-top: 10px;
+}
+
+.add-ann.active i.create {
+  font-size: 24px;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: all 0.1s ease-out;
+}
+
+.ann-create-tab {
+  margin-top: 100px;
+  display: none;
+}
+
+.ann-create-tab.active {
+  display: block;
+}
+
+.ann-text-form,
+.ann-items-form,
+.ann-confirm-form,
+.goods-items-form,
+.storage-items-form,
+.storage-quantity-form,
+.storage-confirm-form{
+  position: relative;
+  width: 100%;
+  padding: 25px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #525151;
+  border-radius: 6px;
+  background: #ffffff;
+  font-size: 16px;
+  display: none;
+}
+
+.goods-items-form,
+.storage-items-form,
+.storage-quantity-form,
+.storage-confirm-form{
+  padding: 15px;
+  margin-bottom: 10px;
+}
+
+.ann-text-form.active,
+.ann-items-form.active,
+.ann-confirm-form.active,
+.goods-items-form.active,
+.storage-items-form.active,
+.storage-quantity-form.active,
+.storage-confirm-form.active {
+  display: block;
+  position: sticky;
+}
+
+.ann-text-form .input-box input{
+  padding: 0;
+}
+
+.ann-text-form .cancelbtn,
+.ann-confirm-form .cancelbtn,
+.storage-quantity-form .cancelbtn{
+  justify-content: flex-end;
+}
+
+.item-options {
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.transfered-items-tab .item-options,
+.items-list{
+  max-height: 85px;
+  overflow-y: auto;
+}
+
+.item-options {
+  display: none;
+}
+
+.item-options.active {
+  display: block;
+}
+
+.item-options li {
+  height: 30px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.storage-quantity-form li{
+  cursor: auto;
+}
+
+.item-options li:hover,
+li.selected {
+  border-radius: 5px;
+  background: #f2f2f2;
+}
+
+.storage-quantity-form li:hover{
+  background: none;
+  border-radius: 0px;
+}
+
+.form-title{
+  font-weight: 600;
+  text-align: center;
+}
+
+.item {
+  padding: 5px;
+}
+
+.storage-tab-control {
+  padding: 10px 0px;
+  padding-top: 0px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.exchange-ico{
+  display: flex;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #0e505e;
+}
+
+.item-count {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 30px;
+}
+
+.item-quantity {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  background: #FFF;
+  border: none;
+}
+
+.quantity-text {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}
+
+.quantity-input {
+  width: 50px;
+  height: 25px;
+  margin-left: 5px;
+  outline: none;
+  font-size: 14px;
+  border-radius: 5px;
+  text-align: center;
+  border: 1px solid #B3B3B3;
+}
+
+.reset-button {
+  margin-left: 10px;
+  padding: 5px;
+  transition: all 0.4s ease-out;
+  cursor: pointer;
+  border-radius: 5px;
+  background: #23778a;
+  border-color: #000000;
+  color: #fff;
+  border-radius: 6px;
+}
+
+.reset-button:active {
+  background-color: #0e505e;
+  transform: scale(0.98);
+}

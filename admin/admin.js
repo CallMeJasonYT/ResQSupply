@@ -295,7 +295,7 @@ function removeTaskMarker(marker) {
   if (index !== -1) {
     taskMarkers.splice(index, 1);
   }
-}*/
+}
 
 const filters = L.control({ position: 'topleft' });
 filters.onAdd = function (map) {
@@ -445,7 +445,7 @@ L.control.zoom({
   position: 'bottomright'
 }).addTo(map);
 
-/*const polylines = [];
+const polylines = [];
 var veh_id;
 function drawLine() {
   const truckMarker = truckMarkers.find((marker) => marker.truckInfo.vehId == veh_id);
@@ -545,7 +545,7 @@ const unloadTab = document.querySelector(".unload-tab");
 function deskDivCreation() {
   var desktopViewDiv = document.createElement("div");
   desktopViewDiv.className = "desktop-view";
-  var parentContainer = document.querySelector(".rescuer-home");
+  var parentContainer = document.querySelector(".admin-home");
   parentContainer.insertBefore(desktopViewDiv, burgerCont);
   desktopViewDiv.appendChild(burgerCont);
   desktopViewDiv.appendChild(moduleSel);
@@ -561,7 +561,6 @@ const mapCont = document.querySelector(".map-container");
 function deskCustomization() {
   mapItem.id = "map_desktop";
   mapCont.classList.add("desktop");
-  tasksCont.classList.add("desktop");
   moduleSel.classList.add("desktop");
   burgerCont.classList.add("desktop");
   burgerIcox.classList.remove("active");
@@ -587,21 +586,9 @@ function deskDivDeletion() {
 }
 
 //Activating 
-const loadTab = document.querySelector(".load-tab");
-const truckloadTab = document.querySelector(".truckload-tab");
-const loadBtn = document.querySelector("#loadBtn");
-const truckloadBtn = document.querySelector("#truckloadBtn");
-const unloadBtn = document.querySelector("#unloadBtn");
 function mobileCustomization() {
-  loadTab.classList.remove("active");
-  unloadTab.classList.remove("active");
-  truckloadTab.classList.add("active");
-  unloadBtn.classList.remove("selected");
-  loadBtn.classList.remove("selected");
-  truckloadBtn.classList.add("selected");
   mapItem.id = "map";
   mapCont.classList.remove("desktop");
-  tasksCont.classList.remove("desktop");
   moduleSel.classList.remove("desktop");
   burgerCont.classList.remove("desktop");
   burgerIco.classList.add("active");
@@ -623,7 +610,8 @@ burgerIco.addEventListener("click", (e) => {
 const statsTab = document.querySelector(".statistics");
 const rescAccTab = document.querySelector(".rescuer-account");
 const annCreationTab = document.querySelector(".announcement-creation");
-const storageMngTab = document.querySelector(".storage-mngmt");
+const storageMngOpt = document.querySelector(".storage-mngmt");
+
 burgerIcox.addEventListener("click", (e) => {
   burgerIcox.classList.remove("active");
   burgerIco.classList.add("active");
@@ -631,7 +619,7 @@ burgerIcox.addEventListener("click", (e) => {
   statsTab.classList.remove("active");
   rescAccTab.classList.remove("active");
   annCreationTab.classList.remove("active");
-  storageMngTab.classList.remove("active");
+  storageMngOpt.classList.remove("active");
   moduleSel.classList.add("active");
 });
 
@@ -645,22 +633,22 @@ burgerItems.forEach(function (item) {
                 statsTab.classList.add("active");
                 rescAccTab.classList.remove("active");
                 annCreationTab.classList.remove("active");
-                storageMngTab.classList.remove("active");
+                storageMngOpt.classList.remove("active");
                 break;
             case "resacc":
                 rescAccTab.classList.add("active");
                 statsTab.classList.remove("active");
                 annCreationTab.classList.remove("active");
-                storageMngTab.classList.remove("active");
+                storageMngOpt.classList.remove("active");
                 break;
             case "announcement":
                 annCreationTab.classList.add("active");
                 statsTab.classList.remove("active");
                 rescAccTab.classList.remove("active");
-                storageMngTab.classList.remove("active");
+                storageMngOpt.classList.remove("active");
                 break;
             case "storage":
-                storageMngTab.classList.add("active");
+                storageMngOpt.classList.add("active");
                 statsTab.classList.remove("active");
                 rescAccTab.classList.remove("active");
                 annCreationTab.classList.remove("active");
@@ -669,460 +657,92 @@ burgerItems.forEach(function (item) {
     });
 });
 
-/* ~~~~~~~~~~ Fetch Functions ~~~~~~~~~~ */
-//Fetching the Items that each Load requires
-var loadItemCat;
-function fetchLoadItems() {
-  fetch("fetch_BaseItems.php", {
-    method: "POST"
-  })
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      data.forEach((res) => {
-        const markupItem =
-          `<li class="item">` +
-          `<div class="item-content">` +
-          `<p class="item-text">${res.strGoodN}</p>` +
-          `<p class="item-available">Available: ${res.strGoodV}</p>` +
-          `</div>` +
-          `</li>`;
-        document.querySelector(".load-items-form .item-list").insertAdjacentHTML("beforeend", markupItem);
-      });
-      itemsLoadBtn = document.querySelectorAll(".load-items-form .item-list .item");
-      itemsLoadBtnListener();
-    });
-}
+/* ~~~~~~~~~~ Announcement Creation Functions ~~~~~~~~~~ */
 
-function loadTruck() {
-  fetch("load_Truck.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ data: loadDataArray })
-  })
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      loadDataArray = [];
-      truckLoadArray = [];
-      fetchTruckLoad();
-    })
-}
-
-function unloadTruck() {
-  fetch("unload_Truck.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ data: unloadDataArray })
-  })
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      unloadDataArray = [];
-      truckLoadArray = [];
-      fetchTruckLoad();
-    })
-}
-
-//Fetching the Items of the Truck
-function fetchTruckLoad() {
-  fetch("fetch_TruckLoad.php", {
-    method: "POST"
-  })
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      data.forEach((res) => {
-        const markupItem =
-          `<li class="list-item">` +
-          `<div class="item-title"><b>${res.loadGoodN}</b>` +
-          `<p class="quantity"> Quantity: ${res.loadGoodV}</p>` +
-          `</div>` +
-          `</li>`
-        document.querySelector(".truckload-tab .truckload-list").insertAdjacentHTML("beforeend", markupItem);
-        var itemData = {
-          "itemText": res.loadGoodN,
-          "itemQ": res.loadGoodV
-        };
-        truckLoadArray.push(itemData);
-      });
-      truckLoadItems = document.querySelectorAll(".truckload-list .list-item");
-    });
-}
-
-//Fetching the Username and Vehicle of the User and displaying the Welcome Message
-function fetchResInfo() {
-  fetch("fetch_ResInfo.php", {
-    method: "POST"
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      const userData = data.data[0];
-      veh_id = userData.vehicle;
-      if (userData) {
-        const markupWelcome = `<div class="welcome">Welcome, ${userData.username}!</div>`;
-        document.querySelector(".footer").insertAdjacentHTML("afterBegin", markupWelcome);
-
-        const markupVehicle =
-          `<p class="truckNum">Truck ID: ${userData.vehicle}</p>` +
-          `<p class="truckOwner">Owner: ${userData.username}</p>`;
-
-        document.querySelector(".truck-info").insertAdjacentHTML("beforeEnd", markupVehicle);
-      }
-      fetchTruckLoad();
-    });
-}
-
-//Fetching Active Tasks
-function fetchActiveTasks() {
-  document.querySelector(".tasks-list").innerHTML = "";
-  fetch("fetch_ActiveTasks.php")
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      if (data != "False") {
-        data.forEach((res) => {
-          markup =
-            `<li class="list-item" id=${res.id}>` +
-            `<div class="item-title"><b>${res.goodName}</b>` +
-            `<div class="cancel">` +
-            `<p> Cancel </p>` +
-            `<i class="fa-solid fa-ban cancelt"></i>` +
-            `</div>` +
-            `</div>` +
-            `<div class="information">Citizen Information: ${res.fullname}, ${res.telephone}</div>` +
-            `<div class="quantity">Quantity: ${res.goodValue}</div>` +
-            `<div class="datetime">Creation Date: ${res.creationDate}</div>` +
-            `<div class="type">Type: ${res.category}` +
-            `<div class="complete-box">` +
-            `<div class="complete">` +
-            `<p> Complete </p>` +
-            `<i class="fa-solid fa-check check"></i>` +
-            `</div>` +
-            `</div>` +
-            `</div>` +
-            `</li>`
-          document.querySelector(".tasks-list").insertAdjacentHTML("beforeend", markup);
-        });
-        cancelBtn = document.querySelectorAll(".tasks-list .list-item .cancel");
-        cancelBtnListener();
-        completeBtn = document.querySelectorAll(".tasks-list .list-item .complete");
-        completeBtnListener();
-        activeTasks = document.querySelectorAll(".tasks-list li");
-      } else {
-        markup = `<p>There aren't any Active Tasks assigned to your Truck</p>`;
-        document.querySelector(".tasks-list").insertAdjacentHTML("beforeend", markup);
-      }
-    });
-}
-
-//Adding Listeners to the complete Buttons
-var completeBtn = document.querySelectorAll(".tasks-list .list-item .complete");
-function completeBtnListener() {
-  completeBtn.forEach(function (btn) {
-    if (!btn.dataset.listenerAdded) {
-      btn.addEventListener("click", function () {
-        var id = btn.parentNode.parentNode.parentNode.id;
-        const taskMarker = taskMarkers.find((marker) => marker.taskInfo.taskId == id);
-
-        if (truckMarkers.length > 0 && taskMarker) {
-          const truckMarker = truckMarkers[0];
-          const distance = calculateDistance(truckMarker.getLatLng(), taskMarker.getLatLng());
-
-          const taskToBeCompleted = document.getElementById("" + id + "");
-          const existingDistanceError = taskToBeCompleted.querySelector('.error.distance');
-          const existingLoadError = taskToBeCompleted.querySelector('.error.load');
-
-          if (distance <= 50) {
-            completeTask(id);
-            if (existingDistanceError) {
-              existingDistanceError.remove();
-            }
-          } else {
-            if (existingLoadError) {
-              existingLoadError.remove();
-            }
-            if (!existingDistanceError) {
-              const markup =
-                `<div class="error distance active">` +
-                `<p><b>Error:&nbsp;</b>Your truck must be 50m away or closer to the Task Location.</p>` +
-                `</div>`;
-              taskToBeCompleted.insertAdjacentHTML("beforeend", markup);
-            }
-          }
-        }
-      });
-      btn.dataset.listenerAdded = true;
-    }
-  });
-}
-
-//Calculate the distance between the truck and the task
-function calculateDistance(point1, point2) {
-  const R = 6371000;
-  const lat1 = (point1.lat * Math.PI) / 180;
-  const lon1 = (point1.lng * Math.PI) / 180;
-  const lat2 = (point2.lat * Math.PI) / 180;
-  const lon2 = (point2.lng * Math.PI) / 180;
-  const dLat = lat2 - lat1;
-  const dLon = lon2 - lon1;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = R * c;
-  return distance;
-}
-
-// Function that completes a Task
-function completeTask(taskID) {
-  fetch("complete_Task.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ taskId: taskID })
-  })
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      const taskToBeCompleted = document.getElementById("" + taskID + "");
-      const existingError = taskToBeCompleted.querySelector('.error');
-
-      if (data != false) {
-        const marker = taskMarkers.find((marker) => marker.taskInfo.taskId == taskID);
-        removeTaskMarker(marker);
-        removePolyline(taskID);
-        fetchActiveTasks();
-        removeTruckLoad();
-        truckLoadArray = [];
-        fetchTruckLoad();
-
-        if (existingError) {
-          existingError.remove();
-        }
-      } else {
-        if (!existingError) {
-          const markup =
-            `<div class="error load active">` +
-            `<p><b>Error:&nbsp;</b> There aren't enough resources in your Truck to Complete this Task.</p>` +
-            `</div>`;
-          taskToBeCompleted.insertAdjacentHTML("beforeend", markup);
-        }
-      }
-    });
-}
-
-//Adding Listeners to the cancel Buttons
-var cancelBtn = document.querySelectorAll(".tasks-list .list-item .cancel");
-function cancelBtnListener() {
-  cancelBtn.forEach(function (btn) {
-    if (!btn.dataset.listenerAdded) {
-      btn.addEventListener("click", function () {
-        var id = btn.parentNode.parentNode.id;
-        cancelTask(id);
-      });
-      btn.dataset.listenerAdded = true;
-    }
-  });
-}
-
-//Function that cancels a Task
-function cancelTask(taskID) {
-  fetch("cancel_Task.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ taskId: taskID }),
-  })
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      const marker = taskMarkers.find((marker) => marker.taskInfo.taskId == taskID);
-      var loc = { lat: marker.getLatLng().lat.toString(), lon: marker.getLatLng().lng.toString() };
-      removeTaskMarker(marker);
-      setMapMarkers(loc, taskID);
-      removePolyline(taskID);
-      fetchActiveTasks();
-    });
-}
-
-//Logging out Actions
-const logoutButton = document.querySelector(".button.logout");
-logoutButton.addEventListener("click", logoutUser);
-function logoutUser() {
-  fetch("/ResQSupply/logout_User.php", {
-    method: "POST",
-    credentials: 'include'
-  });
-  location.href = "/" + "ResQSupply/home.html";
-}
-
-//Form Validation
-
-//Show-Hide Password Icon
-const pwShowHide = document.querySelectorAll(".pw_hide");
-pwShowHide.forEach((icon) => {
-  icon.addEventListener("click", () => {
-    let getPwInput = icon.parentElement.querySelector("input");
-    if (getPwInput.type === "password") {
-      getPwInput.type = "text";
-      icon.classList.replace("fa-eye-slash", "fa-eye");
-    } else {
-      getPwInput.type = "password";
-      icon.classList.replace("fa-eye", "fa-eye-slash");
-    }
-  });
+const addAnnouncement = document.querySelector(".add-ann");
+const annCreateTab = document.querySelector(".ann-create-tab");
+const annTextForm = document.querySelector(".ann-text-form");
+const annItemsForm = document.querySelector(".ann-items-form");
+addAnnouncement.addEventListener("click", (e) => {
+  addAnnouncement.classList.remove("active");
+  annCreateTab.classList.add("active");
+  annTextForm.classList.add("active")
 });
 
-//Password Requirements
-let validationRegex = [
-  { regex: /.{8,}/ },
-  { regex: /[A-Z]/ },
-  { regex: /[^A-Za-z0-9]/ },
-  { regex: /^[a-zA-Z0-9!@#$%^&*()-_=+{}\[\]:;<>,.?\/\\|]+$/ },
-];
-
-//Password Requirements Checklist
-const passChecklist = document.querySelectorAll(".checklist-item");
-const passInput = document.querySelector("#pass");
-passInput.addEventListener("keyup", () => {
-  validationRegex.forEach((item, i) => {
-    let isValid = item.regex.test(passInput.value);
-    if (isValid) {
-      passChecklist[i].classList.add("checked");
-    } else {
-      passChecklist[i].classList.remove("checked");
-    }
-  });
-});
-
-//Show-Hide Password Requirements
-const passField = document.querySelector(".field.password");
-passInput.addEventListener("focus", (e) => {
-  e.preventDefault();
-  passField.classList.add("active");
-});
-passInput.addEventListener("blur", (e) => {
-  e.preventDefault();
-  passField.classList.remove("active");
-});
-
-//Password Validation
-function checkPass() {
-  for (var i = 0; i < passChecklist.length; i++) {
-    if (!passChecklist[i].classList.contains("checked")) {
-      passGood = false;
-    } else passGood = true;
-  }
-}
-
-//Username Validation
-const usernamePattern = /^[a-zA-Z0-9]+\s?[a-zA-Z0-9]+$/;
-const usernameField = document.querySelector(".field.username");
-const usernameInput = document.querySelector("#username");
-function checkUsername() {
-  if (!usernameInput.value.match(usernamePattern)) {
-    usernameField.classList.add("invalid");
-    usernameField.classList.remove("duplicate");
-  } else {
-    usernameField.classList.remove("invalid");
-    checkUsernameAvailability();
-  }
-}
-
-//Fullname Validation
-const fullnamePattern = /[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+\s+[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+$/;
-const fullnameField = document.querySelector(".field.fullname");
-const fullnameInput = document.querySelector("#fullname");
-function checkFullname() {
-  if (!fullnameInput.value.match(fullnamePattern)) {
-    return fullnameField.classList.add("invalid");
-  }
-  fullnameField.classList.remove("invalid");
-}
-
-//Phone Number Validation
-const phonePattern = /^[+0-9]+$/;
-const phoneField = document.querySelector(".field.phone");
-const phoneInput = document.querySelector("#phone");
-function checkPhone() {
-  if (!phoneInput.value.match(phonePattern)) {
-    return phoneField.classList.add("invalid");
-  }
-  phoneField.classList.remove("invalid");
-}
-
-//Address Validation
-const addressPattern = /^[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+\s+[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+$/;
-const addressField = document.querySelector(".field.address");
-const addressInput = document.querySelector("#address");
-function checkAddress() {
-  if (!addressInput.value.match(addressPattern)) {
-    return addressField.classList.add("invalid");
-  }
-  addressField.classList.remove("invalid");
-}
-
-// AJAX Request to check the Database for Username Similarity
-function checkUsernameAvailability() {
-  var data = { username: usernameInput.value };
-  fetch("check_username.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+const cancelAnn = document.querySelectorAll(".cancela");
+const annConfirmForm = document.querySelector(".ann-confirm-form");
+cancelAnn.forEach(function(btn){
+  btn.addEventListener("click", function(){
+    addAnnouncement.classList.add("active");
+    annCreateTab.classList.remove("active");
+    annTextForm.classList.remove("active");
+    annItemsForm.classList.remove("active");
+    annConfirmForm.classList.remove("active");
   })
-    .then((response) => response.json())
-    .then((result) => {
-      if (result != "False") {
-        usernameField.classList.add("duplicate");
-      } else {
-        usernameField.classList.remove("duplicate");
-      }
-    });
-}
-//Validation When Typing
-usernameInput.addEventListener("keyup", checkUsername);
-fullnameInput.addEventListener("keyup", checkFullname);
-phoneInput.addEventListener("keyup", checkPhone);
-addressInput.addEventListener("keyup", checkAddress);
+})
 
-//Submit Form Validation When Submiting
-const signupForm = document.querySelector(".form.signup_form");
-const emailInput = document.querySelector("#emailInput");
-signupForm.addEventListener("submit", (e) => {
-  checkUsername();
-  checkFullname();
-  checkPhone();
-  checkAddress();
-  checkPass();
-  if (
-    usernameField.classList.contains("invalid") ||
-    usernameField.classList.contains("duplicate") ||
-    fullnameField.classList.contains("invalid") ||
-    phoneField.classList.contains("invalid") ||
-    addressField.classList.contains("invalid") ||
-    !passGood
-  ) {
-    e.preventDefault();
-  } else {
-    fetch("home.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: usernameInput.value, fullname: fullnameInput.value, phone: phoneInput.value, address: addressInput.value, password: passInput.value, email: emailInput.value }),
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        formAct.action = "citizen/citizen.html";
-        formAct.submit();
-      });
-  }
-});
+const annNextTextBtn = document.querySelector(".ann-next-text");
+const annNextItemsBtn = document.querySelector(".ann-next-items");
+const annSubmitBtn = document.querySelector(".ann-submit");
+annNextTextBtn.addEventListener("click", function(){
+  annTextForm.classList.remove("active");
+  annItemsForm.classList.add("active");
+})
+
+annNextItemsBtn.addEventListener("click", function(){
+  annItemsForm.classList.remove("active");
+  annConfirmForm.classList.add("active");
+})
+
+annSubmitBtn.addEventListener("click", function(){
+  annConfirmForm.classList.remove("active");
+  addAnnouncement.classList.add("active");
+})
+
+/* ~~~~~~~~~~ Storage Management Functions ~~~~~~~~~~ */
+
+function toggleBottomBorder(clickedButton) {
+  var buttons = document.querySelectorAll(".button");
+  buttons.forEach(function (button) {
+    button.classList.remove("selected");
+  });
+  clickedButton.classList.add("selected");
+}
+
+const storageBtn = document.querySelector("#storageBtn");
+const storageMngTab = document.querySelector(".storage-managment-tab");
+const transferedItemsTab = document.querySelector(".transfered-items-tab");
+storageBtn.addEventListener("click", function(){
+  storageMngTab.classList.add("active");
+  transferedItemsTab.classList.remove("active");
+})
+
+const transferedBtn = document.querySelector("#transferedBtn");
+transferedBtn.addEventListener("click", function(){
+  transferedItemsTab.classList.add("active");
+  storageMngTab.classList.remove("active");
+})
+
+const updateBtn = document.querySelector("#updateBtn");
+updateBtn.addEventListener("click", function(){
+  transferedItemsTab.classList.remove("active");
+  storageMngTab.classList.remove("active");
+})
+
+/* ~~~~~~~~~~ Transfered Items Functions ~~~~~~~~~~ */
+
+/* ~~~~~~~~~~ Update Storage Functions ~~~~~~~~~~ */
+
+const strgNextQuantityBtn = document.querySelector(".strg-next-quantity");
+const strgQuantityForm = document.querySelector(".storage-quantity-form");
+const strgConfirmForm = document.querySelector(".storage-confirm-form");
+strgNextQuantityBtn.addEventListener("click", function(){
+  strgQuantityForm.classList.remove("active");
+  strgConfirmForm.classList.add("active");
+})
+
+const strgSubmitBtn = document.querySelector(".storage-submit");
+strgSubmitBtn.addEventListener("click", function(){
+  strgConfirmForm.classList.remove("active");
+  strgQuantityForm.classList.add("active");
+})

@@ -297,7 +297,6 @@ i.burgerx.active {
 
 .clr-text {
   padding-left: 5px;
-  margin-bottom: 5px;
 }
 
 .cancell,
@@ -936,7 +935,6 @@ input[type="checkbox"]:checked {
 
 .filter-btn {
   display: flex;
-  align-items: center;
 }
 
 .filter-text {

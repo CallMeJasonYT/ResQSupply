@@ -11,7 +11,7 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-$queryItems = "SELECT good_name FROM goods";
+$queryItems = "SELECT str_goodn FROM storage";
 $stmtItems = mysqli_prepare($conn, $queryItems);
 mysqli_stmt_execute($stmtItems);
 $resultItems = mysqli_stmt_get_result($stmtItems);
@@ -19,19 +19,20 @@ $resultItems = mysqli_stmt_get_result($stmtItems);
 $items = [];
 
 while ($row = mysqli_fetch_assoc($resultItems)) {
-    $items[] = $row['good_name'];
+    $items[] = $row['str_goodn'];
 }
 
-$queryCat = "SELECT cat_name FROM categories";
-$stmtCat = mysqli_prepare($conn, $queryCat);
-mysqli_stmt_execute($stmtCat);
-$resultCat = mysqli_stmt_get_result($stmtCat);
+$stmtSelect = $conn->prepare("SELECT cat_name FROM categories INNER JOIN goods ON good_cat_id = cat_id INNER JOIN storage ON str_goodn = good_name");
+$stmtSelect->execute();
+$result = $stmtSelect->get_result();
 
 $categories = [];
-
-while ($row = mysqli_fetch_assoc($resultCat)) {
-    $categories[] = $row['cat_name'];
+if (mysqli_num_rows($result) > 0) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $categories[] = $row['cat_name'];
+    }
 }
+$stmtSelect->close();
 
 $response['items'] = $items;
 $response['categories'] = $categories;

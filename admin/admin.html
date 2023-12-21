@@ -29,93 +29,275 @@
   <!-- Home -->
   <section class="admin-home">
     <div class="burger-container">
-        <ul class="burger-menu active">
-            <li class="burger-item" id="stats">Statistics</li>
-            <li class="burger-item" id="resacc">Rescuer Account Creation</li>
-            <li class="burger-item" id="announcement">Announcement Creation</li>
-            <li class="burger-item" id="storage">Storage Management</li>
-        </ul>
-        <div class="statistics"> stats </div>
-        <div class="rescuer-account"> 
-            <div class="form-container">
-                <div class="form signup_form">
-                    <div class="title">
-                      <h2>Rescuer Signup Form</h2>
-                    </div>
-                    <form id="signup-form" action="" method="post">
-                      <div class="field username">
-                        <div class="input-box">
-                          <input name="username" type="text" id="username" placeholder="Enter Rescuer's Username" minlength="8"
-                            maxlength="20" required autocomplete="on" />
-                          <i class="fa-solid fa-star user"></i>
-                        </div>
-                        <span class="check username">
-                          <p class="check-text">Please enter a Valid Username</p>
-                        </span>
-                        <span class="check1 username">
-                          <p class="check-text">This username is taken</p>
-                        </span>
-                      </div>
-                      <div class="field fullname">
-                        <div class="input-box">
-                          <input name="fullname" type="text" id="fullname" placeholder="Enter Rescuer's Full Name" minlength="5"
-                            maxlength="50" required autocomplete="on" />
-                          <i class="fa-solid fa-user fname"></i>
-                        </div>
-                        <span class="check fullname">
-                          <p class="check-text">Please enter a Valid Fullname</p>
-                        </span>
-                      </div>
-                      <div class="field phone">
-                        <div class="input-box">
-                          <input name="phone" type="tel" id="phone" placeholder="Enter Rescuer's Phone Number" minlength="10"
-                            maxlength="15" required autocomplete="on" />
-                          <i class="fa-solid fa-phone phone"></i>
-                        </div>
-                        <span class="check phone">
-                          <p class="check-text">Please enter a Valid Phone Number</p>
-                        </span>
-                      </div>
-                      <div class="field truck-id">
-                        <div class="input-box">
-                          <input name="truck-id" type="truck-id" id="truckid" placeholder="Enter Rescuer's Truck ID"
-                            autocomplete="on" />
-                          <i class="fa-solid fa-truck truck"></i>
-                        </div>
-                      </div>
-                      <div class="field address">
-                        <div class="input-box">
-                          <input name="address" type="text" id="address" placeholder="Enter Rescuer's Truck Address" required
-                            autocomplete="on" />
-                          <i class="fa-solid fa-location-dot address"></i>
-                        </div>
-                        <span class="check address">
-                          <p class="check-text">Please enter a Valid Address ex. Baker London</p>
-                        </span>
-                      </div>
-                      <div class="field password">
-                        <div class="input-box">
-                          <input name="password" type="password" id="pass" placeholder="Create Rescuer's Password" maxlength="12" required />
-                          <i class="fa-solid fa-lock password"></i>
-                          <i class="fa-solid fa-eye-slash pw_hide"></i>
-                        </div>
-                        <span class="password-check">
-                          <h3 class="check-title">Password should be:</h3>
-                          <ul class="checklist">
-                            <li class="checklist-item">8-12 Characters Long </li>
-                            <li class="checklist-item">Containing 1 Uppercase Character </li>
-                            <li class="checklist-item">Containing 1 Special Character </li>
-                            <li class="checklist-item">Containing English Characters </li>
-                          </ul>
-                        </span>
-                      </div>
-                      <button type="submit" class="button">Signup Now</button>
-                    </form>
-                </div>
+      <ul class="burger-menu active">
+        <li class="burger-item" id="stats">Statistics</li>
+        <li class="burger-item" id="resacc">Rescuer Account Creation</li>
+        <li class="burger-item" id="announcement">Announcement Creation</li>
+        <li class="burger-item" id="storage">Storage Management</li>
+      </ul>
+      <div class="statistics"> stats </div>
+      <div class="rescuer-account">
+        <div class="form-container">
+          <div class="form signup_form">
+            <div class="title">
+              <h2>Rescuer Signup Form</h2>
             </div>
+            <form id="signup-form" action="" method="post">
+              <div class="field username">
+                <div class="input-box">
+                  <input name="username" type="text" id="username" placeholder="Enter Rescuer's Username" minlength="8"
+                    maxlength="20" required autocomplete="on" />
+                  <i class="fa-solid fa-star user"></i>
+                </div>
+                <span class="check username">
+                  <p class="check-text">Please enter a Valid Username</p>
+                </span>
+                <span class="check1 username">
+                  <p class="check-text">This username is taken</p>
+                </span>
+              </div>
+              <div class="field fullname">
+                <div class="input-box">
+                  <input name="fullname" type="text" id="fullname" placeholder="Enter Rescuer's Full Name" minlength="5"
+                    maxlength="50" required autocomplete="on" />
+                  <i class="fa-solid fa-user fname"></i>
+                </div>
+                <span class="check fullname">
+                  <p class="check-text">Please enter a Valid Fullname</p>
+                </span>
+              </div>
+              <div class="field phone">
+                <div class="input-box">
+                  <input name="phone" type="tel" id="phone" placeholder="Enter Rescuer's Phone Number" minlength="10"
+                    maxlength="15" required autocomplete="on" />
+                  <i class="fa-solid fa-phone phone"></i>
+                </div>
+                <span class="check phone">
+                  <p class="check-text">Please enter a Valid Phone Number</p>
+                </span>
+              </div>
+              <div class="field truck-id">
+                <div class="input-box">
+                  <input name="truck-id" type="truck-id" id="truckid" placeholder="Enter Rescuer's Truck ID"
+                    autocomplete="on" />
+                  <i class="fa-solid fa-truck truck"></i>
+                </div>
+              </div>
+              <div class="field address">
+                <div class="input-box">
+                  <input name="address" type="text" id="address" placeholder="Enter Rescuer's Truck Address" required
+                    autocomplete="on" />
+                  <i class="fa-solid fa-location-dot address"></i>
+                </div>
+                <span class="check address">
+                  <p class="check-text">Please enter a Valid Address ex. Baker London</p>
+                </span>
+              </div>
+              <div class="field password">
+                <div class="input-box">
+                  <input name="password" type="password" id="pass" placeholder="Create Rescuer's Password"
+                    maxlength="12" required />
+                  <i class="fa-solid fa-lock password"></i>
+                  <i class="fa-solid fa-eye-slash pw_hide"></i>
+                </div>
+                <span class="password-check">
+                  <h3 class="check-title">Password should be:</h3>
+                  <ul class="checklist">
+                    <li class="checklist-item">8-12 Characters Long </li>
+                    <li class="checklist-item">Containing 1 Uppercase Character </li>
+                    <li class="checklist-item">Containing 1 Special Character </li>
+                    <li class="checklist-item">Containing English Characters </li>
+                  </ul>
+                </span>
+              </div>
+              <button type="submit" class="button">Signup Now</button>
+            </form>
+          </div>
         </div>
-        <div class="announcement-creation"> ann </div>
-        <div class="storage-mngmt"> strg </div>
+      </div>
+      <div class="announcement-creation">
+        <div class="ann-tab active">
+          <div class="add-ann active">
+            <p>Create Announcement</p>
+            <i class="fa-regular fa-square-plus create" aria-hidden="true"></i>
+          </div>
+          <!-- Announcement Title/Text -->
+          <div class="ann-create-tab">
+            <div class="ann-text-form">
+              <div class="cancelbtn">
+                <i class="fa-solid fa-xmark cancela" aria-hidden="true"></i>
+              </div>
+              <div class="form ann-form">
+                <div class="title">
+                  <h2>Announcement</h2>
+                </div>
+                <div class="field title">
+                  <div class="input-box">
+                    <input name="ann-title" id="title" type="text" placeholder="Enter the Title of your Announcement"
+                      minlength="8" maxlength="50" required />
+                  </div>
+                </div>
+                <div class="field details">
+                  <div class="input-box">
+                    <input name="ann-details" id="details" type="text"
+                      placeholder="Enter the Details of your Announcement" minlength="8" maxlength="100" required />
+                  </div>
+                </div>
+                <button type="button" class="button ann-next-text"> Next </button>
+              </div>
+            </div>
+            <!-- Announcement Items -->
+            <div class="ann-items-form">
+              <div class="cancelbtn">
+                <div class="clrbtn">
+                  <i class="fa-solid fa-broom brooma" aria-hidden="true"></i>
+                  <p class="clr-text">Clear</p>
+                </div>
+                <i class="fa-solid fa-xmark cancela" aria-hidden="true"></i>
+              </div>
+              <div class="item-select">
+                <div class="item-drop-sel">
+                  <div class="item-btn selected">
+                    <span class="item-text">Select Item</span>
+                    <i class="fa-solid fa-chevron-down down" aria-hidden="true"></i>
+                  </div>
+                </div>
+                <div class="content active">
+                  <div class="item-options active">
+                    <ul class="item-list">
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="error none">
+                <p>Please Select an Item</p>
+              </div>
+              <button type="button" class="button ann-next-items"> Next </button>
+            </div>
+            <!-- Confirm Announcement / Announcement Overview -->
+            <div class="ann-confirm-form">
+              <div class="cancelbtn">
+                <i class="fa-solid fa-xmark cancela" aria-hidden="true"></i>
+              </div>
+              <div class="ann-text-confirm">
+              </div>
+              <ul class="selected-items-confirm">
+              </ul>
+              <button type="button" class="button ann-submit"> Submit </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Storage Management Option -->
+      <div class="storage-mngmt">
+        <!-- Storage Tab Control Menu -->
+        <div class="storage-tab-control">
+          <button type="button" id="transferedBtn" class="button" onclick="toggleBottomBorder(this)">Tranfered Items</button>
+          <button type="button" id="storageBtn" class="button selected" onclick="toggleBottomBorder(this)">Update
+            Storage</button>
+          <button type="button" id="updateBtn" class="button" onclick="toggleBottomBorder(this)">Update Goods</button>
+        </div>
+        <!-- Tranfered Items Tab -->
+        <div class="transfered-items-tab">
+          <!-- Goods Table -->
+          <div class="goods-items-form active">
+            <div class="item-select">
+              <p class="form-title">Goods</p>
+              <div class="item-options active">
+                <ul class="item-list">
+                  <li class="item">
+                    <p class="item-text">Biscuits</p>
+                  </li>
+                  <li class="item">
+                    <p class="item-text">Biscuits</p>
+                  </li>
+                  <li class="item">
+                    <p class="item-text">Biscuits</p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- Arrows Icon -->
+          <div class="exchange-ico"><i class="fa-solid fa-right-left exchange"></i></div>
+          <!-- Storage Table with Transferable Items -->
+          <div class="storage-items-form active">
+            <div class="item-select">
+              <p class="form-title">Storage</p>
+              <div class="item-options active">
+                <ul class="item-list">
+                  <li class="item">
+                    <p class="item-text">Biscuits</p>
+                  </li>
+                  <li class="item">
+                    <p class="item-text">Biscuits</p>
+                  </li>
+                  <li class="item">
+                    <p class="item-text">Biscuits</p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="button exchange-submit"> Submit Changes </button>
+        </div>
+        <!-- Storage Management -->
+        <div class="storage-managment-tab active">
+          <!-- Storage Items Tab -->
+          <div class="storage-quantity-form active">
+            <p class="form-title">Base Storage</p>
+            <div class="item-select">
+              <ul class="items-list">
+                <li class="item">
+                  <div class="item-count">
+                    <p class="item-text">Blanket</p>
+                    <div class="item-quantity">
+                      <p class="quantity-text">Quantity:</p>
+                      <input class="quantity-input" type="number" value="0" oninput="validity.valid||(value='0');">
+                      <p class="reset-button"> Reset </p>
+                    </div>
+                  </div>
+                </li>
+                <li class="item">
+                  <div class="item-count">
+                    <p class="item-text">Blanket</p>
+                    <div class="item-quantity">
+                      <p class="quantity-text">Quantity:</p>
+                      <input class="quantity-input" type="number" value="0" oninput="validity.valid||(value='0');">
+                      <p class="reset-button"> Reset </p>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <button type="button" class="button strg-next-quantity"> Next </button>
+          </div>
+          <!-- Confirm Load -->
+          <div class="storage-confirm-form">
+            <p class="form-title">Updates Summary</p>
+            <div class="item-select">
+              <ul class="items-list">
+                <li class="item">
+                  <div class="item-count">
+                    <p class="item-text"> Blanket </p> 
+                    <div class="item-quantity">
+                    <p class="quantity-text">Quantity: 5</p>
+                  </div>
+                </li>
+                <li class="item">
+                  <div class="item-count">
+                    <p class="item-text"> Blanket </p> 
+                    <div class="item-quantity">
+                    <p class="quantity-text">Quantity: 5</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <button type="button" class="button storage-submit"> Submit </button>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="module active">
       <!-- Mobile Selections -->
@@ -172,61 +354,64 @@
       <div class="storage-container">
         <p class="storage-status"> Storage Status </p>
         <table>
-            <thead>
-                <tr>
-                    <th> Item </th>
-                    <th> 
-                        <div class="dropdown">
-                            <button class="dropbtn">Category</button>
-                            <div class="dropdown-content">
-                                <div class="cat-selection">
-                                    <input type="checkbox"> <p> Drinks </p>
-                                </div>
-                                <div class="cat-selection">
-                                    <input type="checkbox"> <p> Fruits </p>
-                                </div>
-                                <div class="cat-selection">
-                                    <input type="checkbox"> <p> Medicine </p>
-                                </div>
-                            </div>
-                        </div> 
-                    </th>
-                    <th> Location </th>
-                    <th> Quantity </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td> Coca Cola </td>
-                    <td> Drinks </td>
-                    <td> Base </td>
-                    <td> 50 </td>
-                </tr>
-                <tr>
-                    <td> Coca Cola </td>
-                    <td> Drinks </td>
-                    <td> Base </td>
-                    <td> 50 </td>
-                </tr>
-                <tr>
-                    <td> Coca Cola </td>
-                    <td> Drinks </td>
-                    <td> Base </td>
-                    <td> 50 </td>
-                </tr>
-                <tr>
-                    <td> Coca Cola </td>
-                    <td> Drinks </td>
-                    <td> Truck </td>
-                    <td> 50 </td>
-                </tr>
-                <tr>
-                    <td> Coca Cola </td>
-                    <td> Drinks </td>
-                    <td> Truck </td>
-                    <td> 50 </td>
-                </tr>
-            </tbody>
+          <thead>
+            <tr>
+              <th> Item </th>
+              <th>
+                <div class="dropdown">
+                  <button class="dropbtn">Category</button>
+                  <div class="dropdown-content">
+                    <div class="cat-selection">
+                      <input type="checkbox">
+                      <p> Drinks </p>
+                    </div>
+                    <div class="cat-selection">
+                      <input type="checkbox">
+                      <p> Fruits </p>
+                    </div>
+                    <div class="cat-selection">
+                      <input type="checkbox">
+                      <p> Medicine </p>
+                    </div>
+                  </div>
+                </div>
+              </th>
+              <th> Location </th>
+              <th> Quantity </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td> Coca Cola </td>
+              <td> Drinks </td>
+              <td> Base </td>
+              <td> 50 </td>
+            </tr>
+            <tr>
+              <td> Coca Cola </td>
+              <td> Drinks </td>
+              <td> Base </td>
+              <td> 50 </td>
+            </tr>
+            <tr>
+              <td> Coca Cola </td>
+              <td> Drinks </td>
+              <td> Base </td>
+              <td> 50 </td>
+            </tr>
+            <tr>
+              <td> Coca Cola </td>
+              <td> Drinks </td>
+              <td> Truck </td>
+              <td> 50 </td>
+            </tr>
+            <tr>
+              <td> Coca Cola </td>
+              <td> Drinks </td>
+              <td> Truck </td>
+              <td> 50 </td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </div>

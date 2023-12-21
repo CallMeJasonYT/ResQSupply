@@ -38,14 +38,6 @@ function setResultList(parsedResult) {
   map.flyTo(position, 15);
 }
 
-function fetchGeoTasks(query) {
-  fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + query.address + '&limit=1')
-    .then(result => result.json())
-    .then(result => {
-      setMapMarkers(result[0], query.task_id);
-    });
-}
-
 const categoryIcons = {
   'Pending Request': L.icon({
     iconUrl: '/ResQSupply/icons/requestsIconPending.svg',
@@ -92,7 +84,7 @@ function fetchTasksLoc() {
     .then((response) => response.json())
     .then((data) => {
       data.forEach(entry => {
-        fetchGeoTasks(entry);
+        setMapMarkers(entry.lat, entry.lon, entry.task_id);
       });
     });
 }
@@ -104,7 +96,7 @@ function fetchBaseInfo() {
     .then((response) => response.json())
     .then((data) => {
       data.forEach(entry => {
-        fetchGeoTasks(entry);
+        setMapMarkers(entry.lat, entry.lon, 'Base');
       });
     });
 }
@@ -116,16 +108,8 @@ function fetchTruckLoc() {
     .then((response) => response.json())
     .then((data) => {
       data.forEach(entry => {
-        fetchGeoTruck(entry);
+        setMapMarkers(entry.lat, entry.lon, 'Truck');
       });
-    });
-}
-
-function fetchGeoTruck(query) {
-  fetch('https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + query.address + '&limit=1')
-    .then(result => result.json())
-    .then(result => {
-      setMapMarkers(result[0], query.category);
     });
 }
 
@@ -135,7 +119,7 @@ function revGeocode(query) {
   fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&limit=1&format=json')
     .then(result => result.json())
     .then(result => {
-      updateTruckLoc(parseDisplayName(result.display_name));
+      updateTruckLoc(parseDisplayName(result.display_name), lat, lng);
     });
 }
 
@@ -145,15 +129,13 @@ function parseDisplayName(displayName) {
   return address;
 }
 
-function updateTruckLoc(position) {
+function updateTruckLoc(position, lat, lon) {
   fetch('update_TruckLoc.php', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      address: position
-    })
+    body: JSON.stringify({address: position, latitude: lat, longitude: lon})
   })
     .then(response => response.json())
 }
@@ -161,27 +143,50 @@ function updateTruckLoc(position) {
 const taskMarkers = [];
 const truckMarkers = [];
 const baseMarkers = [];
-function setMapMarkers(result, task_id) {
-  if (task_id == undefined) { task_id = null; }
-  fetch("fetch_TasksInfo.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ taskID: task_id })
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      data.forEach(res => {
-        var iconName = "";
-        if (res.status != undefined && res.status != 'Completed') {
-          iconName = "" + res.status + " " + res.category + "";
-        } else if (res.status != 'Completed') {
-          iconName = res.category;
-        };
-        const latitude = parseFloat(result.lat);
-        const longitude = parseFloat(result.lon);
+function setMapMarkers(lat, lon, task_id) {
+  const latitude = lat;
+  const longitude = lon;
+  if (task_id == 'Truck') { 
+    const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Truck'], draggable: true });
+    marker.truckInfo = {
+      vehId: veh_id,
+      latitude: latitude,
+      longitude: longitude
+    };
+    marker.addTo(map);
+    truckMarkers.push(marker);
+    drawLine();
 
-        if (iconName != "") {
-          if (res.category != 'Truck' && res.category != 'Base') {
+    marker.on('dragend', function (e) {
+      removeAllPolylines();
+      var position = marker.getLatLng();
+      marker.setLatLng(position).update();
+      map.panTo(position);
+      revGeocode(position);
+      drawLine();
+    });
+  }else if(task_id == 'Base'){
+    const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Base'] });
+    marker.baseInfo = {
+      latitude: latitude,
+      longitude: longitude
+    };
+    marker.addTo(map);
+    baseMarkers.push(marker);
+  }else{
+    fetch("fetch_TasksInfo.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ taskID: task_id })
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        data.forEach(res => {
+          var iconName = "";
+          if (res.status != 'Completed') {
+            iconName = "" + res.status + " " + res.category + "";
+          }
+          if (iconName != "") {
             const marker = new L.Marker([latitude, longitude], { icon: categoryIcons[iconName] });
             marker.taskInfo = {
               taskId: task_id,
@@ -196,37 +201,10 @@ function setMapMarkers(result, task_id) {
             if (res.veh == veh_id && truckMarkers.length != 0) {
               drawLineOnce(task_id);
             }
-          } else if (res.category == 'Truck') {
-            const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Truck'], draggable: true });
-            marker.truckInfo = {
-              vehId: veh_id,
-              latitude: latitude,
-              longitude: longitude
-            };
-            marker.addTo(map);
-            truckMarkers.push(marker);
-            drawLine();
-
-            marker.on('dragend', function (e) {
-              removeAllPolylines();
-              var position = marker.getLatLng();
-              marker.setLatLng(position).update();
-              map.panTo(position);
-              revGeocode(position);
-              drawLine();
-            });
-          } else {
-            const marker = new L.Marker([latitude, longitude], { icon: categoryIcons[iconName] });
-            marker.baseInfo = {
-              latitude: latitude,
-              longitude: longitude
-            };
-            marker.addTo(map);
-            baseMarkers.push(marker);
           }
-        }
+        });
       });
-    });
+  }
 }
 
 function showTaskPopup(marker, status) {
@@ -258,8 +236,7 @@ function showTaskPopup(marker, status) {
 
 var activeTasks = document.querySelectorAll(".tasks-list li");
 function handleButtonClick(event, taskId) {
-  if (activeTasks.length + 1 < 4) {
-    console.log(activeTasks.length)
+  if (activeTasks.length < 4) {
     fetch("update_Task.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -268,24 +245,22 @@ function handleButtonClick(event, taskId) {
       .then((response) => response.json())
       .then((result) => {
         const marker = taskMarkers.find((marker) => marker.taskInfo.taskId == taskId);
-        var loc = { lat: marker.getLatLng().lat.toString(), lon: marker.getLatLng().lng.toString() };
+        var lat = marker.getLatLng().lat.toString();
+        var lon = marker.getLatLng().lng.toString();
         removeTaskMarker(marker);
-        setMapMarkers(loc, taskId);
+        setMapMarkers(lat, lon, taskId);
         removeAllPolylines();
         drawLine();
         fetchActiveTasks();
       });
   } else {
     event.stopPropagation();
-    console.log(activeTasks.length)
     const marker = taskMarkers.find((marker) => marker.taskInfo.taskId == taskId);
-    console.log(marker);
     const popupContent = `
       <p class="error activeTasks active"><b>Error:&nbsp;</b> You have reached the maximum number of active tasks.<p>
     `;
     marker.getPopup().setContent(marker.getPopup().getContent() + popupContent);
     marker.getPopup().update();
-    console.log(marker.getPopup().getContent());
   }
 }
 
@@ -309,7 +284,6 @@ filters.onAdd = function (map) {
   });
   return div;
 };
-
 filters.addTo(map);
 
 //Replace the Map with the Filter Menu
@@ -841,7 +815,7 @@ function selItemsLoad() {
         `<p class="item-text">${itemText}</p>` +
         `<div class="item-quantity">` +
         `<p class="quantity-text">Quantity: </p>` +
-        `<input class="quantity-input" type="number" value="0">` +
+        `<input class="quantity-input" type="number" value="0" oninput="validity.valid||(value='');">` +
         `</div>` +
         `</div>` +
         `</li>`;
@@ -997,7 +971,7 @@ function quantityUnLoad() {
       `<p class="item-text">${item.itemText}</p>` +
       `<div class="item-quantity">` +
       `<p class="quantity-text">Quantity:</p>` +
-      `<input class="quantity-input" type="number" value="0">` +
+      `<input class="quantity-input" type="number" value="0" oninput="validity.valid||(value='');">` +
       `<p class="max-button"> Max </p>` +
       `</div>` +
       `</div>` +
@@ -1357,9 +1331,10 @@ function cancelTask(taskID) {
     })
     .then((data) => {
       const marker = taskMarkers.find((marker) => marker.taskInfo.taskId == taskID);
-      var loc = { lat: marker.getLatLng().lat.toString(), lon: marker.getLatLng().lng.toString() };
+      var lat = marker.getLatLng().lat.toString();
+      var lon = marker.getLatLng().lng.toString();
       removeTaskMarker(marker);
-      setMapMarkers(loc, taskID);
+      setMapMarkers(lat, lon, taskID);
       removePolyline(taskID);
       fetchActiveTasks();
     });
