@@ -710,23 +710,27 @@ function toggleBottomBorder(clickedButton) {
 }
 
 const storageBtn = document.querySelector("#storageBtn");
-const storageMngTab = document.querySelector(".storage-managment-tab");
+const storageUpdateTab = document.querySelector(".storage-update-tab");
 const transferedItemsTab = document.querySelector(".transfered-items-tab");
+const updateGoodsTab = document.querySelector(".update-goods-tab");
 storageBtn.addEventListener("click", function(){
-  storageMngTab.classList.add("active");
+  storageUpdateTab.classList.add("active");
   transferedItemsTab.classList.remove("active");
+  updateGoodsTab.classList.remove("active");
 })
 
 const transferedBtn = document.querySelector("#transferedBtn");
 transferedBtn.addEventListener("click", function(){
   transferedItemsTab.classList.add("active");
-  storageMngTab.classList.remove("active");
+  storageUpdateTab.classList.remove("active");
+  updateGoodsTab.classList.remove("active");
 })
 
 const updateBtn = document.querySelector("#updateBtn");
 updateBtn.addEventListener("click", function(){
+  updateGoodsTab.classList.add("active");
   transferedItemsTab.classList.remove("active");
-  storageMngTab.classList.remove("active");
+  storageUpdateTab.classList.remove("active");
 })
 
 /* ~~~~~~~~~~ Transfered Items Functions ~~~~~~~~~~ */
@@ -746,3 +750,65 @@ strgSubmitBtn.addEventListener("click", function(){
   strgConfirmForm.classList.remove("active");
   strgQuantityForm.classList.add("active");
 })
+
+/* ~~~~~~~~~~ Update Goods Functions ~~~~~~~~~~ */
+
+let fileInput = document.querySelector(".file-input");
+let fileList = document.getElementById("files-list");
+let numOfFiles = document.getElementById("num-of-files");
+const fileLabel = document.querySelector(".file-label");
+const errorFiletype = document.querySelector(".error.filetype");
+fileInput.addEventListener("change", () => {
+  fileList.innerHTML = "";
+  numOfFiles.textContent = ``;
+  for (i of fileInput.files) {
+    let reader = new FileReader();
+    if(i.type != "application/json"){
+      errorFiletype.classList.add("active");
+      numOfFiles.textContent = 'No Files Selected';
+    }else{
+      errorFiletype.classList.remove("active");
+      let fileName = i.name;
+      let fileSize = (i.size / 1024).toFixed(1);
+      var markup = 
+      `<li>`+
+      `<p>${fileName}</p>`+
+      `<div class="details">`+
+      `<p>${fileSize}KB</p>`+
+      `<i class="fa-solid fa-xmark cancelu" aria-hidden="true"></i>`+
+      `</div>`+
+      `</li>`;
+      if (fileSize >= 1024) {
+        fileSize = (fileSize / 1024).toFixed(1);
+        markup = 
+        `<li>`+
+        `<p>${fileName}</p>`+
+        `<div class="details">`+
+        `<p>${fileSize}MB</p>`+
+        `<i class="fa-solid fa-xmark cancelu" aria-hidden="true"></i>`+
+        `</div>`+
+        `</li>`;
+      }
+      fileList.insertAdjacentHTML("beforeend", markup);
+      fileInput.classList.remove("active");
+      fileLabel.classList.remove("active");
+      var markup = 
+      `<div class="upload-files">`+
+      `<i class="fa-solid fa-arrow-up-from-bracket"></i> Upload Selected File`+
+      `</div>`;
+      const uploadForm = document.querySelector(".upload-form")
+      uploadForm.insertAdjacentHTML("afterbegin", markup);
+
+      const cancelUpload = document.querySelector(".cancelu");
+      cancelUpload.addEventListener("click", function(){
+        fileInput.value = '';
+        fileList.innerHTML = '';
+        document.querySelector(".upload-files").remove();
+        fileInput.classList.add("active");
+        fileLabel.classList.add("active");
+        numOfFiles.textContent = 'No Files Selected';
+      })
+    }
+  }
+});
+

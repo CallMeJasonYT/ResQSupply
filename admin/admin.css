@@ -190,10 +190,14 @@ i.burgerx.active {
 .cancell,
 .cancelu,
 .cancela,
-.cancels
+.cancels,
 .brooma {
   cursor: pointer;
   font-size: 18px;
+}
+
+.cancelu{
+  margin-left: 5px;
 }
 
 .broomr {
@@ -842,7 +846,7 @@ form .input-box {
 .ann-items-form .button,
 .ann-confirm-form .button,
 .transfered-items-tab .button,
-.storage-managment-tab .button,
+.storage-update-tab .button,
 .storage-confirm-form .button {
     background: #0a7388;
     margin-top: 5px;
@@ -924,19 +928,21 @@ form .input-box {
   }
 
 .ann-tab,
-.storage-managment-tab,
-.transfered-items-tab
+.storage-update-tab,
+.transfered-items-tab,
+.update-goods-tab
  {
   display: none;
 }
 
-.storage-managment-tab{
+.storage-update-tab{
   margin-top: 50px;
 }
 
 .ann-tab.active,
-.storage-managment-tab.active,
-.transfered-items-tab.active {
+.storage-update-tab.active,
+.transfered-items-tab.active,
+.update-goods-tab.active {
   display: block;
 }
 
@@ -977,7 +983,9 @@ form .input-box {
 .goods-items-form,
 .storage-items-form,
 .storage-quantity-form,
-.storage-confirm-form{
+.storage-confirm-form,
+.upload-form,
+.url-form{
   position: relative;
   width: 100%;
   padding: 25px;
@@ -993,7 +1001,9 @@ form .input-box {
 .goods-items-form,
 .storage-items-form,
 .storage-quantity-form,
-.storage-confirm-form{
+.storage-confirm-form,
+.upload-form,
+.url-form{
   padding: 15px;
   margin-bottom: 10px;
 }
@@ -1004,7 +1014,9 @@ form .input-box {
 .goods-items-form.active,
 .storage-items-form.active,
 .storage-quantity-form.active,
-.storage-confirm-form.active {
+.storage-confirm-form.active,
+.upload-form.active,
+.url-form.active {
   display: block;
   position: sticky;
 }
@@ -1076,12 +1088,18 @@ li.selected {
   width: 100%;
 }
 
-.exchange-ico{
+.exchange-ico,
+.or-icon{
   display: flex;
   justify-content: center;
   font-size: 20px;
   margin-bottom: 10px;
   color: #0e505e;
+}
+
+.or-icon{
+  font-weight: 600;
+  font-size: 24px;
 }
 
 .item-count {
@@ -1131,4 +1149,73 @@ li.selected {
 .reset-button:active {
   background-color: #0e505e;
   transform: scale(0.98);
+}
+
+input[type="file"] {
+  display: none;
+}
+
+label,
+.url-button {
+  display: block;
+  position: relative;
+  background-color: #0d6a8f;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  width: 100%;
+  padding: 10px 0;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.upload-files{
+  display: block;
+  position: relative;
+  background-color: #0d6a8f;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  width: 100%;
+  padding: 10px 0;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+#num-of-files {
+  font-weight: 400;
+  text-align: center;
+  margin: 10px 0 5px 0;
+}
+
+.upload-form li {
+  font-weight: 500;
+  background-color: #eff5ff;
+  color: #0d6a8f;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.details{
+  display: flex;
+  align-items: center;
+}
+
+.file-input{
+  display: none;
+}
+
+.file.input.active{
+  display: block;
+}
+.file-label{
+  display: none;
+}
+.file-label.active{
+  display: block;
 }

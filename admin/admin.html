@@ -243,7 +243,7 @@
           <button type="button" class="button exchange-submit"> Submit Changes </button>
         </div>
         <!-- Storage Management -->
-        <div class="storage-managment-tab active">
+        <div class="storage-update-tab active">
           <!-- Storage Items Tab -->
           <div class="storage-quantity-form active">
             <p class="form-title">Base Storage</p>
@@ -273,7 +273,7 @@
             </div>
             <button type="button" class="button strg-next-quantity"> Next </button>
           </div>
-          <!-- Confirm Load -->
+          <!-- Confirm Storage Updates -->
           <div class="storage-confirm-form">
             <p class="form-title">Updates Summary</p>
             <div class="item-select">
@@ -295,6 +295,27 @@
               </ul>
             </div>
             <button type="button" class="button storage-submit"> Submit </button>
+          </div>
+        </div>
+        <!-- Update Goods Tab -->
+        <div class="update-goods-tab">
+          <div class="upload-form active">
+            <input type="file" id="file" class="file-input active" accept=".json" />
+            <label for="file" class="file-label active">
+              <i class="fa-solid fa-folder-open"></i>
+              Select File To Upload
+            </label>
+            <div id="num-of-files">No File Selected</div>
+            <div class="error filetype"> <b>Error:&nbsp;</b> The only accepted File Type is .json </div>
+            <ul id="files-list">
+            </ul>
+          </div>
+          <div class="or-icon"> OR </div>
+          <div class="url-form active">
+            <div class="url-button">
+              <i class="fa-solid fa-link"></i>
+              Upload from URL
+            </div>
           </div>
         </div>
       </div>
