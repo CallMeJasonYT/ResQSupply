@@ -14,7 +14,7 @@ const searchIcon = document.getElementById('search-icon');
 const map_desktop = document.getElementById('map');
 map_desktop.classList.add("map");
 map_desktop.classList.add("active");
-/*searchIcon.addEventListener("click", fetchGeoSearch);
+searchIcon.addEventListener("click", fetchGeoSearch);
 
 searchInput.addEventListener("keyup", function (event) {
   if (event.key === "Enter") {
@@ -37,14 +37,6 @@ function setResultList(parsedResult) {
   position = new L.LatLng(latitude, longitude);
   map.flyTo(position, 15);
 }
-
-function fetchGeoTasks(query) {
-  fetch('https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + query.address + '&limit=1')
-    .then(result => result.json())
-    .then(result => {
-      setMapMarkers(result[0], query.task_id);
-    });
-}*/
 
 const categoryIcons = {
   'Pending Request': L.icon({
@@ -85,14 +77,14 @@ const categoryIcons = {
   })
 };
 
-/*function fetchTasksLoc() {
+function fetchTasksLoc() {
   fetch("fetch_TasksLoc.php", {
     method: "POST"
   })
     .then((response) => response.json())
     .then((data) => {
       data.forEach(entry => {
-        fetchGeoTasks(entry);
+        setMapMarkers(entry.lat, entry.lon, entry.task_id);
       });
     });
 }
@@ -104,19 +96,19 @@ function fetchBaseInfo() {
     .then((response) => response.json())
     .then((data) => {
       data.forEach(entry => {
-        fetchGeoTasks(entry);
+        setMapMarkers(entry.lat, entry.lon, 'Base');
       });
     });
 }
 
 function fetchTruckLoc() {
-  fetch("fetch_TruckLoc.php", {
+  fetch("fetch_TrucksLoc.php", {
     method: "POST"
   })
     .then((response) => response.json())
     .then((data) => {
       data.forEach(entry => {
-        fetchGeoTruck(entry);
+        setMapMarkers(entry.lat, entry.lon, 'Truck');
       });
     });
 }
@@ -129,15 +121,15 @@ function fetchGeoTruck(query) {
     });
 }
 
-function revGeocode(query) {
+/*function revGeocode(query) {
   var lng = query.lng;
   var lat = query.lat;
   fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&limit=1&format=json')
     .then(result => result.json())
     .then(result => {
-      updateTruckLoc(parseDisplayName(result.display_name));
+      updateTruckLoc(parseDisplayName(result.display_name), lat, lng);
     });
-}
+}*/
 
 function parseDisplayName(displayName) {
   const words = displayName.split(', ');
@@ -145,43 +137,64 @@ function parseDisplayName(displayName) {
   return address;
 }
 
-function updateTruckLoc(position) {
+/*function updateTruckLoc(position, lat, lon) {
   fetch('update_TruckLoc.php', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      address: position
-    })
+    body: JSON.stringify({address: position, latitude: lat, longitude: lon})
   })
     .then(response => response.json())
-}
+}*/
 
 const taskMarkers = [];
 const truckMarkers = [];
 const baseMarkers = [];
-function setMapMarkers(result, task_id) {
-  if (task_id == undefined) { task_id = null; }
-  fetch("fetch_TasksInfo.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ taskID: task_id })
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      data.forEach(res => {
-        var iconName = "";
-        if (res.status != undefined && res.status != 'Completed') {
-          iconName = "" + res.status + " " + res.category + "";
-        } else if (res.status != 'Completed') {
-          iconName = res.category;
-        };
-        const latitude = parseFloat(result.lat);
-        const longitude = parseFloat(result.lon);
+function setMapMarkers(lat, lon, task_id) {
+  const latitude = lat;
+  const longitude = lon;
+  if (task_id == 'Truck') { 
+    const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Truck'], draggable: true });
+    marker.truckInfo = {
+      vehId: veh_id,
+      latitude: latitude,
+      longitude: longitude
+    };
+    marker.addTo(map);
+    truckMarkers.push(marker);
+    drawLine();
 
-        if (iconName != "") {
-          if (res.category != 'Truck' && res.category != 'Base') {
+    marker.on('dragend', function (e) {
+      removeAllPolylines();
+      var position = marker.getLatLng();
+      marker.setLatLng(position).update();
+      map.panTo(position);
+      //revGeocode(position);
+      drawLine();
+    });
+  }else if(task_id == 'Base'){
+    const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Base'] });
+    marker.baseInfo = {
+      latitude: latitude,
+      longitude: longitude
+    };
+    marker.addTo(map);
+    baseMarkers.push(marker);
+  }else{
+    fetch("fetch_TasksInfo.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ taskID: task_id })
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        data.forEach(res => {
+          var iconName = "";
+          if (res.status != 'Completed') {
+            iconName = "" + res.status + " " + res.category + "";
+          }
+          if (iconName != "") {
             const marker = new L.Marker([latitude, longitude], { icon: categoryIcons[iconName] });
             marker.taskInfo = {
               taskId: task_id,
@@ -196,37 +209,10 @@ function setMapMarkers(result, task_id) {
             if (res.veh == veh_id && truckMarkers.length != 0) {
               drawLineOnce(task_id);
             }
-          } else if (res.category == 'Truck') {
-            const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Truck'], draggable: true });
-            marker.truckInfo = {
-              vehId: veh_id,
-              latitude: latitude,
-              longitude: longitude
-            };
-            marker.addTo(map);
-            truckMarkers.push(marker);
-            drawLine();
-
-            marker.on('dragend', function (e) {
-              removeAllPolylines();
-              var position = marker.getLatLng();
-              marker.setLatLng(position).update();
-              map.panTo(position);
-              revGeocode(position);
-              drawLine();
-            });
-          } else {
-            const marker = new L.Marker([latitude, longitude], { icon: categoryIcons[iconName] });
-            marker.baseInfo = {
-              latitude: latitude,
-              longitude: longitude
-            };
-            marker.addTo(map);
-            baseMarkers.push(marker);
           }
-        }
+        });
       });
-    });
+  }
 }
 
 function showTaskPopup(marker, status) {
@@ -256,47 +242,6 @@ function showTaskPopup(marker, status) {
     });
 }
 
-var activeTasks = document.querySelectorAll(".tasks-list li");
-function handleButtonClick(event, taskId) {
-  if (activeTasks.length + 1 < 4) {
-    console.log(activeTasks.length)
-    fetch("update_Task.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ taskId: taskId })
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        const marker = taskMarkers.find((marker) => marker.taskInfo.taskId == taskId);
-        var loc = { lat: marker.getLatLng().lat.toString(), lon: marker.getLatLng().lng.toString() };
-        removeTaskMarker(marker);
-        setMapMarkers(loc, taskId);
-        removeAllPolylines();
-        drawLine();
-        fetchActiveTasks();
-      });
-  } else {
-    event.stopPropagation();
-    console.log(activeTasks.length)
-    const marker = taskMarkers.find((marker) => marker.taskInfo.taskId == taskId);
-    console.log(marker);
-    const popupContent = `
-      <p class="error activeTasks active"><b>Error:&nbsp;</b> You have reached the maximum number of active tasks.<p>
-    `;
-    marker.getPopup().setContent(marker.getPopup().getContent() + popupContent);
-    marker.getPopup().update();
-    console.log(marker.getPopup().getContent());
-  }
-}
-
-function removeTaskMarker(marker) {
-  map.removeLayer(marker);
-  const index = taskMarkers.indexOf(marker);
-  if (index !== -1) {
-    taskMarkers.splice(index, 1);
-  }
-}
-
 const filters = L.control({ position: 'topleft' });
 filters.onAdd = function (map) {
   const div = L.DomUtil.create('div', 'filters');
@@ -309,7 +254,6 @@ filters.onAdd = function (map) {
   });
   return div;
 };
-
 filters.addTo(map);
 
 //Replace the Map with the Filter Menu
@@ -445,7 +389,7 @@ L.control.zoom({
   position: 'bottomright'
 }).addTo(map);
 
-const polylines = [];
+/*const polylines = [];
 var veh_id;
 function drawLine() {
   const truckMarker = truckMarkers.find((marker) => marker.truckInfo.vehId == veh_id);
@@ -811,4 +755,3 @@ fileInput.addEventListener("change", () => {
     }
   }
 });
-

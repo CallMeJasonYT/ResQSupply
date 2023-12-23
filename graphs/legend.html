@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Getting Started with Chart JS with www.chartjs3.com</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+      }
+      .chartMenu {
+        width: 100vw;
+        height: 40px;
+        background: #1A1A1A;
+        color: rgba(54, 162, 235, 1);
+      }
+      .chartMenu p {
+        padding: 10px;
+        font-size: 20px;
+      }
+      .chartCard {
+        width: 100vw;
+        height: calc(100vh - 40px);
+        background: rgba(54, 162, 235, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .chartBox {
+        width: 700px;
+        padding: 20px;
+        border-radius: 20px;
+        border: solid 3px rgba(54, 162, 235, 1);
+        background: white;
+      }
+      #customLegend ul{
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        padding: 0;
+      }
+
+      #customLegend li{
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        flex-direction: row;
+        margin-bottom: 5px;
+        line-height: 22px;
+      }
+
+      #customLegend span{
+        display: inline-block;
+        height: 20px;
+        width: 20px;
+        margin-right: 10px;
+        border-style: solid;
+        border-width: 1px;
+      }
+
+      #customLegend li p{
+        margin: 0;
+        padding: 0;
+        color: rgba(102, 102, 102, 1);
+      }
+
+      #customLegend li.fade p{
+        margin: 0;
+        padding: 0;
+        color: rgba(102, 102, 102, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chartMenu">
+      <p>WWW.CHARTJS3.COM (Chart JS <span id="chartVersion"></span>)</p>
+    </div>
+    <div class="chartCard">
+      <div class="chartBox">
+        <canvas id="myChart"></canvas>
+        <!--<div id="legend">
+            <ul>
+                <li><span>Colorbox</span><p>Text</p></li>
+                <li><span>Colorbox</span><p>Text</p></li>
+            </ul>
+        </div> -->
+      </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
+    <script>
+    // setup 
+    const data = {
+      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      datasets: [{
+        label: 'Weekly Sales',
+        data: [18, 12, 6, 9, 12, 3, 9],
+        backgroundColor: [
+          'rgba(75, 192, 192, 0.2)'
+        ],
+        borderColor: [
+          'rgba(75, 192, 192, 1)'
+        ],
+        borderWidth: 1
+      },
+      {
+        label: 'Weekly Cost',
+        data: [18, 12, 6, 9, 12, 3, 9],
+        backgroundColor: [
+          'rgba(255, 26, 104, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 26, 104, 1)'
+        ],
+        borderWidth: 1
+      }]
+    };
+
+    // config 
+    const config = {
+      type: 'bar',
+      data,
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    };
+
+    // render init block
+    const myChart = new Chart(
+      document.getElementById('myChart'),
+      config
+    );
+
+     //Legend Functions
+    function generateLegend(){
+        const chartBox = document.querySelector('.chartBox')
+
+        const div = document.createElement('DIV');
+        div.setAttribute('id', 'customLegend');
+
+        const ul = document.createElement('UL');
+
+        myChart.legend.legendItems.forEach((dataset, index) => {
+            const text = dataset.text;
+            const datasetIndex = dataset.datasetIndex;
+            const bgColor = dataset.fillStyle;
+            const bColor = dataset.strokeStyle;
+            const fontColor = dataset.fontColor;
+
+            const li = document.createElement('LI');
+
+            const spanBox = document.createElement('SPAN');
+            spanBox.style.borderColor = bColor;
+            spanBox.style.backgroundColor = bgColor;
+
+            const p = document.createElement('P');
+            const textNode = document.createTextNode(text);
+
+            li.onclick = (click) => {
+                const isHidden = !myChart.isDatasetVisible(datasetIndex);
+                myChart.setDatasetVisibility(datasetIndex, isHidden);
+                updateLegend(click);
+            }
+
+            ul.appendChild(li);
+            li.appendChild(spanBox);
+            li.appendChild(p);
+            p.appendChild(textNode);
+
+        })
+        chartBox.appendChild(div);
+        div.appendChild(ul);
+    };
+
+    function updateLegend(click){
+        const element = click.target.parentNode;
+        element.classList.toggle('fade');
+        myChart.update();
+    }
+
+    generateLegend();
+
+    </script>
+
+  </body>
+</html>

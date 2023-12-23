@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Getting Started with Chart JS with www.chartjs3.com</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+      }
+      .chartMenu {
+        width: 100vw;
+        height: 40px;
+        background: #1A1A1A;
+        color: rgba(54, 162, 235, 1);
+      }
+      .chartMenu p {
+        padding: 10px;
+        font-size: 20px;
+      }
+      .chartCard {
+        width: 100vw;
+        height: calc(100vh - 40px);
+        background: rgba(54, 162, 235, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .chartBox {
+        width: 700px;
+        padding: 20px;
+        border-radius: 20px;
+        border: solid 3px rgba(54, 162, 235, 1);
+        background: white;
+        display: flex;
+      }
+      .colSmall{
+        width: 35px;
+      }
+      .colLarge{
+        max-width: 700px;
+        overflow-x: scroll;
+      }
+      .box{
+        width: calc(700px - 35px); /* colLarge - colSmall*/
+        /* Βάζουμε την πράξη για να μην κόβετε κάποια στήλη του graph στην μέση */
+        height: 500px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chartMenu">
+      <p>WWW.CHARTJS3.COM (Chart JS <span id="chartVersion"></span>)</p>
+    </div>
+    <div class="chartCard">
+      <div class="chartBox">
+        <div class="colSmall">
+            <canvas id="myChart2"></canvas>
+        </div>
+        <div class="colLarge">
+            <div class="box">
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
+    <script>
+
+    // CHART 1 
+    // setup 
+    const data = {
+      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      datasets: [{
+        label: 'Weekly Sales',
+        data: [9, 12, 6, 9, 12, 3, 9,18, 12, 6, 9, 12, 3, 9],
+        backgroundColor: [
+          'rgba(255, 26, 104, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+          'rgba(0, 0, 0, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 26, 104, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(0, 0, 0, 1)'
+        ],
+        borderWidth: 1
+      }]
+    };
+
+    // config 
+    const config = {
+      type: 'bar',
+      data,
+      options: {
+        maintainAspectRatio: false, //max the size inside the div it is in
+        layout: {
+            padding: {
+                top: 10, //allign the 2 charts
+                bottom: 10
+            }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+                display: false /* remove scale */
+            },
+            grid:{
+                drawTicks: false, //remove remaining ticks
+                drawBorder: false
+            }
+          }
+        },
+        plugins: { //Remove Legends
+            legend: {
+                display: false
+            }
+        }
+      }
+    };
+
+    // render init block
+    const myChart = new Chart(
+      document.getElementById('myChart'),
+      config
+    );
+
+    // CHART 2 
+    // setup 
+    const data2 = {
+      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      datasets: [{
+        label: 'Weekly Sales',
+        data: myChart.data.datasets[0].data, //get the same data as chart 1 
+      }]
+    };
+
+    // config 
+    const config2 = {
+      type: 'bar',
+      data: data2,
+      options: {
+        maintainAspectRatio: false, //max the size inside the div it is in
+        layout: {
+            padding: {
+                bottom: 43.8 //allign the 2 charts
+            }
+        },
+        scales: {
+          x: {
+            ticks: {
+                display: false
+            },
+            grid: {
+                drawTicks: false
+            },
+          },
+          y: {
+            beginAtZero: true,
+            afterFit: (ctx) =>{  //somehow removes the extra lines on the left
+                ctx.width = 35;
+            }
+            
+          }
+        },
+        plugins: { //Remove Legends
+            legend: {
+                display: false
+            }
+        }
+      }
+    };
+
+    // render init block
+    const myChart2 = new Chart(
+      document.getElementById('myChart2'),
+      config2
+    );
+
+    const box = document.querySelector('.box')
+    const barLength = myChart.data.labels.length; //caclulates the numbers of bars we have at the moment
+    console.log(barLength)
+
+    if(barLength > 7){
+        const chartWidth = 700 + ((barLength - 7) * 30);
+        box.style.width = `${chartWidth}px`;
+    }
+    </script>
+
+  </body>
+</html>
