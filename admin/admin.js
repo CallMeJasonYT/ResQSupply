@@ -75,6 +75,13 @@ const categoryIcons = {
     iconAnchor: [15, 30],
     popupAnchor: [0, -30]
   })
+  ,
+  'Active Truck': L.icon({
+    iconUrl: '/ResQSupply/icons/truckActiveIcon.svg',
+    iconSize: [25, 25],
+    iconAnchor: [15, 30],
+    popupAnchor: [0, -30]
+  })
 };
 
 function fetchTasksLoc() {
@@ -84,7 +91,7 @@ function fetchTasksLoc() {
     .then((response) => response.json())
     .then((data) => {
       data.forEach(entry => {
-        setMapMarkers(entry.lat, entry.lon, entry.task_id);
+        setMapMarkers(entry.lat, entry.lon, entry.task_id, null);
       });
     });
 }
@@ -96,28 +103,20 @@ function fetchBaseInfo() {
     .then((response) => response.json())
     .then((data) => {
       data.forEach(entry => {
-        setMapMarkers(entry.lat, entry.lon, 'Base');
+        setMapMarkers(entry.lat, entry.lon, 'Base', null);
       });
     });
 }
 
-function fetchTruckLoc() {
+function fetchTrucksLoc() {
   fetch("fetch_TrucksLoc.php", {
     method: "POST"
   })
     .then((response) => response.json())
     .then((data) => {
       data.forEach(entry => {
-        setMapMarkers(entry.lat, entry.lon, 'Truck');
+        setMapMarkers(entry.lat, entry.lon, entry.category, entry.veh_id);
       });
-    });
-}
-
-function fetchGeoTruck(query) {
-  fetch('https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + query.address + '&limit=1')
-    .then(result => result.json())
-    .then(result => {
-      setMapMarkers(result[0], query.category);
     });
 }
 
@@ -151,30 +150,36 @@ function parseDisplayName(displayName) {
 const taskMarkers = [];
 const truckMarkers = [];
 const baseMarkers = [];
-function setMapMarkers(lat, lon, task_id) {
+function setMapMarkers(lat, lon, task_id, veh_id) {
   const latitude = lat;
   const longitude = lon;
-  if (task_id == 'Truck') { 
-    const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Truck'], draggable: true });
+  if (task_id == 'Active Truck') { 
+    const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Active Truck'], draggable: false });
     marker.truckInfo = {
       vehId: veh_id,
       latitude: latitude,
       longitude: longitude
     };
     marker.addTo(map);
-    truckMarkers.push(marker);
-    drawLine();
-
-    marker.on('dragend', function (e) {
-      removeAllPolylines();
-      var position = marker.getLatLng();
-      marker.setLatLng(position).update();
-      map.panTo(position);
-      //revGeocode(position);
-      drawLine();
+    marker.on('click', function () {
+      showTruckPopup(marker);
     });
+    truckMarkers.push(marker);
+    //drawLine();
+  }else if (task_id == 'Truck') { 
+    const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Truck'], draggable: false });
+    marker.truckInfo = {
+      vehId: veh_id,
+      latitude: latitude,
+      longitude: longitude
+    };
+    marker.addTo(map);
+    marker.on('click', function () {
+      showTruckPopup(marker);
+    });
+    truckMarkers.push(marker);
   }else if(task_id == 'Base'){
-    const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Base'] });
+    const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Base'], draggable: true });
     marker.baseInfo = {
       latitude: latitude,
       longitude: longitude
@@ -207,7 +212,7 @@ function setMapMarkers(lat, lon, task_id) {
             });
             taskMarkers.push(marker);
             if (res.veh == veh_id && truckMarkers.length != 0) {
-              drawLineOnce(task_id);
+              //drawLineOnce(task_id);
             }
           }
         });
@@ -241,6 +246,45 @@ function showTaskPopup(marker, status) {
       marker.bindPopup(popup).openPopup();
     });
 }
+
+function showTruckPopup(marker) {
+  fetch("fetch_TrucksPopup.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ vehicleIDs: marker.truckInfo.vehId })
+  })
+    .then((response) => response.json())
+    .then((truckDetails) => {
+      var popupContent = '';
+      
+      if (truckDetails !== null) {
+        for (const [vehicleID, details] of Object.entries(truckDetails)) {
+          popupContent += `
+            <b>Truck ID:</b> ${vehicleID}<br>
+            <b>Task Count:</b> ${details[0].taskCount}<br>
+            <b>TruckLoad:</b><br>
+          `;
+
+          details.forEach((load, index) => {
+            popupContent += `<b>Item ${index + 1}:</b> ${load.load_goodn} - ${load.load_goodv}<br>`;
+          });
+
+          popupContent += '<br>';
+        }
+      } else {
+        // Handle the case where truckDetails is null
+        popupContent += `
+            <b>Truck ID:</b> ${vehicleID}<br>
+            <b>Task Count:</b> ${details[0].taskCount}<br>
+            <b>TruckLoad: Empty</b><br>
+          `;
+      }
+      var popup = L.popup().setLatLng(marker.getLatLng()).setContent(popupContent);
+      marker.bindPopup(popup).openPopup();
+    });
+}
+
+
 
 const filters = L.control({ position: 'topleft' });
 filters.onAdd = function (map) {
@@ -301,6 +345,22 @@ document.addEventListener("DOMContentLoaded", function () {
             removeMarkersByCategory('Executing Offer');
           } else {
             addMarkersByCategory('Executing Offer');
+          }
+          break;
+        case 'Trucks With Active Tasks':
+          if (!checkbox.checked) {
+            removeMarkersByCategory('Active Truck');
+            hidePolylines();
+          } else {
+            addMarkersByCategory('Active Truck');
+            showPolylines();
+          }
+          break;
+        case 'Trucks Without Active Tasks':
+          if (!checkbox.checked) {
+            removeMarkersByCategory('Truck');
+          } else {
+            addMarkersByCategory('Truck');
           }
           break;
         case 'Tasks Lines':
@@ -370,7 +430,8 @@ const legendContent = {
   'Pending Offer': 'Pending Offers',
   'Executing Offer': 'Executing Offers',
   'Base': 'Base Location',
-  'Truck': 'Truck Location'
+  'Active Truck': 'Trucks with Active Tasks',
+  'Truck': 'Trucks without Active Tasks'
 };
 
 const legend = L.control({ position: 'topleft' });
@@ -389,7 +450,7 @@ L.control.zoom({
   position: 'bottomright'
 }).addTo(map);
 
-/*const polylines = [];
+const polylines = [];
 var veh_id;
 function drawLine() {
   const truckMarker = truckMarkers.find((marker) => marker.truckInfo.vehId == veh_id);
@@ -441,7 +502,7 @@ function removePolyline(task_id) {
   if (index !== -1) {
     polylines.splice(index, 1);
   }
-}*/
+}
 
 /* ~~~~~~~~~~ General Functions ~~~~~~~~~~ */
 
@@ -449,11 +510,9 @@ function removePolyline(task_id) {
 document.addEventListener("DOMContentLoaded", function () {
   map.invalidateSize();
   checkWidth();
-  /*fetchResInfo();
   fetchTasksLoc();
   fetchBaseInfo();
-  fetchTruckLoc();
-  fetchActiveTasks();*/
+  fetchTrucksLoc();
 });
 window.addEventListener("resize", (e) => {
   checkWidth();
@@ -477,23 +536,21 @@ function checkWidth() {
 
 //Desktop Layout Changes
 function desktopApply() {
-  deskDivCreation();
   deskCustomization();
+  storageDivCreation();
 }
 
 //Creating desktop-view Div
 const burgerCont = document.querySelector(".burger-container");
 const moduleSel = document.querySelector(".module");
-const tasksCont = document.querySelector(".tasks-container");
-const unloadTab = document.querySelector(".unload-tab");
-function deskDivCreation() {
-  var desktopViewDiv = document.createElement("div");
-  desktopViewDiv.className = "desktop-view";
+const storageCont = document.querySelector(".storage-container");
+
+function storageDivCreation(){
+  var storageDiv = document.createElement("div");
+  storageDiv.className = "storage-div";
+  storageDiv.appendChild(storageCont);
   var parentContainer = document.querySelector(".admin-home");
-  parentContainer.insertBefore(desktopViewDiv, burgerCont);
-  desktopViewDiv.appendChild(burgerCont);
-  desktopViewDiv.appendChild(moduleSel);
-  burgerCont.insertAdjacentElement("afterbegin", tasksCont);
+  parentContainer.appendChild(storageDiv);
   cnt++;
 }
 
@@ -506,26 +563,20 @@ function deskCustomization() {
   mapItem.id = "map_desktop";
   mapCont.classList.add("desktop");
   moduleSel.classList.add("desktop");
-  burgerCont.classList.add("desktop");
-  burgerIcox.classList.remove("active");
-  burgerIco.classList.remove("active");
   map.invalidateSize();
 }
 
 //Mobile Layout Changes
 function mobileApply() {
-  deskDivDeletion();
+  storageDivDeletion();
   mobileCustomization();
 }
 
 //Removing desktop-view Div
-function deskDivDeletion() {
-  var desktopViewDiv = document.querySelector(".desktop-view");
-  var parentContainer = desktopViewDiv.parentNode;
-  parentContainer.appendChild(burgerCont);
-  parentContainer.appendChild(moduleSel);
-  moduleSel.appendChild(tasksCont);
-  desktopViewDiv.remove();
+function storageDivDeletion() {
+  moduleSel.appendChild(storageCont);
+  var storageDiv = document.querySelector(".storage-div");
+  storageDiv.remove();
   cnt--;
 }
 
@@ -535,7 +586,6 @@ function mobileCustomization() {
   mapCont.classList.remove("desktop");
   moduleSel.classList.remove("desktop");
   burgerCont.classList.remove("desktop");
-  burgerIco.classList.add("active");
   map.invalidateSize()
 }
 
