@@ -10,20 +10,31 @@ map.zoomControl.remove();
 
 const searchInput = document.querySelector('.address-search');
 const mapContainer = document.getElementById('map-container');
-const searchIcon = document.getElementById('search-icon');
 const map_desktop = document.getElementById('map');
 map_desktop.classList.add("map");
 map_desktop.classList.add("active");
-searchIcon.addEventListener("click", fetchGeoSearch);
 
-searchInput.addEventListener("keyup", function (event) {
-  if (event.key === "Enter") {
-    fetchGeoSearch();
-  }
+var searchControl = L.control({
+  position: 'topright'
 });
 
+searchControl.onAdd = function (map) {
+  var container = L.DomUtil.create('div', 'leaflet-control leaflet-bar');
+  container.innerHTML = '<div class="search active">' +
+    `<input type="text" class="address-search" placeholder="Search...">` +
+    `<i class="fa-solid fa-magnifying-glass mglass" id="search-icon"></i>` +
+    '</div>';
+
+  // Add event listener to the mglassIcon
+  const mglassIcon = container.querySelector("#search-icon");
+  mglassIcon.addEventListener("click", fetchGeoSearch);
+  return container;
+};
+
+searchControl.addTo(map);
+
 function fetchGeoSearch() {
-  const query = searchInput.value;
+  const query = document.querySelector(".address-search").value;
   fetch('https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + query + '&limit=1')
     .then(result => result.json())
     .then(parsedResult => {
@@ -32,10 +43,12 @@ function fetchGeoSearch() {
 }
 
 function setResultList(parsedResult) {
-  const latitude = parseFloat(parsedResult.lat);
-  const longitude = parseFloat(parsedResult.lon);
-  position = new L.LatLng(latitude, longitude);
-  map.flyTo(position, 15);
+  if (parsedResult && parsedResult.lat && parsedResult.lon) {
+    const latitude = parseFloat(parsedResult.lat);
+    const longitude = parseFloat(parsedResult.lon);
+    const position = new L.LatLng(latitude, longitude);
+    map.flyTo(position, 15);
+  }
 }
 
 const categoryIcons = {
@@ -74,8 +87,7 @@ const categoryIcons = {
     iconSize: [25, 25],
     iconAnchor: [15, 30],
     popupAnchor: [0, -30]
-  })
-  ,
+  }),
   'Active Truck': L.icon({
     iconUrl: '/ResQSupply/icons/truckActiveIcon.svg',
     iconSize: [25, 25],
@@ -153,7 +165,7 @@ const baseMarkers = [];
 function setMapMarkers(lat, lon, task_id, veh_id) {
   const latitude = lat;
   const longitude = lon;
-  if (task_id == 'Active Truck') { 
+  if (task_id == 'Active Truck') {
     const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Active Truck'], draggable: false });
     marker.truckInfo = {
       vehId: veh_id,
@@ -166,7 +178,7 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
     });
     truckMarkers.push(marker);
     //drawLine();
-  }else if (task_id == 'Truck') { 
+  } else if (task_id == 'Truck') {
     const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Truck'], draggable: false });
     marker.truckInfo = {
       vehId: veh_id,
@@ -178,7 +190,7 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
       showTruckPopup(marker);
     });
     truckMarkers.push(marker);
-  }else if(task_id == 'Base'){
+  } else if (task_id == 'Base') {
     const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Base'], draggable: true });
     marker.baseInfo = {
       latitude: latitude,
@@ -186,7 +198,7 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
     };
     marker.addTo(map);
     baseMarkers.push(marker);
-  }else{
+  } else {
     fetch("fetch_TasksInfo.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -255,13 +267,12 @@ function showTruckPopup(marker) {
   })
     .then((response) => response.json())
     .then((truckDetails) => {
-      var popupContent = '';
-      
-      if (truckDetails !== null) {
+      if (truckDetails != null) {
+        var popupContent = '';
+
         for (const [vehicleID, details] of Object.entries(truckDetails)) {
           popupContent += `
             <b>Truck ID:</b> ${vehicleID}<br>
-            <b>Task Count:</b> ${details[0].taskCount}<br>
             <b>TruckLoad:</b><br>
           `;
 
@@ -271,20 +282,24 @@ function showTruckPopup(marker) {
 
           popupContent += '<br>';
         }
+
+        var popup = L.popup().setLatLng(marker.getLatLng()).setContent(popupContent);
+        marker.bindPopup(popup).openPopup();
       } else {
-        // Handle the case where truckDetails is null
-        popupContent += `
-            <b>Truck ID:</b> ${vehicleID}<br>
-            <b>Task Count:</b> ${details[0].taskCount}<br>
-            <b>TruckLoad: Empty</b><br>
-          `;
+        var popupContent = '';
+
+        for (const [vehicleID, details] of Object.entries(truckDetails)) {
+          popupContent += `
+                <b>Truck ID:</b> ${vehicleID}<br>
+                <b>TruckLoad: Empty</b><br>
+              `;
+        }
+
+        var popup = L.popup().setLatLng(marker.getLatLng()).setContent(popupContent);
+        marker.bindPopup(popup).openPopup();
       }
-      var popup = L.popup().setLatLng(marker.getLatLng()).setContent(popupContent);
-      marker.bindPopup(popup).openPopup();
     });
 }
-
-
 
 const filters = L.control({ position: 'topleft' });
 filters.onAdd = function (map) {
@@ -311,7 +326,7 @@ function replaceMapWithMenu() {
 
 //Add or Remove Markers when the xmark is clicked
 document.addEventListener("DOMContentLoaded", function () {
-  const xmark = document.querySelector(".cancelr");
+  const xmark = document.querySelector(".cancelf");
   xmark.addEventListener('click', () => {
     var checkboxes = document.querySelectorAll('.filters-list input[type="checkbox"]');
     checkboxes.forEach(function (checkbox) {
@@ -537,160 +552,155 @@ function checkWidth() {
 //Desktop Layout Changes
 function desktopApply() {
   deskCustomization();
-  storageDivCreation();
+  cnt++;
 }
 
 //Creating desktop-view Div
 const burgerCont = document.querySelector(".burger-container");
-const moduleSel = document.querySelector(".module");
 const storageCont = document.querySelector(".storage-container");
-
-function storageDivCreation(){
-  var storageDiv = document.createElement("div");
-  storageDiv.className = "storage-div";
-  storageDiv.appendChild(storageCont);
-  var parentContainer = document.querySelector(".admin-home");
-  parentContainer.appendChild(storageDiv);
-  cnt++;
-}
 
 //Activating all the tabs and NavBar Options
 const burgerIcox = document.querySelector(".burgerx");
 const burgerIco = document.querySelector(".burgeri");
-const mapItem = document.querySelector("#map");
-const mapCont = document.querySelector(".map-container");
+
 function deskCustomization() {
-  mapItem.id = "map_desktop";
-  mapCont.classList.add("desktop");
-  moduleSel.classList.add("desktop");
+  var storageSection = document.querySelector('.storage-sect');
+  var mapSection = document.querySelector('.map-sect');
+  var mainElement = document.querySelector('main');
+  mainElement.removeChild(storageSection);
+  mainElement.insertBefore(storageSection, mapSection);
   map.invalidateSize();
 }
 
 //Mobile Layout Changes
 function mobileApply() {
-  storageDivDeletion();
   mobileCustomization();
-}
-
-//Removing desktop-view Div
-function storageDivDeletion() {
-  moduleSel.appendChild(storageCont);
-  var storageDiv = document.querySelector(".storage-div");
-  storageDiv.remove();
   cnt--;
 }
 
 //Activating 
 function mobileCustomization() {
-  mapItem.id = "map";
-  mapCont.classList.remove("desktop");
-  moduleSel.classList.remove("desktop");
-  burgerCont.classList.remove("desktop");
+  var storageSection = document.querySelector('.storage-sect');
+  var mapSection = document.querySelector('.map-sect');
+  var mainElement = document.querySelector('main');
+  mainElement.removeChild(storageSection);
+  mainElement.insertBefore(storageSection, mapSection.nextSibling);
   map.invalidateSize()
 }
 
 /* ~~~~~~~~~~ Burger Menu Functions ~~~~~~~~~~ */
 
 //Burger Open
+const burgerSect = document.querySelector(".burger-sect");
 burgerIco.addEventListener("click", (e) => {
   burgerIco.classList.remove("active");
   burgerIcox.classList.add("active");
-  burgerCont.classList.add("active");
-  burgerMenu.classList.add("active");
-  moduleSel.classList.remove("active");
+  burgerSect.classList.add("active");
 });
 
 //Burger Close
 const statsTab = document.querySelector(".statistics");
-const rescAccTab = document.querySelector(".rescuer-account");
-const annCreationTab = document.querySelector(".announcement-creation");
-const storageMngOpt = document.querySelector(".storage-mngmt");
+const rescAccSect = document.querySelector(".rescuer-acc-sect");
+const annCreateSect = document.querySelector(".ann-create-sect");
+const storageMngSect = document.querySelector(".storage-mngmt-sect");
 
 burgerIcox.addEventListener("click", (e) => {
   burgerIcox.classList.remove("active");
   burgerIco.classList.add("active");
-  burgerCont.classList.remove("active");
-  statsTab.classList.remove("active");
-  rescAccTab.classList.remove("active");
-  annCreationTab.classList.remove("active");
-  storageMngOpt.classList.remove("active");
-  moduleSel.classList.add("active");
+  burgerSect.classList.remove("active");
 });
 
 const burgerItems = document.querySelectorAll(".burger-item");
-const burgerMenu = document.querySelector(".burger-menu");
+const mapSection = document.querySelector(".map-sect");
+const storageSection = document.querySelector(".storage-sect");
 burgerItems.forEach(function (item) {
-    item.addEventListener("click", function () {
-        burgerMenu.classList.remove("active");
-        switch (item.id) {
-            case 'stats':
-                statsTab.classList.add("active");
-                rescAccTab.classList.remove("active");
-                annCreationTab.classList.remove("active");
-                storageMngOpt.classList.remove("active");
-                break;
-            case "resacc":
-                rescAccTab.classList.add("active");
-                statsTab.classList.remove("active");
-                annCreationTab.classList.remove("active");
-                storageMngOpt.classList.remove("active");
-                break;
-            case "announcement":
-                annCreationTab.classList.add("active");
-                statsTab.classList.remove("active");
-                rescAccTab.classList.remove("active");
-                storageMngOpt.classList.remove("active");
-                break;
-            case "storage":
-                storageMngOpt.classList.add("active");
-                statsTab.classList.remove("active");
-                rescAccTab.classList.remove("active");
-                annCreationTab.classList.remove("active");
-                break;
-        }
-    });
+  item.addEventListener("click", function () {
+    switch (item.id) {
+      case 'home':
+        mapSection.classList.add("active");
+        storageSection.classList.add("active");
+        rescAccSect.classList.remove("active");
+        annCreateSect.classList.remove("active");
+        storageMngSect.classList.remove("active");
+        burgerSect.classList.remove("active");
+        burgerIco.classList.add("active");
+        burgerIcox.classList.remove("active");
+        break;
+      case 'stats':
+        mapSection.classList.add("active");
+        storageSection.classList.add("active");
+        rescAccSect.classList.remove("active");
+        storageMngSect.classList.remove("active");
+        burgerSect.classList.remove("active");
+        burgerIco.classList.add("active");
+        burgerIcox.classList.remove("active");
+        break;
+      case 'resacc':
+        rescAccSect.classList.add("active");
+        burgerIco.classList.add("active");
+        burgerIcox.classList.remove("active");
+        mapSection.classList.remove("active");
+        storageSection.classList.remove("active");
+        burgerSect.classList.remove("active");
+        annCreateSect.classList.remove("active");
+        storageMngSect.classList.remove("active");
+        //statsTab.classList.remove("active");
+        break;
+      case 'announcement':
+        annCreateSect.classList.add("active");
+        rescAccSect.classList.remove("active");
+        storageMngSect.classList.remove("active");
+        burgerIco.classList.add("active");
+        burgerIcox.classList.remove("active");
+        mapSection.classList.remove("active");
+        storageSection.classList.remove("active");
+        burgerSect.classList.remove("active");
+        //statsTab.classList.remove("active");
+        break;
+      case 'storage':
+        storageMngSect.classList.add("active");
+        rescAccSect.classList.remove("active");
+        annCreateSect.classList.remove("active");
+        burgerIco.classList.add("active");
+        burgerIcox.classList.remove("active");
+        mapSection.classList.remove("active");
+        storageSection.classList.remove("active");
+        burgerSect.classList.remove("active");
+        break;
+    }
+  });
 });
 
 /* ~~~~~~~~~~ Announcement Creation Functions ~~~~~~~~~~ */
 
-const addAnnouncement = document.querySelector(".add-ann");
-const annCreateTab = document.querySelector(".ann-create-tab");
 const annTextForm = document.querySelector(".ann-text-form");
 const annItemsForm = document.querySelector(".ann-items-form");
-addAnnouncement.addEventListener("click", (e) => {
-  addAnnouncement.classList.remove("active");
-  annCreateTab.classList.add("active");
-  annTextForm.classList.add("active")
-});
-
-const cancelAnn = document.querySelectorAll(".cancela");
 const annConfirmForm = document.querySelector(".ann-confirm-form");
-cancelAnn.forEach(function(btn){
-  btn.addEventListener("click", function(){
-    addAnnouncement.classList.add("active");
-    annCreateTab.classList.remove("active");
-    annTextForm.classList.remove("active");
+const annNextTextBtn = document.querySelector(".ann-next-text");
+const annNextItemsBtn = document.querySelector(".ann-next-items");
+const annSubmitBtn = document.querySelector(".ann-submit");
+const cancelAnn = document.querySelectorAll(".cancela");
+cancelAnn.forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    annTextForm.classList.add("active");
     annItemsForm.classList.remove("active");
     annConfirmForm.classList.remove("active");
   })
 })
 
-const annNextTextBtn = document.querySelector(".ann-next-text");
-const annNextItemsBtn = document.querySelector(".ann-next-items");
-const annSubmitBtn = document.querySelector(".ann-submit");
-annNextTextBtn.addEventListener("click", function(){
+annNextTextBtn.addEventListener("click", function () {
   annTextForm.classList.remove("active");
   annItemsForm.classList.add("active");
 })
 
-annNextItemsBtn.addEventListener("click", function(){
+annNextItemsBtn.addEventListener("click", function () {
   annItemsForm.classList.remove("active");
   annConfirmForm.classList.add("active");
 })
 
-annSubmitBtn.addEventListener("click", function(){
+annSubmitBtn.addEventListener("click", function () {
   annConfirmForm.classList.remove("active");
-  addAnnouncement.classList.add("active");
+  annTextForm.classList.add("active");
 })
 
 /* ~~~~~~~~~~ Storage Management Functions ~~~~~~~~~~ */
@@ -707,21 +717,21 @@ const storageBtn = document.querySelector("#storageBtn");
 const storageUpdateTab = document.querySelector(".storage-update-tab");
 const transferedItemsTab = document.querySelector(".transfered-items-tab");
 const updateGoodsTab = document.querySelector(".update-goods-tab");
-storageBtn.addEventListener("click", function(){
+storageBtn.addEventListener("click", function () {
   storageUpdateTab.classList.add("active");
   transferedItemsTab.classList.remove("active");
   updateGoodsTab.classList.remove("active");
 })
 
 const transferedBtn = document.querySelector("#transferedBtn");
-transferedBtn.addEventListener("click", function(){
+transferedBtn.addEventListener("click", function () {
   transferedItemsTab.classList.add("active");
   storageUpdateTab.classList.remove("active");
   updateGoodsTab.classList.remove("active");
 })
 
 const updateBtn = document.querySelector("#updateBtn");
-updateBtn.addEventListener("click", function(){
+updateBtn.addEventListener("click", function () {
   updateGoodsTab.classList.add("active");
   transferedItemsTab.classList.remove("active");
   storageUpdateTab.classList.remove("active");
@@ -731,16 +741,22 @@ updateBtn.addEventListener("click", function(){
 
 /* ~~~~~~~~~~ Update Storage Functions ~~~~~~~~~~ */
 
-const strgNextQuantityBtn = document.querySelector(".strg-next-quantity");
+const cancelUpdate = document.querySelector(".cancelupd");
 const strgQuantityForm = document.querySelector(".storage-quantity-form");
 const strgConfirmForm = document.querySelector(".storage-confirm-form");
-strgNextQuantityBtn.addEventListener("click", function(){
+cancelUpdate.addEventListener("click", function () {
+  strgQuantityForm.classList.add("active");
+  strgConfirmForm.classList.remove("active");
+})
+
+const strgNextQuantityBtn = document.querySelector(".strg-next-quantity");
+strgNextQuantityBtn.addEventListener("click", function () {
   strgQuantityForm.classList.remove("active");
   strgConfirmForm.classList.add("active");
 })
 
 const strgSubmitBtn = document.querySelector(".storage-submit");
-strgSubmitBtn.addEventListener("click", function(){
+strgSubmitBtn.addEventListener("click", function () {
   strgConfirmForm.classList.remove("active");
   strgQuantityForm.classList.add("active");
 })
@@ -757,44 +773,44 @@ fileInput.addEventListener("change", () => {
   numOfFiles.textContent = ``;
   for (i of fileInput.files) {
     let reader = new FileReader();
-    if(i.type != "application/json"){
+    if (i.type != "application/json") {
       errorFiletype.classList.add("active");
       numOfFiles.textContent = 'No Files Selected';
-    }else{
+    } else {
       errorFiletype.classList.remove("active");
       let fileName = i.name;
       let fileSize = (i.size / 1024).toFixed(1);
-      var markup = 
-      `<li>`+
-      `<p>${fileName}</p>`+
-      `<div class="details">`+
-      `<p>${fileSize}KB</p>`+
-      `<i class="fa-solid fa-xmark cancelu" aria-hidden="true"></i>`+
-      `</div>`+
-      `</li>`;
+      var markup =
+        `<li>` +
+        `<p>${fileName}</p>` +
+        `<div class="details">` +
+        `<p>${fileSize}KB</p>` +
+        `<i class="fa-solid fa-xmark cancelu" aria-hidden="true"></i>` +
+        `</div>` +
+        `</li>`;
       if (fileSize >= 1024) {
         fileSize = (fileSize / 1024).toFixed(1);
-        markup = 
-        `<li>`+
-        `<p>${fileName}</p>`+
-        `<div class="details">`+
-        `<p>${fileSize}MB</p>`+
-        `<i class="fa-solid fa-xmark cancelu" aria-hidden="true"></i>`+
-        `</div>`+
-        `</li>`;
+        markup =
+          `<li>` +
+          `<p>${fileName}</p>` +
+          `<div class="details">` +
+          `<p>${fileSize}MB</p>` +
+          `<i class="fa-solid fa-xmark cancelu" aria-hidden="true"></i>` +
+          `</div>` +
+          `</li>`;
       }
       fileList.insertAdjacentHTML("beforeend", markup);
       fileInput.classList.remove("active");
       fileLabel.classList.remove("active");
-      var markup = 
-      `<div class="upload-files">`+
-      `<i class="fa-solid fa-arrow-up-from-bracket"></i> Upload Selected File`+
-      `</div>`;
+      var markup =
+        `<div class="upload-files">` +
+        `<i class="fa-solid fa-arrow-up-from-bracket"></i> Upload Selected File` +
+        `</div>`;
       const uploadForm = document.querySelector(".upload-form")
       uploadForm.insertAdjacentHTML("afterbegin", markup);
 
       const cancelUpload = document.querySelector(".cancelu");
-      cancelUpload.addEventListener("click", function(){
+      cancelUpload.addEventListener("click", function () {
         fileInput.value = '';
         fileList.innerHTML = '';
         document.querySelector(".upload-files").remove();
@@ -805,3 +821,177 @@ fileInput.addEventListener("change", () => {
     }
   }
 });
+
+/* ~~~~~~~~~~ Rescuer Signup Form ~~~~~~~~~~ */
+
+//Show-Hide Password Icon
+const pwShowHide = document.querySelectorAll(".pw_hide");
+pwShowHide.forEach((icon) => {
+  icon.addEventListener("click", () => {
+    let getPwInput = icon.parentElement.querySelector("input");
+    if (getPwInput.type === "password") {
+      getPwInput.type = "text";
+      icon.classList.replace("fa-eye-slash", "fa-eye");
+    } else {
+      getPwInput.type = "password";
+      icon.classList.replace("fa-eye", "fa-eye-slash");
+    }
+  });
+});
+
+//Password Requirements
+let validationRegex = [
+  { regex: /.{8,}/ },
+  { regex: /[A-Z]/ },
+  { regex: /[^A-Za-z0-9]/ },
+  { regex: /^[a-zA-Z0-9!@#$%^&*()-_=+{}\[\]:;<>,.?\/\\|]+$/ },
+];
+
+//Password Requirements Checklist
+const passChecklist = document.querySelectorAll(".checklist-item");
+const passInput = document.querySelector("#pass");
+passInput.addEventListener("keyup", () => {
+  validationRegex.forEach((item, i) => {
+    let isValid = item.regex.test(passInput.value);
+    if (isValid) {
+      passChecklist[i].classList.add("checked");
+    } else {
+      passChecklist[i].classList.remove("checked");
+    }
+  });
+});
+
+//Show-Hide Password Requirements
+const passField = document.querySelector(".field.password");
+passInput.addEventListener("focus", (e) => {
+  e.preventDefault();
+  passField.classList.add("active");
+});
+passInput.addEventListener("blur", (e) => {
+  e.preventDefault();
+  passField.classList.remove("active");
+});
+
+//Password Validation
+function checkPass() {
+  for (var i = 0; i < passChecklist.length; i++) {
+    if (!passChecklist[i].classList.contains("checked")) {
+      passGood = false;
+    } else passGood = true;
+  }
+}
+
+//Username Validation
+const usernamePattern = /^[a-zA-Z0-9]+\s?[a-zA-Z0-9]+$/;
+const usernameField = document.querySelector(".field.username");
+const usernameInput = document.querySelector("#username");
+function checkUsername() {
+  if (!usernameInput.value.match(usernamePattern)) {
+    usernameField.classList.add("invalid");
+    usernameField.classList.remove("duplicate");
+  } else {
+    usernameField.classList.remove("invalid");
+    checkUsernameAvailability();
+  }
+}
+
+//Fullname Validation
+const fullnamePattern = /[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+\s+[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+$/;
+const fullnameField = document.querySelector(".field.fullname");
+const fullnameInput = document.querySelector("#fullname");
+function checkFullname() {
+  if (!fullnameInput.value.match(fullnamePattern)) {
+    return fullnameField.classList.add("invalid");
+  }
+  fullnameField.classList.remove("invalid");
+}
+
+//Phone Number Validation
+const phonePattern = /^[+0-9]+$/;
+const phoneField = document.querySelector(".field.phone");
+const phoneInput = document.querySelector("#phone");
+function checkPhone() {
+  if (!phoneInput.value.match(phonePattern)) {
+    return phoneField.classList.add("invalid");
+  }
+  phoneField.classList.remove("invalid");
+}
+
+//Address Validation
+const addressPattern = /^[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+\s+[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+$/;
+const addressField = document.querySelector(".field.address");
+const addressInput = document.querySelector("#address");
+function checkAddress() {
+  if (!addressInput.value.match(addressPattern)) {
+    return addressField.classList.add("invalid");
+  }
+  addressField.classList.remove("invalid");
+}
+
+// AJAX Request to check the Database for Username Similarity
+function checkUsernameAvailability() {
+  var data = { username: usernameInput.value };
+  fetch("/ResQSupply/check_username.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      if (result != "False") {
+        usernameField.classList.add("duplicate");
+      } else {
+        usernameField.classList.remove("duplicate");
+      }
+    });
+}
+
+//Validation When Typing
+usernameInput.addEventListener("keyup", checkUsername);
+fullnameInput.addEventListener("keyup", checkFullname);
+phoneInput.addEventListener("keyup", checkPhone);
+addressInput.addEventListener("keyup", checkAddress);
+
+//Submit Form Validation When Submiting
+const signupBtn = document.querySelector(".signup");
+signupBtn.addEventListener("click", (e) => {
+  checkUsername();
+  checkFullname();
+  checkPhone();
+  checkAddress();
+  checkPass();
+  if (
+    usernameField.classList.contains("invalid") ||
+    usernameField.classList.contains("duplicate") ||
+    fullnameField.classList.contains("invalid") ||
+    phoneField.classList.contains("invalid") ||
+    addressField.classList.contains("invalid") ||
+    !passGood
+  ) {
+    e.preventDefault();
+  } else {
+    e.preventDefault();
+    var lat;
+    var lon;
+    fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + addressInput.value + '&limit=1')
+      .then(result => result.json())
+      .then(result => {
+        lat = result[0].lat;
+        lon = result[0].lon;
+        submit(lat, lon);
+      });
+  }
+});
+
+const regFormAct = document.querySelector("#signup-form");
+function submit(lat, lon) {
+  fetch("home.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: usernameInput.value, fullname: fullnameInput.value, phone: phoneInput.value, address: addressInput.value, password: passInput.value, latitude: lat, longitude: lon }),
+  })
+    .then((response) => response.json())
+    .then((result) => {
+
+    });
+}
