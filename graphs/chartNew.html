@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Getting Started with Chart JS with www.chartjs3.com</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+      }
+      .chartMenu {
+        width: 100vw;
+        height: 40px;
+        background: #1A1A1A;
+        color: rgba(54, 162, 235, 1);
+      }
+      .chartMenu p {
+        padding: 10px;
+        font-size: 20px;
+      }
+      .chartCard {
+        width: 100vw;
+        height: calc(100vh - 40px);
+        background: rgba(54, 162, 235, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .chartBox {
+        width: 700px;
+        padding: 20px;
+        border-radius: 20px;
+        border: solid 3px rgba(54, 162, 235, 1);
+        background: white;
+      }
+      .container{
+        width: 700px;
+        max-width: 700px;
+        overflow-x: scroll;
+      }
+      .containerBody{
+        height: 500px;
+      }
+
+      #customLegend{
+        margin-top: 15px;
+      }
+
+      #customLegend ul{
+        display: flex;
+        flex-direction: row;
+        margin: 0;
+        padding: 0;
+      }
+
+      #customLegend li{
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        flex-direction: row;
+        margin-bottom: 5px;
+        line-height: 22px;
+      }
+
+      #customLegend span{
+        display: inline-block;
+        height: 20px;
+        width: 20px;
+        margin-right: 4px;
+        border-style: solid;
+        border-width: 1px;
+      }
+
+      #customLegend li p{
+        margin-right: 20px;
+        padding: 0;
+        color: rgba(102, 102, 102, 1);
+      }
+
+      #customLegend li.fade p{
+        margin: 0;
+        padding: 0;
+        color: rgba(102, 102, 102, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chartMenu">
+      <p>WWW.CHARTJS3.COM (Chart JS <span id="chartVersion"></span>)</p>
+    </div>
+    <div class="chartCard">
+      <div class="chartBox">
+        <div class="container">
+            <div class="containerBody">
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
+    <script>
+    // setup 
+    const data = {
+      labels: ['01/11', '02/11', '03/11', '04/11', '05/11', '06/11', '07/11','08/11', '09/11', '10/11', '11/11', '12/11', '13/11', '14/11'],
+      datasets: [{
+        label: 'New Offers',
+        data: [100, 5, 29, 78, 48, 98, 37, 87, 29, 78, 39, 20, 3, 34],
+        backgroundColor: [
+          'rgba(200, 0, 71, 0.2)'
+        ],
+        borderColor: [
+          'rgba(200, 0, 71, 1)'
+        ],
+        borderWidth: 1
+      },
+      {
+        label: 'New Requests',
+        data: [21, 45, 54, 78, 65, 32, 54, 0, 2, 1, 4, 5, 8, 78],
+        backgroundColor: [
+          'rgba(200, 219, 255, 0.2)'
+        ],
+        borderColor: [
+          'rgba(200, 219, 255, 1)'
+        ],
+        borderWidth: 1
+      },
+      {
+        label: 'Completed Offers',
+        data: [48, 98, 37, 87, 29, 100, 5, 29, 78, 48, 45, 54, 2, 7],
+        backgroundColor: [
+          'rgba(149, 95, 255, 0.2)'
+        ],
+        borderColor: [
+          'rgba(149, 95, 255, 1)'
+        ],
+        borderWidth: 1
+      },
+      {
+        label: 'Completed Requests',
+        data: [32, 54, 0, 2, 1, 4, 100, 5, 29, 78, 48, 98, 37, 0],
+        backgroundColor: [
+          'rgba(136, 255, 133, 0.2)'
+        ],
+        borderColor: [
+          'rgba(136, 255, 133, 1)'
+        ],
+        borderWidth: 1
+      }]
+    };
+
+    // config 
+    const config = {
+      type: 'bar',
+      data,
+      options: {
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        },
+        plugins: { //Remove Legends
+            legend: {
+                display: false
+            }
+        }
+      }
+    };
+
+    // render init block
+    const myChart = new Chart(
+      document.getElementById('myChart'),
+      config
+    );
+
+    const containerBody = document.querySelector('.containerBody');
+    const totalLabels = myChart.data.labels.length;
+    if(totalLabels > 7){
+        const newWidth = 700 + ((totalLabels - 7) * 30);
+        containerBody.style.width = `${newWidth}px`;
+    }
+
+    //Legend Functions
+    function generateLegend(){
+        const chartBox = document.querySelector('.chartBox')
+
+        const div = document.createElement('DIV');
+        div.setAttribute('id', 'customLegend');
+
+        const ul = document.createElement('UL');
+
+        myChart.legend.legendItems.forEach((dataset, index) => {
+            const text = dataset.text;
+            const datasetIndex = dataset.datasetIndex;
+            const bgColor = dataset.fillStyle;
+            const bColor = dataset.strokeStyle;
+            const fontColor = dataset.fontColor;
+
+            const li = document.createElement('LI');
+
+            const spanBox = document.createElement('SPAN');
+            spanBox.style.borderColor = bColor;
+            spanBox.style.backgroundColor = bgColor;
+
+            const p = document.createElement('P');
+            const textNode = document.createTextNode(text);
+
+            li.onclick = (click) => {
+                const isHidden = !myChart.isDatasetVisible(datasetIndex);
+                myChart.setDatasetVisibility(datasetIndex, isHidden);
+                updateLegend(click);
+            }
+
+            ul.appendChild(li);
+            li.appendChild(spanBox);
+            li.appendChild(p);
+            p.appendChild(textNode);
+
+        })
+        chartBox.appendChild(div);
+        div.appendChild(ul);
+    };
+
+    function updateLegend(click){
+        const element = click.target.parentNode;
+        element.classList.toggle('fade');
+        myChart.update();
+    }
+
+    generateLegend();
+    </script>
+
+  </body>
+</html>

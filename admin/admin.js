@@ -599,7 +599,7 @@ burgerIco.addEventListener("click", (e) => {
 });
 
 //Burger Close
-const statsTab = document.querySelector(".statistics");
+const statsTab = document.querySelector(".statistics-sect");
 const rescAccSect = document.querySelector(".rescuer-acc-sect");
 const annCreateSect = document.querySelector(".ann-create-sect");
 const storageMngSect = document.querySelector(".storage-mngmt-sect");
@@ -622,18 +622,22 @@ burgerItems.forEach(function (item) {
         rescAccSect.classList.remove("active");
         annCreateSect.classList.remove("active");
         storageMngSect.classList.remove("active");
+        statsTab.classList.remove("active");
         burgerSect.classList.remove("active");
         burgerIco.classList.add("active");
         burgerIcox.classList.remove("active");
         break;
       case 'stats':
-        mapSection.classList.add("active");
-        storageSection.classList.add("active");
-        rescAccSect.classList.remove("active");
-        storageMngSect.classList.remove("active");
-        burgerSect.classList.remove("active");
+        statsTab.classList.add("active");
         burgerIco.classList.add("active");
         burgerIcox.classList.remove("active");
+        mapSection.classList.remove("active");
+        storageSection.classList.remove("active");
+        burgerSect.classList.remove("active");
+        annCreateSect.classList.remove("active");
+        storageMngSect.classList.remove("active");
+        rescAccSect.classList.remove("active");
+        fetch_statistics();
         break;
       case 'resacc':
         rescAccSect.classList.add("active");
@@ -644,7 +648,7 @@ burgerItems.forEach(function (item) {
         burgerSect.classList.remove("active");
         annCreateSect.classList.remove("active");
         storageMngSect.classList.remove("active");
-        //statsTab.classList.remove("active");
+        statsTab.classList.remove("active");
         break;
       case 'announcement':
         annCreateSect.classList.add("active");
@@ -655,7 +659,7 @@ burgerItems.forEach(function (item) {
         mapSection.classList.remove("active");
         storageSection.classList.remove("active");
         burgerSect.classList.remove("active");
-        //statsTab.classList.remove("active");
+        statsTab.classList.remove("active");
         break;
       case 'storage':
         storageMngSect.classList.add("active");
@@ -666,6 +670,7 @@ burgerItems.forEach(function (item) {
         mapSection.classList.remove("active");
         storageSection.classList.remove("active");
         burgerSect.classList.remove("active");
+        statsTab.classList.remove("active");
         break;
     }
   });
@@ -995,3 +1000,102 @@ function submit(lat, lon) {
 
     });
 }
+
+//Statistics
+const config = {
+  type: 'bar',
+  data: {}, // Empty data initially
+  options: {
+      maintainAspectRatio: false,
+      scales: {
+          y: {
+              beginAtZero: true
+          }
+      },
+      plugins: {
+          legend: {
+              display: false
+          }
+      }
+  }
+};
+
+// render init block
+const myChart = new Chart(
+  document.getElementById('myChart'),
+  config
+);
+
+const containerBody = document.querySelector('.containerBody');
+const chartBox = document.querySelector('.chartBox');
+
+function fetch_statistics(){
+  fetch('statistics.php')
+  .then(response => response.json())
+  .then(data => {
+      // Update chart data with fetched data
+      myChart.data = data;
+
+      // Update container width based on the number of labels
+      const totalLabels = myChart.data.labels.length;
+      if (totalLabels > 7) {
+          const newWidth = 700 + ((totalLabels - 7) * 30);
+          containerBody.style.width = `${newWidth}px`;
+      }
+
+      // Update legend
+      generateLegend();
+  })
+  .catch(error => console.error('Error fetching data:', error));
+}
+
+
+//Legend Functions
+function generateLegend(){
+    const chartBox = document.querySelector('.chartBox')
+
+    const div = document.createElement('DIV');
+    div.setAttribute('id', 'customLegend');
+
+    const ul = document.createElement('UL');
+
+    myChart.legend.legendItems.forEach((dataset, index) => {
+        const text = dataset.text;
+        const datasetIndex = dataset.datasetIndex;
+        const bgColor = dataset.fillStyle;
+        const bColor = dataset.strokeStyle;
+        const fontColor = dataset.fontColor;
+
+        const li = document.createElement('LI');
+
+        const spanBox = document.createElement('SPAN');
+        spanBox.style.borderColor = bColor;
+        spanBox.style.backgroundColor = bgColor;
+
+        const p = document.createElement('P');
+        const textNode = document.createTextNode(text);
+
+        li.onclick = (click) => {
+            const isHidden = !myChart.isDatasetVisible(datasetIndex);
+            myChart.setDatasetVisibility(datasetIndex, isHidden);
+            updateLegend(click);
+        }
+
+        ul.appendChild(li);
+        li.appendChild(spanBox);
+        li.appendChild(p);
+        p.appendChild(textNode);
+
+    })
+    chartBox.appendChild(div);
+    div.appendChild(ul);
+};
+
+function updateLegend(click){
+    const element = click.target.parentNode;
+    element.classList.toggle('fade');
+    myChart.update();
+}
+
+
+

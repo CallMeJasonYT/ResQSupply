@@ -1,0 +1,79 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+  }
+  .chartMenu {
+    width: 100vw;
+    height: 40px;
+    background: #1A1A1A;
+    color: rgba(54, 162, 235, 1);
+  }
+  .chartMenu p {
+    padding: 10px;
+    font-size: 20px;
+  }
+  .chartCard {
+    width: 100vw;
+    height: calc(100vh - 40px);
+    background: rgba(54, 162, 235, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .chartBox {
+    width: 700px;
+    padding: 20px;
+    border-radius: 20px;
+    border: solid 3px rgba(54, 162, 235, 1);
+    background: white;
+  }
+  .container{
+    width: 700px;
+    max-width: 700px;
+    overflow-x: scroll;
+  }
+  .containerBody{
+    height: 500px;
+  }
+
+  #customLegend{
+    margin-top: 15px;
+  }
+
+  #customLegend ul{
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    padding: 0;
+  }
+
+  #customLegend li{
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    flex-direction: row;
+    margin-bottom: 5px;
+    line-height: 22px;
+  }
+
+  #customLegend span{
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+    margin-right: 4px;
+    border-style: solid;
+    border-width: 1px;
+  }
+
+  #customLegend li p{
+    margin-right: 20px;
+    padding: 0;
+    color: rgba(102, 102, 102, 1);
+  }
+
+  #customLegend li.fade p{
+    margin: 0;
+    padding: 0;
+    color: rgba(102, 102, 102, 0.5);
+  }
