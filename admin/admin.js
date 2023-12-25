@@ -1033,16 +1033,20 @@ function fetch_statistics(){
   fetch('statistics.php')
   .then(response => response.json())
   .then(data => {
+    console.log(data)
       // Update chart data with fetched data
       myChart.data = data;
 
       // Update container width based on the number of labels
       const totalLabels = myChart.data.labels.length;
       if (totalLabels > 7) {
-          const newWidth = 700 + ((totalLabels - 7) * 30);
+        if(viewportW > 1000){
+          newWidth = 1000 + ((totalLabels - 7) * 150);
+        }else{
+          const newWidth = 700 + ((totalLabels - 7) * 150);
+        }
           containerBody.style.width = `${newWidth}px`;
       }
-
       // Update legend
       generateLegend();
   })
@@ -1085,6 +1089,7 @@ function generateLegend(){
         li.appendChild(spanBox);
         li.appendChild(p);
         p.appendChild(textNode);
+        myChart.update();
 
     })
     chartBox.appendChild(div);
@@ -1097,5 +1102,13 @@ function updateLegend(click){
     myChart.update();
 }
 
-
-
+const picker = new easepick.create({
+  element: document.getElementById('datepicker'),
+  css: [
+    'custom_date_picker.css'
+  ],
+  plugins: ['RangePlugin'],
+  RangePlugin: {
+    tooltip: true,
+  },
+});

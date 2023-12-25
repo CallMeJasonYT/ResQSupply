@@ -144,6 +144,13 @@ section {
   align-items: center;
   min-height: calc(100vh - 160px);
   display: none;
+  gap: calc(100vh - 90vh + 15px);
+}
+
+.statistics-sect{
+  gap: 0px;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .storage-mngmt-sect {
@@ -156,7 +163,6 @@ section {
 .storage-mngmt-sect.active,
 .statistics-sect.active {
   display: flex;
-  gap: calc(100vh - 90vh + 15px);
 }
 
 .map {
@@ -187,6 +193,11 @@ section {
     max-width: 560px !important;
   }
 
+  .chartBox,
+  .date-pick{
+    max-width: 960px !important;
+  }
+
   .ann-text-form,
   .ann-items-form,
   .ann-confirm-form,
@@ -208,6 +219,11 @@ section {
 
   .map-container {
     max-width: 1000px !important;
+  }
+
+  .chartBox,
+  .date-pick{
+    max-width: 1280px !important;
   }
 
   .storage-container {
@@ -1225,27 +1241,29 @@ label,
   font-size: 20px;
 }
 .chartCard {
-  width: 100vw;
-  height: calc(100vh - 40px);
-  background: rgba(54, 162, 235, 0.2);
+  width: calc(100vw - 40px);
+  height: calc(calc(100vh - 180px) - calc(10vh - 15px));
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .chartBox {
-  /*width: 700px;*/
+  width: calc(100vw - 40px);
+  max-width: 720px;
   padding: 20px;
   border-radius: 20px;
-  border: solid 3px rgba(54, 162, 235, 1);
+  border: solid 3px #0a7388;
+  transition: all 0.4s ease-out;
   background: white;
 }
+
 .container{
-  width: 700px;
-  max-width: 700px;
+  width: 100%;
+  max-width: calc(100vw - 40px);
   overflow-x: scroll;
 }
 .containerBody{
-  height: 500px;
+  height: calc(calc(100vh - 300px) - calc(10vh - 15px));
 }
 
 #customLegend{
@@ -1287,4 +1305,28 @@ label,
   margin: 0;
   padding: 0;
   color: rgba(102, 102, 102, 0.5);
+}
+
+.date-pick{
+  display: flex;
+  max-width: 720px;
+  transition: all 0.4s ease-out;
+  align-items: center;
+  margin: auto;
+  width: 100%;
+}
+
+.date-text{
+  margin-right: 20px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+#datepicker{
+  height: 30px;
+  outline: none;
+  font-size: 14px;
+  border-radius: 5px;
+  padding: 0 20px 0 10px;
+  border: 1px solid #B3B3B3;
 }
