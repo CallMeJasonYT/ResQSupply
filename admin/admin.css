@@ -167,6 +167,7 @@ section {
 
 .map {
   height: calc(100vh - 310px);
+  width: 100%;
   display: none;
 }
 
@@ -181,12 +182,17 @@ section {
   }
 
   .map {
+    max-width: calc(calc(100vw - 40px) / 2);
     height: calc(100vh - 170px) !important;
   }
 
   .storage-sect {
     margin-right: 10px;
     margin-top: 0;
+  }
+
+  .storage-container{
+    max-width: calc(calc(100vw - 40px) / 2) !important; 
   }
 
   .form-container {
@@ -213,21 +219,12 @@ section {
 }
 
 @media screen and (min-width: 1300px) {
-  .map {
-    max-width: 1000px;
-  }
-
   .map-container {
-    max-width: 1000px !important;
+    max-width: 100vh !important;
   }
-
   .chartBox,
   .date-pick{
     max-width: 1280px !important;
-  }
-
-  .storage-container {
-    max-width: 960px !important;
   }
 }
 
@@ -375,14 +372,26 @@ ul {
   position: relative;
 }
 
-.pending-request,
-.executing-request,
-.pending-offer,
-.executing-offer,
-.line {
+.filters-list {
+  position: relative;
+  padding: 10px;
+}
+
+.filter {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+
+.filter div {
   display: flex;
   align-items: center;
   cursor: pointer;
+}
+
+.filter img{
+  margin-right: 10px;
 }
 
 .cancelr {
@@ -399,18 +408,6 @@ ul {
   z-index: 501;
 }
 
-.filters-list {
-  position: relative;
-  padding: 10px;
-}
-
-.filter {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  margin-top: 5px;
-}
-
 input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
@@ -425,23 +422,6 @@ input[type="checkbox"] {
 
 input[type="checkbox"]:checked {
   background-color: #0e505e;
-}
-
-.pending-request,
-.executing-request,
-.pending-offer,
-.executing-offer,
-.line {
-  display: flex;
-  align-items: center;
-}
-
-.pending-request img,
-.executing-request img,
-.pending-offer img,
-.executing-offer img,
-.line img {
-  margin-right: 10px;
 }
 
 .name {

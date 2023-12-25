@@ -626,6 +626,7 @@ burgerItems.forEach(function (item) {
         burgerSect.classList.remove("active");
         burgerIco.classList.add("active");
         burgerIcox.classList.remove("active");
+        map.invalidateSize();
         break;
       case 'stats':
         statsTab.classList.add("active");

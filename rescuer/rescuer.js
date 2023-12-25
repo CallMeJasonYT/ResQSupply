@@ -10,17 +10,27 @@ map.zoomControl.remove();
 
 const searchInput = document.querySelector('.address-search');
 const mapContainer = document.getElementById('map-container');
-const searchIcon = document.getElementById('search-icon');
 const map_desktop = document.getElementById('map');
 map_desktop.classList.add("map");
 map_desktop.classList.add("active");
-searchIcon.addEventListener("click", fetchGeoSearch);
 
-searchInput.addEventListener("keyup", function (event) {
-  if (event.key === "Enter") {
-    fetchGeoSearch();
-  }
+var searchControl = L.control({
+  position: 'topright'
 });
+
+searchControl.onAdd = function (map) {
+  var container = L.DomUtil.create('div', 'leaflet-control leaflet-bar');
+  container.innerHTML = '<div class="search active">' +
+    `<input type="text" class="address-search" placeholder="Search...">` +
+    `<i class="fa-solid fa-magnifying-glass mglass" id="search-icon"></i>` +
+    '</div>';
+
+  const mglassIcon = container.querySelector("#search-icon");
+  mglassIcon.addEventListener("click", fetchGeoSearch);
+  return container;
+};
+
+searchControl.addTo(map);
 
 function fetchGeoSearch() {
   const query = searchInput.value;
@@ -135,7 +145,7 @@ function updateTruckLoc(position, lat, lon) {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({address: position, latitude: lat, longitude: lon})
+    body: JSON.stringify({ address: position, latitude: lat, longitude: lon })
   })
     .then(response => response.json())
 }
@@ -146,7 +156,7 @@ const baseMarkers = [];
 function setMapMarkers(lat, lon, task_id) {
   const latitude = lat;
   const longitude = lon;
-  if (task_id == 'Truck') { 
+  if (task_id == 'Truck') {
     const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Truck'], draggable: true });
     marker.truckInfo = {
       vehId: veh_id,
@@ -165,7 +175,7 @@ function setMapMarkers(lat, lon, task_id) {
       revGeocode(position);
       drawLine();
     });
-  }else if(task_id == 'Base'){
+  } else if (task_id == 'Base') {
     const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Base'] });
     marker.baseInfo = {
       latitude: latitude,
@@ -173,7 +183,7 @@ function setMapMarkers(lat, lon, task_id) {
     };
     marker.addTo(map);
     baseMarkers.push(marker);
-  }else{
+  } else {
     fetch("fetch_TasksInfo.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -297,7 +307,7 @@ function replaceMapWithMenu() {
 
 //Add or Remove Markers when the xmark is clicked
 document.addEventListener("DOMContentLoaded", function () {
-  const xmark = document.querySelector(".cancelr");
+  const xmark = document.querySelector(".cancelf");
   xmark.addEventListener('click', () => {
     var checkboxes = document.querySelectorAll('.filters-list input[type="checkbox"]');
     checkboxes.forEach(function (checkbox) {
@@ -347,6 +357,7 @@ document.addEventListener("DOMContentLoaded", function () {
     map_desktop.classList.add("active");
   });
 });
+
 
 function removeMarkersByCategory(category) {
   taskMarkers.forEach(marker => {
@@ -507,23 +518,7 @@ function checkWidth() {
 
 //Desktop Layout Changes
 function desktopApply() {
-  deskDivCreation();
   deskCustomization();
-}
-
-//Creating desktop-view Div
-const burgerCont = document.querySelector(".burger-container");
-const moduleSel = document.querySelector(".module");
-const tasksCont = document.querySelector(".tasks-container");
-const unloadTab = document.querySelector(".unload-tab");
-function deskDivCreation() {
-  var desktopViewDiv = document.createElement("div");
-  desktopViewDiv.className = "desktop-view";
-  var parentContainer = document.querySelector(".rescuer-home");
-  parentContainer.insertBefore(desktopViewDiv, burgerCont);
-  desktopViewDiv.appendChild(burgerCont);
-  desktopViewDiv.appendChild(moduleSel);
-  burgerCont.insertAdjacentElement("afterbegin", tasksCont);
   cnt++;
 }
 
@@ -533,77 +528,61 @@ const burgerIco = document.querySelector(".burgeri");
 const mapItem = document.querySelector("#map");
 const mapCont = document.querySelector(".map-container");
 function deskCustomization() {
-  mapItem.id = "map_desktop";
-  mapCont.classList.add("desktop");
-  tasksCont.classList.add("desktop");
-  moduleSel.classList.add("desktop");
-  burgerCont.classList.add("desktop");
-  burgerIcox.classList.remove("active");
-  burgerIco.classList.remove("active");
+  var activeTasksSect = document.querySelector('.active-tasks-sect');
+  var mapSection = document.querySelector('.map-sect');
+  var mainElement = document.querySelector('main');
+  mainElement.removeChild(activeTasksSect);
+  mainElement.insertBefore(activeTasksSect, mapSection);
   map.invalidateSize();
 }
 
 //Mobile Layout Changes
 function mobileApply() {
-  deskDivDeletion();
   mobileCustomization();
-}
-
-//Removing desktop-view Div
-function deskDivDeletion() {
-  var desktopViewDiv = document.querySelector(".desktop-view");
-  var parentContainer = desktopViewDiv.parentNode;
-  parentContainer.appendChild(burgerCont);
-  parentContainer.appendChild(moduleSel);
-  moduleSel.appendChild(tasksCont);
-  desktopViewDiv.remove();
   cnt--;
 }
 
-//Activating 
-const loadTab = document.querySelector(".load-tab");
-const truckloadTab = document.querySelector(".truckload-tab");
-const loadBtn = document.querySelector("#loadBtn");
-const truckloadBtn = document.querySelector("#truckloadBtn");
-const unloadBtn = document.querySelector("#unloadBtn");
 function mobileCustomization() {
-  loadTab.classList.remove("active");
-  unloadTab.classList.remove("active");
-  truckloadTab.classList.add("active");
-  unloadBtn.classList.remove("selected");
-  loadBtn.classList.remove("selected");
-  truckloadBtn.classList.add("selected");
-  mapItem.id = "map";
-  mapCont.classList.remove("desktop");
-  tasksCont.classList.remove("desktop");
-  moduleSel.classList.remove("desktop");
-  burgerCont.classList.remove("desktop");
-  burgerIco.classList.add("active");
+  var activeTasksSect = document.querySelector('.active-tasks-sect');
+  var mapSection = document.querySelector('.map-sect');
+  var mainElement = document.querySelector('main');
+  mainElement.removeChild(activeTasksSect);
+  mainElement.insertBefore(activeTasksSect, mapSection.nextSibling);
   map.invalidateSize()
 }
 
 /* ~~~~~~~~~~ Truck Menu Functions ~~~~~~~~~~ */
 
+const burgerSect = document.querySelector(".burger-sect");
+const mapSection = document.querySelector(".map-sect");
+const activeTasksSect = document.querySelector(".active-tasks-sect");
 //Truck Open
 burgerIco.addEventListener("click", (e) => {
   burgerIco.classList.remove("active");
   burgerIcox.classList.add("active");
-  burgerCont.classList.add("active");
-  moduleSel.classList.remove("active");
+  burgerSect.classList.add("active");
+  mapSection.classList.remove("active");
+  activeTasksSect.classList.remove("active");
 });
 
 //Truck Close
 burgerIcox.addEventListener("click", (e) => {
   burgerIcox.classList.remove("active");
   burgerIco.classList.add("active");
-  burgerCont.classList.remove("active");
-  moduleSel.classList.add("active");
+  burgerSect.classList.remove("active");
+  mapSection.classList.add("active");
+  activeTasksSect.classList.add("active");
+  map.invalidateSize();
 });
 
 //Load Button
+const loadTab = document.querySelector(".load-tab");
+const truckloadTab = document.querySelector(".truckload-tab");
+const loadBtn = document.querySelector("#loadBtn");
 const loadTruckBtn = document.querySelector(".add-load");
 const loadItems = document.querySelector(".load-items-tab");
 const loadItemsForm = document.querySelector(".load-items-form");
+const unloadTab = document.querySelector(".unload-tab");
 loadBtn.addEventListener("click", (e) => {
   distanceErrorUnload.classList.remove("active");
   loadTab.classList.add("active");
@@ -618,45 +597,25 @@ loadBtn.addEventListener("click", (e) => {
   }
 });
 
+const truckloadBtn = document.querySelector("#truckloadBtn");
 //Truckload Button
 truckloadBtn.addEventListener("click", (e) => {
   distanceErrorUnload.classList.remove("active");
   distanceErrorLoad.classList.remove("active");
   truckloadTab.classList.add("active");
   loadTab.classList.remove("active");
-  unloadTab.classList.remove("active");
   loadItems.classList.remove("active");
-  unloadItemsTab.classList.remove("active");
   loadItemsForm.classList.remove("active");
   loadQuantity.classList.remove("active");
   loadConfirm.classList.remove("active");
+  unloadTab.classList.remove("active");
+  unloadItemsTab.classList.remove("active");
   unloadQuantity.classList.remove("active");
   unloadConfirm.classList.remove("active");
   removeItemLoad();
   removeQuantityLoad();
   removeConfirmLoad();
   removeUnloadConfirm();
-});
-
-//Unload Button
-const unloadTruckBtn = document.querySelector(".remove-load");
-const unloadQuantity = document.querySelector(".unload-quantity-form");
-const unloadItemsTab = document.querySelector(".unload-items-tab");
-unloadBtn.addEventListener("click", (e) => {
-  distanceErrorLoad.classList.remove("active");
-  unloadTab.classList.add("active");
-  loadTab.classList.remove("active");
-  truckloadTab.classList.remove("active");
-  loadItems.classList.remove("active");
-  loadItemsForm.classList.remove("active");
-  loadQuantity.classList.remove("active");
-  loadConfirm.classList.remove("active");
-  removeItemLoad();
-  removeQuantityLoad();
-  removeConfirmLoad();
-  if (!unloadItemsTab.classList.contains("active")) {
-    unloadTruckBtn.classList.add("active");
-  }
 });
 
 //Bottom Border for Tab Buttons
@@ -688,6 +647,7 @@ const loadQuantity = document.querySelector(".load-quantity-form");
 const nextButton1 = document.querySelector(".button.next1");
 nextButton1.addEventListener("click", (e) => {
   noItemError();
+  overQuantity();
 });
 
 //Load Truck Quantity
@@ -707,6 +667,56 @@ submitButtonLoad.addEventListener("click", (e) => {
   removeItemLoad();
   removeQuantityLoad();
   removeConfirmLoad();
+});
+
+//Cancel Button Load
+const cancelBtnL = document.querySelectorAll(".cancell");
+cancelBtnL.forEach(function (button) {
+  button.addEventListener("click", function () {
+    loadTruckBtn.classList.add("active");
+    loadItems.classList.remove("active");
+    loadItemsForm.classList.remove("active");
+    loadQuantity.classList.remove("active");
+    loadConfirm.classList.remove("active");
+    errorNone.classList.remove("active")
+    errorAvailable.classList.remove("active")
+    errorZeroQ.classList.remove("active")
+    removeItemLoad();
+    removeQuantityLoad();
+    removeConfirmLoad();
+    loadDataArray = [];
+  })
+})
+
+//Clear Button Load
+const clearBtnL = document.querySelector(".load-items-form .clrbtn");
+clearBtnL.addEventListener("click", function () {
+  loadDataArray = [];
+  itemsLoadBtn.forEach(function (item) {
+    item.classList.remove("selected");
+  })
+})
+
+//Unload Button
+const unloadBtn = document.querySelector("#unloadBtn");
+const unloadTruckBtn = document.querySelector(".remove-load");
+const unloadQuantity = document.querySelector(".unload-quantity-form");
+const unloadItemsTab = document.querySelector(".unload-items-tab");
+unloadBtn.addEventListener("click", (e) => {
+  distanceErrorLoad.classList.remove("active");
+  unloadTab.classList.add("active");
+  loadTab.classList.remove("active");
+  truckloadTab.classList.remove("active");
+  loadItems.classList.remove("active");
+  loadItemsForm.classList.remove("active");
+  loadQuantity.classList.remove("active");
+  loadConfirm.classList.remove("active");
+  removeItemLoad();
+  removeQuantityLoad();
+  removeConfirmLoad();
+  if (!unloadItemsTab.classList.contains("active")) {
+    unloadTruckBtn.classList.add("active");
+  }
 });
 
 //Unload Truck Plus Button
@@ -746,26 +756,6 @@ submitButtonUnload.addEventListener("click", (e) => {
   unloadTruck();
 });
 
-//Cancel Button Load
-const cancelBtnL = document.querySelectorAll(".cancell");
-cancelBtnL.forEach(function (button) {
-  button.addEventListener("click", function () {
-    loadTruckBtn.classList.add("active");
-    loadItems.classList.remove("active");
-    loadItemsForm.classList.remove("active");
-    loadQuantity.classList.remove("active");
-    loadConfirm.classList.remove("active");
-    errorNone.classList.remove("active")
-    errorAvailable.classList.remove("active")
-    errorZeroQ.classList.remove("active")
-    errorGreaterQ.classList.remove("active")
-    removeItemLoad();
-    removeQuantityLoad();
-    removeConfirmLoad();
-    loadDataArray = [];
-  })
-})
-
 //Cancel Button Unload
 const cancelBtnU = document.querySelectorAll(".cancelu");
 cancelBtnU.forEach(function (button) {
@@ -775,6 +765,15 @@ cancelBtnU.forEach(function (button) {
     unloadConfirm.classList.remove("active");
     removeUnloadConfirm();
     unloadDataArray = [];
+  })
+})
+
+//Clear Button Unload
+const clearBtnU = document.querySelector(".unload-quantity-form .clrbtn");
+clearBtnU.addEventListener("click", function () {
+  unloadDataArray = [];
+  unloadItems.forEach(function (item) {
+    item.querySelector(".quantity-input").value = 0;
   })
 })
 
@@ -874,11 +873,13 @@ function submitLoad() {
 }
 
 const errorNone = document.querySelector(".error.none");
+var errorSel = 'none';
 function noItemError() {
+  errorSel = 'none';
   if (document.querySelector(".load-items-form .item-list .item.selected") == null) {
-    errorNone.classList.add("active");
+    errorSel = 'item';
+    notAvailable();
   } else {
-    errorNone.classList.remove("active");
     notAvailable();
   }
 }
@@ -886,18 +887,22 @@ function noItemError() {
 const errorAvailable = document.querySelector(".error.available");
 function notAvailable() {
   var selItems = document.querySelectorAll(".load-items-form .item-list .item.selected");
-  let hasError = false;
   selItems.forEach(function (item) {
-    if (item.querySelector(".item-available").textContent == "Available: 0") {
-      hasError = true;
+    if (item.querySelector(".item-available").textContent == "Available: 0" && errorSel != 'item') {
+      errorSel = 'available';
     }
   });
 
-  if (hasError) {
+  if (errorSel == 'available') {
     errorAvailable.classList.add("active");
+    errorNone.classList.remove("active");
+  } else if (errorSel == 'item') {
+    errorNone.classList.add("active");
+    errorAvailable.classList.remove("active");
   } else {
     loadItemsForm.classList.remove("active");
     loadQuantity.classList.add("active");
+    errorNone.classList.remove("active");
     errorAvailable.classList.remove("active");
     selItemsLoad();
   }
@@ -905,7 +910,7 @@ function notAvailable() {
 
 const errorZeroQ = document.querySelector(".error.zero-quantity");
 function zeroQuantity() {
-  let hasError = false;
+  var hasError = false;
   itemsQuantityBtn.forEach(function (item) {
     var itemQ = item.querySelector(".quantity-input").value;
     if (itemQ == 0) {
@@ -917,41 +922,39 @@ function zeroQuantity() {
     errorZeroQ.classList.add("active");
   } else {
     errorZeroQ.classList.remove("active");
-    greaterQuantity();
+    loadQuantity.classList.remove("active");
+    loadConfirm.classList.add("active");
+    submitLoad();
   }
 }
 
-const errorGreaterQ = document.querySelector(".error.greater-quantity");
-function greaterQuantity() {
-  var selectedItems = document.querySelectorAll(".load-items-form .item-list .item.selected");
-  let hasError = false;
+function overQuantity() {
+  var itemsQuantityBtn = document.querySelectorAll(".load-quantity-form .selected-items-list .item .quantity-input");
   var availableNumbers = [];
+  var selectedItems = document.querySelectorAll(".load-items-form .item-list .item.selected");
   selectedItems.forEach(function (item) {
     var itemAvailable = item.querySelector(".item-available");
     var match = itemAvailable.textContent.match(/Available: (\d+)/);
+
     if (match) {
       var availableNumber = parseInt(match[1], 10);
       availableNumbers.push(availableNumber);
     }
   });
 
-  itemsQuantityBtn.forEach(function (item, index) {
-    var itemQ = parseInt(item.querySelector(".quantity-input").value, 10);
-    if (itemQ > availableNumbers[index]) {
-      hasError = true;
-    }
-  });
+  itemsQuantityBtn.forEach(function (item) {
+    item.addEventListener("input", function () {
+      var enteredQuantity = parseInt(item.value, 10);
+      var itemIndex = Array.from(itemsQuantityBtn).indexOf(item);
 
-  if (hasError) {
-    errorGreaterQ.classList.add("active");
-  } else {
-    loadQuantity.classList.remove("active");
-    loadConfirm.classList.add("active");
-    errorGreaterQ.classList.remove("active");
-    submitLoad();
-  }
+      if (enteredQuantity > availableNumbers[itemIndex]) {
+        item.value = availableNumbers[itemIndex];
+      }
+    });
+  });
 }
 /* ~~~~~~~~~~ TruckLoad Functions ~~~~~~~~~~ */
+
 var truckLoadItems = document.querySelectorAll(".truckload-list .list-item");
 function removeTruckLoad() {
   truckLoadItems.forEach(function (item) {
@@ -983,7 +986,7 @@ function quantityUnLoad() {
 
 //Adding the Items to Submit Form Unload
 var unloadDataArray = [];
-var unloadConfirmBtn = document.querySelectorAll(".unload-confirm-form .selected-items-confirm .item");
+var unloadItemsConf = document.querySelectorAll(".unload-confirm-form .selected-items-confirm .item");
 function submitUnload() {
   unloadItems.forEach(function (item) {
     var itemText = item.querySelector(".item-text").textContent;
@@ -999,7 +1002,7 @@ function submitUnload() {
         `</div>` +
         `</li>`
       document.querySelector(".unload-confirm-form .selected-items-confirm").insertAdjacentHTML("beforeend", markup);
-      unloadConfirmBtn = document.querySelectorAll(".unload-confirm-form .selected-items-confirm .item");
+      unloadItemsConf = document.querySelectorAll(".unload-confirm-form .selected-items-confirm .item");
       var itemData = {
         "itemText": itemText,
         "itemQ": itemQ
@@ -1016,7 +1019,7 @@ function removeUnloadItems() {
 }
 
 function removeUnloadConfirm() {
-  unloadConfirmBtn.forEach(function (item) {
+  unloadItemsConf.forEach(function (item) {
     item.remove();
   });
 }
@@ -1041,7 +1044,6 @@ function unloadEventListener() {
 
 function maxBtnEventListener() {
   var unloadItems = document.querySelectorAll(".unload-quantity-form .selected-items-list .item");
-
   unloadItems.forEach(function (item, index) {
     var maxBtn = item.querySelector(".max-button");
     var itemInput = item.querySelector(".quantity-input");
@@ -1067,10 +1069,8 @@ function fetchLoadItems() {
       data.forEach((res) => {
         const markupItem =
           `<li class="item">` +
-          `<div class="item-content">` +
           `<p class="item-text">${res.strGoodN}</p>` +
           `<p class="item-available">Available: ${res.strGoodV}</p>` +
-          `</div>` +
           `</li>`;
         document.querySelector(".load-items-form .item-list").insertAdjacentHTML("beforeend", markupItem);
       });

@@ -6,12 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ResQSupply</title>
-  <link rel="stylesheet" href="rescuer.css" />
+  <link rel="stylesheet" href="test.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <!-- Favicons -->
   <script src="https://kit.fontawesome.com/67405e0868.js" crossorigin="anonymous"></script>
-
 </head>
 
 <body>
@@ -26,9 +25,8 @@
       <button class="button logout" type="button"><i class="fa-solid fa-right-from-bracket"></i></button>
     </nav>
   </header>
-  <!-- Home -->
-  <section class="rescuer-home">
-    <div class="burger-container">
+  <main>
+    <section class="burger-sect">
       <div class="truck-info">
         <div class="truck-title">
           <i class="fa-solid fa-circle-info"></i>
@@ -75,10 +73,10 @@
               </div>
             </div>
             <div class="error none">
-              <p>Please Select an Item</p>
+              <p><b>Error:&nbsp;</b>Please Select an Item</p>
             </div>
             <div class="error available">
-              <p>Please only select Items that are Available.</p>
+              <p><b>Error:&nbsp;</b>Please only select Items that are Available.</p>
             </div>
             <button type="button" class="button next1"> Next </button>
           </div>
@@ -95,9 +93,6 @@
             </ul>
             <div class="error zero-quantity">
               <p><b>Error:&nbsp;</b>Please set a Quantity greater than 0.</p>
-            </div>
-            <div class="error greater-quantity">
-              <p><b>Error:&nbsp;</b>You are trying to Load a bigger Quantity than what is Available in the Base.</p>
             </div>
             <button type="button" class="button next2"> Next </button>
           </div>
@@ -151,19 +146,13 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="module active">
-      <!-- Mobile Selections -->
+      </div>
+    </section>
+    <section class="map-sect active">
       <div class="map-container">
-        <div class="search active">
-          <i class="fa-solid fa-magnifying-glass mglass" id="search-icon"></i>
-          <input type="text" class="address-search" placeholder="Search...">
-        </div>
         <div class="filters-menu">
-          <div class="cancelx">
-            <i class="fa-solid fa-xmark cancelr"></i>
-          </div>
           <ul class="filters-list">
+            <li><i class="fa-solid fa-xmark cancelf"></i></li>
             <li class="filter">
               <div class="pending-request">
                 <input type="checkbox" checked>
@@ -204,21 +193,23 @@
         </div>
         <div id="map"></div>
       </div>
+    </section>
+    <section class="active-tasks-sect active">
       <div class="tasks-container">
         <p class="active-tasks"> Active Tasks </p>
-        <div class="active-tasks-list active">
+        <div class="active-tasks-list">
           <ul class="tasks-list">
           </ul>
         </div>
       </div>
-    </div>
-    <div class="footer">
-      <div class="copyright">Copyright © 2023 ResQSupply</div>
-    </div>
-  </section>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="rescuer.js"></script>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="copyright">Copyright © 2023 ResQSupply</div>
+  </footer>
 </body>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="test.js"></script>
 
 </html>
