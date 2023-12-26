@@ -70,67 +70,46 @@ function checkWidth() {
 
 //Desktop Layout Changes
 function desktopApply() {
-  deskDivCreation();
   deskCustomization();
+  mainTabDivCreation();
+  cnt++;
 }
 
 //Creating desktop-view Div
 const reqTab = document.querySelector(".requests-tab");
 const annTab = document.querySelector(".announcements-tab");
 const offTab = document.querySelector(".offers-tab");
-function deskDivCreation() {
-  var desktopViewDiv = document.createElement("div");
-  desktopViewDiv.className = "desktop-view";
-  var parentContainer = reqTab.parentNode;
-  parentContainer.insertBefore(desktopViewDiv, reqTab);
-  desktopViewDiv.appendChild(reqTab);
-  desktopViewDiv.appendChild(annTab);
-  desktopViewDiv.appendChild(offTab);
-  cnt++;
-}
 
 //Activating all the tabs and NavBar Options
 const burgerIcox = document.querySelector(".burgerx");
 const burgerIco = document.querySelector(".burgeri");
-const burgerCont = document.querySelector(".burger-container");
-const moduleSel = document.querySelector(".module");
-const navOpt = document.querySelector(".nav .nav-options");
-const mobAdd = document.querySelector(".burger-menu .field.address");
+const burgerSect = document.querySelector(".burger-sect");
 function deskCustomization() {
   reqTab.classList.add("active");
   annTab.classList.add("active");
   offTab.classList.add("active");
-  navOpt.classList.add("active");
-  moduleSel.classList.add("active");
-  burgerCont.classList.remove("active");
-  burgerIcox.classList.remove("active");
-  burgerIco.classList.add("active");
-  deskAdd.classList.add("active");
-  addressFieldMob.classList.remove("invalid");
 }
 
-//Removing desktop-view Div
-function deskDivDeletion() {
-  var desktopViewDiv = document.querySelector(".desktop-view");
-  var parentContainer = desktopViewDiv.parentNode;
-  parentContainer.appendChild(reqTab);
-  parentContainer.appendChild(annTab);
-  parentContainer.appendChild(offTab);
-  desktopViewDiv.remove();
-  cnt--;
+function mainTabDivCreation(){
+  var newDiv = document.createElement('div');
+  newDiv.classList.add("main-tab");
+  newDiv.appendChild(reqTab);
+  newDiv.appendChild(annTab);
+  newDiv.appendChild(offTab);
+  document.querySelector(".main-menu").appendChild(newDiv);
 }
 
 //Mobile Layout Changes
 function mobileApply() {
-  deskDivDeletion();
   mobileCustomization();
+  mainTabDivDeletion();
+  cnt--;
 }
 
 //Activating Announcements only and removes NavBar Options
 const reqBtn = document.querySelector("#reqBtn");
 const annBtn = document.querySelector("#annBtn");
 const offBtn = document.querySelector("#offBtn");
-const deskAdd = document.querySelector(".nav-options .field.address");
 function mobileCustomization() {
   reqTab.classList.remove("active");
   offTab.classList.remove("active");
@@ -138,9 +117,13 @@ function mobileCustomization() {
   offBtn.classList.remove("selected");
   reqBtn.classList.remove("selected");
   annBtn.classList.add("selected");
-  navOpt.classList.remove("active");
-  deskAdd.classList.remove("active");
-  addressFieldDesk.classList.remove("invalid");
+}
+
+function mainTabDivDeletion(){
+  document.querySelector(".main-menu").appendChild(reqTab);
+  document.querySelector(".main-menu").appendChild(annTab);
+  document.querySelector(".main-menu").appendChild(offTab);
+  document.querySelector(".main-tab").remove();
 }
 
 /* ~~~~~~~~~~ Tab Buttons ~~~~~~~~~~ */
@@ -194,57 +177,52 @@ function toggleBottomBorder(clickedButton) {
 /* ~~~~~~~~~~ Burger and Options ~~~~~~~~~~ */
 
 //Burger Icon
+const mainMenuSect = document.querySelector(".main-menu");
 burgerIco.addEventListener("click", (e) => {
   burgerIco.classList.remove("active");
   burgerIcox.classList.add("active");
-  burgerCont.classList.add("active");
-  moduleSel.classList.remove("active");
+  burgerSect.classList.add("active");
+  mainMenuSect.classList.remove("active");
 });
 
 //Burger Icon Close
 burgerIcox.addEventListener("click", (e) => {
   burgerIcox.classList.remove("active");
   burgerIco.classList.add("active");
-  burgerCont.classList.remove("active");
-  moduleSel.classList.add("active");
+  burgerSect.classList.remove("active");
+  addressField.classList.remove("active");
+  emmField.classList.remove("active");
+  mainMenuSect.classList.add("active");
+  removeErrors();
 });
 
 //Adding Click Event Listener to the Address Burger Button
-var addressBtn = document.querySelector(".burger-item.address");
+const addressBtn = document.querySelector(".burger-item.address");
+const addressField = document.querySelector(".field.address");
+const emmField = document.querySelector(".emergency-num");
 addressBtn.addEventListener("click", (e) => {
-  addressFieldMob.classList.toggle("active");
+  addressField.classList.toggle("active");
+  emmField.classList.remove("active");
 });
 
-//Adding Keystroke Event Listener to the Address field for both Desktop and Mobile
-const addressInputDesk = document.getElementById("addressdesk");
-const addressInputMob = document.getElementById("addressmob");
-addressInputDesk.addEventListener("keyup", checkAddressDesk);
-addressInputMob.addEventListener("keyup", checkAddressMob);
+//Adding Keystroke Event Listener to the Address field
+const addressInput = document.querySelector(".address-text");
+addressInput.addEventListener("keyup", checkAddress);
 
-//Address Mobile Validation 
+//Address Validation 
 const addressPattern = /^[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+\s+[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+$/;
-const addressFieldMob = document.getElementById("addressfieldmob");
-function checkAddressMob() {
-  if (!addressInputMob.value.match(addressPattern)) {
-    return addressFieldMob.classList.add("invalid");
+function checkAddress() {
+  if (!addressInput.value.match(addressPattern)) {
+    return addressField.classList.add("invalid");
   }
-  addressFieldMob.classList.remove("invalid");
+  addressField.classList.remove("invalid");
 }
 
-//Address Desktop Validation 
-const addressFieldDesk = document.getElementById("addressfielddesk");
-function checkAddressDesk() {
-  if (!addressInputDesk.value.match(addressPattern)) {
-    return addressFieldDesk.classList.add("invalid");
-  }
-  addressFieldDesk.classList.remove("invalid");
-}
-
-//Adding Event Listener to the Emergency Numbers Button that toggles it
-var emmBtn = document.querySelector(".burger-item.emergency");
+//Adding Event Listener to the Emergency Numbers Button
+const emmBtn = document.querySelector(".burger-item.emergency");
 emmBtn.addEventListener("click", (e) => {
-  var emmField = document.querySelector(".emergency-num");
   emmField.classList.toggle("active");
+  addressField.classList.remove("active");
 });
 
 /* ~~~~~~~~~~ Requests/Offers ~~~~~~~~~~ */
@@ -334,18 +312,18 @@ function deleteOffReq(type, reqOffID) {
         var statusElement = document.getElementById(reqOffID).querySelector(".status");
         if (statusElement.innerText == "Status: Pending") {
           if (type == "requests" && document.getElementById(reqOffID).querySelector(".error") == null) {
-            markup = `<p class=error style="color:red">The Status of the Request has changed. Please refresh the Page</p>`;
+            markup = `<p class=error style="color:red"><b>Error:</b> The Status of the Request has changed. Please refresh the Page</p>`;
             document.getElementById(reqOffID).insertAdjacentHTML("beforeend", markup);
           } else if (type == "offers" && document.getElementById(reqOffID).querySelector(".error") == null) {
-            markup = `<p class=error style="color:red">The Status of the Offer has changed. Please refresh the Page</p>`;
+            markup = `<p class=error style="color:red"><b>Error:</b> The Status of the Offer has changed. Please refresh the Page</p>`;
             document.getElementById(reqOffID).insertAdjacentHTML("beforeend", markup);
           }
         } else {
           if (type == "requests" && document.getElementById(reqOffID).querySelector(".error") == null) {
-            markup = `<p class=error style="color:red">You cannot delete this Request</p>`;
+            markup = `<p class=error style="color:red"><b>Error:</b> You cannot delete this Request</p>`;
             document.getElementById(reqOffID).insertAdjacentHTML("beforeend", markup);
           } else if (type == "offers" && document.getElementById(reqOffID).querySelector(".error") == null) {
-            markup = `<p class=error style="color:red">You cannot delete this Offer</p>`;
+            markup = `<p class=error style="color:red"><b>Error:</b> You cannot delete this Offer</p>`;
             document.getElementById(reqOffID).insertAdjacentHTML("beforeend", markup);
           }
         }
@@ -413,7 +391,7 @@ function offerBtnListener() {
       offID = button.parentNode.parentNode.id;
       deleteOffersItems();
       fetchOfferItems(offID);
-      if (document.querySelector(".desktop-view") == null) {
+      if (cnt == 0) {
         annTab.classList.remove("active");
       }
     });
@@ -550,6 +528,7 @@ broomO.addEventListener("click", (e) => {
 
 //Cancel Offer Button
 const cancelBtnO = document.querySelector(".cancelo");
+var error = document.querySelectorAll(".invalid .check");
 cancelBtnO.addEventListener("click", () => {
   offForm.classList.remove("active");
   offBox.classList.add("active");
@@ -557,7 +536,7 @@ cancelBtnO.addEventListener("click", () => {
   offForm.classList.remove("invalid");
   itemsOffText.textContent = "Select Item";
   catOffText.textContent = "Select Category";
-  if (document.querySelector(".desktop-view") == null) {
+  if (cnt == 0) {
     offTab.classList.remove("active");
   }
   annBtn.classList.add("selected");
@@ -578,6 +557,7 @@ cancelBtnO.addEventListener("click", () => {
   numO.innerText = offCount;
   catOffSearch.innerText = '';
   itemOffSearch.innerText = '';
+  removeErrors();
 });
 
 //Plus Offer Button
@@ -616,7 +596,7 @@ submitOffForm.addEventListener("click", function () {
     annTab.classList.add("active");
     itemsOffText.textContent = "Select Item";
     catOffText.textContent = "Select Category";
-    if (document.querySelector(".desktop-view") == null) {
+    if (cnt == 0) {
       offTab.classList.remove("active");
     }
     annBtn.classList.add("selected");
@@ -810,6 +790,7 @@ cancelBtnR.addEventListener("click", () => {
   removeItemReq();
   catReqSearch.innerText = '';
   itemReqSearch.innerText = '';
+  removeErrors();
 });
 
 //Plus OfferRequest Button
@@ -1079,7 +1060,7 @@ nAddressButtons.forEach(function (nAddressButton) {
 });
 
 function changeAddress(newAddress) {
-  if (!addressFieldMob.classList.contains("invalid") && !addressFieldDesk.classList.contains("invalid")) {
+  if (!addressField.classList.contains("invalid")) {
     var lat;
     var lon;
     fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + newAddress + '&limit=1')
@@ -1101,4 +1082,11 @@ function updateLoc(newAddress, lat, lon){
     .then((response) => {
       return response.json();
     })
+}
+
+function removeErrors(){
+  error = document.querySelectorAll(".invalid .check");
+  error.forEach(function(error){
+    error.parentElement.classList.remove("invalid");
+  })
 }

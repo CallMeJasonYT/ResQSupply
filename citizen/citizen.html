@@ -20,73 +20,42 @@
         <i class="fa-solid fa-xmark burgerx"></i>
       </button>
       <div class="nav_logo">ResQSupply</div>
-      <div class="nav-options">
-        <div class="add-drop">
-          <div class="option">Change Address</div>
-          <div class="add-drop-cont">
-            <div class="field address drop" id="addressfielddesk">
-              <div class="input-box">
-                <input name="address" type="text" id="addressdesk" class="address-text"
-                  placeholder="Enter your Address (Street City)" required autocomplete="on">
-                <i class="fa-solid fa-location-dot address"></i>
-              </div>
-              <span class="check address">
-                <p class="check-text">Please enter a Valid Address ex. Baker London</p>
-              </span>
-              <button type="button" class="button"> Submit </button>
-            </div>
-          </div>
-        </div>
-        <div class="phone-drop">
-          <div class="option">Emergency Numbers</div>
-          <div class="phone-drop-cont">
-            <ul>
-              <li class="numbers">Emergency: 112</li>
-              <li class="numbers">Ambulance: 166</li>
-              <li class="numbers">Fire Department: 199</li>
-              <li class="numbers">Police: 100</li>
-              <li class="numbers">Anti-drug Police: 109</li>
-              <li class="numbers">Coast Guard: 108</li>
-            </ul>
-          </div>
-        </div>
-      </div>
       <button class="button logout" type="button"><i class="fa-solid fa-right-from-bracket"></i></button>
     </nav>
   </header>
-  <!-- Home -->
-  <section class="citizen-home">
-    <div class="burger-container">
-      <div class="burger-menu">
-        <ul>
-          <li class="burger-item address">Change Address</li>
-          <div class="field address" id="addressfieldmob">
-            <div class="input-box">
-              <input name="address" type="text" id="addressmob" class="address-text"
-                placeholder="Enter your Address (Street City)" required autocomplete="on">
-              <i class="fa-solid fa-location-dot address"></i>
+  <main>
+    <section class="burger-sect">
+      <div class="burger-container">
+        <div class="burger-menu">
+          <ul>
+            <li class="burger-item address">Change Address</li>
+            <div class="field address">
+              <div class="input-box">
+                <input name="address" type="text" id="addressmob" class="address-text"
+                  placeholder="Enter your Address (Street City)" required autocomplete="off">
+                <i class="fa-solid fa-location-dot address"></i>
+              </div>
+              <span class="check address">
+                <p class="check-text"><b>Error:</b> Please enter a Valid Address ex. Baker London</p>
+              </span>
+              <button type="button" class="button"> Submit </button>
             </div>
-            <span class="check address">
-              <p class="check-text">Please enter a Valid Address ex. Baker London</p>
-            </span>
-            <button type="button" class="button"> Submit </button>
-          </div>
-          <li class="burger-item emergency">Emergency Numbers</li>
-          <div class="emergency-num">
-            <ul>
-              <li class="numbers">Emergency: 112</li>
-              <li class="numbers">Ambulance: 166</li>
-              <li class="numbers">Fire Department: 199</li>
-              <li class="numbers">Police: 100</li>
-              <li class="numbers">Anti-drug Police: 109</li>
-              <li class="numbers">Coast Guard: 108</li>
-            </ul>
-          </div>
-        </ul>
+            <li class="burger-item emergency">Emergency Numbers</li>
+            <div class="emergency-num">
+              <ul>
+                <li class="numbers">Emergency: 112</li>
+                <li class="numbers">Ambulance: 166</li>
+                <li class="numbers">Fire Department: 199</li>
+                <li class="numbers">Police: 100</li>
+                <li class="numbers">Anti-drug Police: 109</li>
+                <li class="numbers">Coast Guard: 108</li>
+              </ul>
+            </div>
+          </ul>
+        </div>
       </div>
-    </div>
-    <div class="module active">
-      <!-- Mobile Selections -->
+    </section>
+    <section class="main-menu active">
       <div class="tab-control">
         <button type="button" id="reqBtn" class="button" onclick="toggleBottomBorder(this)">Requests</button>
         <button type="button" id="annBtn" class="button selected"
@@ -144,7 +113,7 @@
             </div>
           </div>
           <span class="check items">
-            <p class="check-text">Please Select an Item</p>
+            <p class="check-text"><b>Error:</b> Please Select an Item</p>
           </span>
           <button type="button" class="button"> Submit </button>
         </div>
@@ -207,7 +176,7 @@
             </div>
           </div>
           <span class="check items">
-            <p class="check-text">Please Select an Item</p>
+            <p class="check-text"><b>Error:</b> Please Select an Item</p>
           </span>
           <button type="button" class="button"> Submit </button>
         </div>
@@ -216,12 +185,11 @@
           </ul>
         </div>
       </div>
-    </div>
-    <div class="footer">
-      <div class="copyright">Copyright © 2023 ResQSupply</div>
-    </div>
-  </section>
-  <script src="citizen.js"></script>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="copyright">Copyright © 2023 ResQSupply</div>
+  </footer>
 </body>
-
+<script src="citizen.js"></script>
 </html>
