@@ -162,7 +162,7 @@ section {
 .ann-create-sect.active,
 .storage-mngmt-sect.active,
 .statistics-sect.active {
-  display: flex;
+  display: block;
 }
 
 .map {
@@ -916,6 +916,7 @@ form .input-box {
   display: none;
   align-self: center;
   justify-content: center;
+  max-height: calc(100vh - 160px);
   width: 100%;
 }
 
@@ -1244,47 +1245,6 @@ label,
 }
 .containerBody{
   height: calc(calc(100vh - 300px) - calc(10vh - 15px));
-}
-
-#customLegend{
-  margin-top: 15px;
-}
-
-#customLegend ul{
-  display: flex;
-  flex-direction: row;
-  margin: 0;
-  padding: 0;
-}
-
-#customLegend li{
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  flex-direction: row;
-  margin-bottom: 5px;
-  line-height: 22px;
-}
-
-#customLegend span{
-  display: inline-block;
-  height: 20px;
-  width: 20px;
-  margin-right: 4px;
-  border-style: solid;
-  border-width: 1px;
-}
-
-#customLegend li p{
-  margin-right: 20px;
-  padding: 0;
-  color: rgba(102, 102, 102, 1);
-}
-
-#customLegend li.fade p{
-  margin: 0;
-  padding: 0;
-  color: rgba(102, 102, 102, 0.5);
 }
 
 .date-pick{

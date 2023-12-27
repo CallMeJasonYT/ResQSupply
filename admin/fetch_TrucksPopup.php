@@ -5,32 +5,54 @@ $unmae = "root";
 $password = "";
 $db_name = "resqsupply";
 $conn = mysqli_connect($sname, $unmae, $password, $db_name);
+$response = [];
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$sql = "SELECT vehicles.veh_id AS vehicleID, loads.load_goodn, loads.load_goodv, COUNT(CASE WHEN tasks.task_status = 'Executing' THEN 1 END) AS taskCount
+$data = file_get_contents("php://input");
+$dataObject = json_decode($data);
+$veh_id = $dataObject->vehicleID;
+
+$stmtSelect = $conn->prepare("SELECT load_goodn, load_goodv
         FROM vehicles
-        INNER JOIN loads ON vehicles.veh_id = loads.load_veh
-        LEFT JOIN tasks ON vehicles.veh_id = tasks.task_veh
-        GROUP BY vehicles.veh_id, loads.load_goodn, loads.load_goodv";
+        INNER JOIN loads ON veh_id = load_veh
+        WHERE veh_id = ?
+        GROUP BY veh_id, load_goodn, load_goodv");
 
-$result = $conn->query($sql);
+$stmtSelect->bind_param("s", $veh_id);
+$stmtSelect->execute();
+$result = $stmtSelect->get_result();
 
-if ($result) {
-    $truckDetails = array();
+if (mysqli_num_rows($result) > 0) {
     while ($row = $result->fetch_assoc()) {
-        $truckDetails[$row['vehicleID']][] = array(
+        $response[] = [
             'load_goodn' => $row['load_goodn'],
-            'load_goodv' => $row['load_goodv'],
-            'taskCount' => $row['taskCount']
-        );
+            'load_goodv' => $row['load_goodv']
+        ];
     }
-    $result->free();
+    $stmtSelect->close();
 }
+
+$stmtSelect = $conn->prepare("SELECT COUNT(*) AS taskCount
+        FROM tasks
+        INNER JOIN vehicles ON task_veh = veh_id
+        WHERE veh_id = ? && task_status = 'Executing'");
+
+$stmtSelect->bind_param("s", $veh_id);
+$stmtSelect->execute();
+$result = $stmtSelect->get_result();
+
+if (mysqli_num_rows($result) > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $response['taskCount'] = $row['taskCount'];
+    }
+    $stmtSelect->close();
+}
+
 $conn->close();
 
 header('Content-Type: application/json');
-echo json_encode($truckDetails);
+echo json_encode($response);
 ?>

@@ -263,43 +263,36 @@ function showTruckPopup(marker) {
   fetch("fetch_TrucksPopup.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ vehicleIDs: marker.truckInfo.vehId })
+    body: JSON.stringify({ vehicleID: marker.truckInfo.vehId })
   })
     .then((response) => response.json())
-    .then((truckDetails) => {
-      if (truckDetails != null) {
-        var popupContent = '';
+    .then((data) => {
+      var popupContent = '';
+      popupContent += `
+        <b>Truck ID:</b> ${marker.truckInfo.vehId}<br>
+        <b>Active Tasks:</b> ${data.taskCount}<br>
+        `;
 
-        for (const [vehicleID, details] of Object.entries(truckDetails)) {
-          popupContent += `
-            <b>Truck ID:</b> ${vehicleID}<br>
-            <b>TruckLoad:</b><br>
-          `;
-
-          details.forEach((load, index) => {
-            popupContent += `<b>Item ${index + 1}:</b> ${load.load_goodn} - ${load.load_goodv}<br>`;
-          });
-
-          popupContent += '<br>';
+      const hasOtherProperties = Object.keys(data).some((key) => key != 'taskCount');
+      if (hasOtherProperties) {
+        popupContent += '<b>TruckLoad:</b><br>';
+        for (let index in data) {
+          if (index !== 'taskCount') {
+            const load = data[index];
+            popupContent += `<b>Item ${index}:</b> ${load.load_goodn} - ${load.load_goodv}<br>`;
+          }
         }
-
-        var popup = L.popup().setLatLng(marker.getLatLng()).setContent(popupContent);
-        marker.bindPopup(popup).openPopup();
       } else {
-        var popupContent = '';
-
-        for (const [vehicleID, details] of Object.entries(truckDetails)) {
-          popupContent += `
-                <b>Truck ID:</b> ${vehicleID}<br>
-                <b>TruckLoad: Empty</b><br>
-              `;
-        }
-
-        var popup = L.popup().setLatLng(marker.getLatLng()).setContent(popupContent);
-        marker.bindPopup(popup).openPopup();
+        popupContent += `<b>TruckLoad:</b> Empty<br>`;
       }
-    });
+
+      var popup = L.popup().setLatLng(marker.getLatLng()).setContent(popupContent);
+      marker.bindPopup(popup).openPopup();
+    })
 }
+
+
+
 
 const filters = L.control({ position: 'topleft' });
 filters.onAdd = function (map) {
@@ -638,7 +631,7 @@ burgerItems.forEach(function (item) {
         annCreateSect.classList.remove("active");
         storageMngSect.classList.remove("active");
         rescAccSect.classList.remove("active");
-        fetch_statistics();
+        fetchAndRenderChart('2023-12-15', '2023-12-25');
         break;
       case 'resacc':
         rescAccSect.classList.add("active");
@@ -1002,10 +995,12 @@ function submit(lat, lon) {
     });
 }
 
+Chart.defaults.plugins.legend.position = 'top';
+Chart.defaults.plugins.legend.align = 'start';
 //Statistics
 const config = {
   type: 'bar',
-  data: {}, // Empty data initially
+  data: {},
   options: {
       maintainAspectRatio: false,
       scales: {
@@ -1013,11 +1008,10 @@ const config = {
               beginAtZero: true
           }
       },
-      plugins: {
-          legend: {
-              display: false
-          }
-      }
+      legend: {
+        position: "top",
+        align: "start"
+    }
   }
 };
 
@@ -1029,78 +1023,88 @@ const myChart = new Chart(
 
 const containerBody = document.querySelector('.containerBody');
 const chartBox = document.querySelector('.chartBox');
-
-function fetch_statistics(){
+function fetchAndRenderChart(startDate, endDate) {
   fetch('statistics.php')
-  .then(response => response.json())
-  .then(data => {
-    console.log(data)
-      // Update chart data with fetched data
-      myChart.data = data;
+    .then(response => response.json())
+    .then(data => {
+
+      // Transform fetched data to match the structure of the chart data
+      var transformedData = [];
+      for(let i=0; i<4; i++){
+        transformedData[i] = transformData(data.datasets[i], startDate, endDate);
+      }
+      
+      // Check if myChart.data.datasets is an array, if not initialize it
+      if (!Array.isArray(myChart.data.datasets)) {
+        myChart.data.datasets = [];
+      }
+
+      // Adds Empty Datasets
+      while (myChart.data.datasets.length < 4) {
+        myChart.data.datasets.push({
+          data: [],
+        });
+      }
+
+      // Update chart data with transformed data
+      myChart.data.labels = transformedData[0].labels;
+      var legend = ['New Offers', 'New Requests', 'Completed Offers', 'Completed Requests'];
+      for(let i=0; i<4; i++){
+        myChart.data.datasets[i].data = transformedData[i].data;
+        myChart.data.datasets[i].label = legend[i];
+      }
 
       // Update container width based on the number of labels
-      const totalLabels = myChart.data.labels.length;
+      const totalLabels = transformedData[0].labels.length;
+      let newWidth;
       if (totalLabels > 7) {
-        if(viewportW > 1000){
+        if (viewportW > 1000) {
           newWidth = 1000 + ((totalLabels - 7) * 150);
-        }else{
-          const newWidth = 700 + ((totalLabels - 7) * 150);
+        } else {
+          newWidth = 700 + ((totalLabels - 7) * 150);
         }
-          containerBody.style.width = `${newWidth}px`;
+        containerBody.style.width = `${newWidth}px`;
       }
-      // Update legend
-      generateLegend();
-  })
-  .catch(error => console.error('Error fetching data:', error));
+
+      // Update the chart
+      myChart.update();
+    });
 }
 
+function transformData(jsonData, startDate, endDate) {
+  let dates = [];
 
-//Legend Functions
-function generateLegend(){
-    const chartBox = document.querySelector('.chartBox')
+  let currentDateObj = new Date(startDate);
+  const endDateObj = new Date(endDate);
 
-    const div = document.createElement('DIV');
-    div.setAttribute('id', 'customLegend');
+  while (currentDateObj <= endDateObj) {
+    let month = currentDateObj.getMonth() + 1;
+    let day = currentDateObj.getDate();
 
-    const ul = document.createElement('UL');
+    if (day < 10) {
+      day = '0' + day;
+    }
 
-    myChart.legend.legendItems.forEach((dataset, index) => {
-        const text = dataset.text;
-        const datasetIndex = dataset.datasetIndex;
-        const bgColor = dataset.fillStyle;
-        const bColor = dataset.strokeStyle;
-        const fontColor = dataset.fontColor;
+    let date = `${currentDateObj.getFullYear()}-${month}-${day}`;
+    dates.push(date);
 
-        const li = document.createElement('LI');
+    currentDateObj.setDate(currentDateObj.getDate() + 1);
+  }
 
-        const spanBox = document.createElement('SPAN');
-        spanBox.style.borderColor = bColor;
-        spanBox.style.backgroundColor = bgColor;
+  let finalLabels = [];
+  let finalDatas = [];
 
-        const p = document.createElement('P');
-        const textNode = document.createTextNode(text);
+  for (const [index, date] of dates.entries()) {
+    if (jsonData.data.count[date]) {
+      finalLabels.push(date);
+      finalDatas.push(jsonData.data.count[date]);
+    } else {
+      finalLabels.push(date);
+      finalDatas.push(0);
+    }
+  }
 
-        li.onclick = (click) => {
-            const isHidden = !myChart.isDatasetVisible(datasetIndex);
-            myChart.setDatasetVisibility(datasetIndex, isHidden);
-            updateLegend(click);
-        }
-
-        ul.appendChild(li);
-        li.appendChild(spanBox);
-        li.appendChild(p);
-        p.appendChild(textNode);
-        myChart.update();
-
-    })
-    chartBox.appendChild(div);
-    div.appendChild(ul);
-};
-
-function updateLegend(click){
-    const element = click.target.parentNode;
-    element.classList.toggle('fade');
-    myChart.update();
+  return { labels: finalLabels, data: finalDatas };
 }
 
 const picker = new easepick.create({
@@ -1111,5 +1115,5 @@ const picker = new easepick.create({
   plugins: ['RangePlugin'],
   RangePlugin: {
     tooltip: true,
-  },
+  }
 });
