@@ -201,16 +201,7 @@
           <div class="item-select">
             <p class="form-title">Goods</p>
             <div class="item-options active">
-              <ul class="item-list">
-                <li class="item">
-                  <p class="item-text">Biscuits</p>
-                </li>
-                <li class="item">
-                  <p class="item-text">Biscuits</p>
-                </li>
-                <li class="item">
-                  <p class="item-text">Biscuits</p>
-                </li>
+              <ul class="good-item-list">
               </ul>
             </div>
           </div>
@@ -222,16 +213,7 @@
           <div class="item-select">
             <p class="form-title">Storage</p>
             <div class="item-options active">
-              <ul class="item-list">
-                <li class="item">
-                  <p class="item-text">Biscuits</p>
-                </li>
-                <li class="item">
-                  <p class="item-text">Biscuits</p>
-                </li>
-                <li class="item">
-                  <p class="item-text">Biscuits</p>
-                </li>
+              <ul class="storage-item-list">
               </ul>
             </div>
           </div>
@@ -400,26 +382,17 @@
     <section class="storage-sect active">
       <div class="storage-container">
         <p class="storage-status"> Storage Status </p>
-        <table>
+        <table class="storage-table">
           <thead>
             <tr>
               <th> Item </th>
               <th>
                 <div class="dropdown">
                   <button class="dropbtn">Category</button>
+                  <i class="fa-solid fa-caret-down"></i>
                   <div class="dropdown-content">
-                    <div class="cat-selection">
-                      <input type="checkbox">
-                      <p> Drinks </p>
-                    </div>
-                    <div class="cat-selection">
-                      <input type="checkbox">
-                      <p> Fruits </p>
-                    </div>
-                    <div class="cat-selection">
-                      <input type="checkbox">
-                      <p> Medicine </p>
-                    </div>
+                    <ul class="category-list">
+                    </ul>
                   </div>
                 </div>
               </th>
@@ -427,13 +400,7 @@
               <th> Quantity </th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td> Coca Cola </td>
-              <td> Drinks </td>
-              <td> Base </td>
-              <td> 50 </td>
-            </tr>
+          <tbody class="storage-tbody">
           </tbody>
         </table>
       </div>

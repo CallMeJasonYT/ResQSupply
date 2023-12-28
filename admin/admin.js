@@ -82,13 +82,13 @@ const categoryIcons = {
     iconAnchor: [15, 30],
     popupAnchor: [0, -30]
   }),
-  'Truck': L.icon({
+  'NoTruck': L.icon({
     iconUrl: '/ResQSupply/icons/truckIcon.svg',
     iconSize: [25, 25],
     iconAnchor: [15, 30],
     popupAnchor: [0, -30]
   }),
-  'Active Truck': L.icon({
+  'YesTruck': L.icon({
     iconUrl: '/ResQSupply/icons/truckActiveIcon.svg',
     iconSize: [25, 25],
     iconAnchor: [15, 30],
@@ -97,18 +97,6 @@ const categoryIcons = {
 };
 
 function fetchTasksLoc() {
-  fetch("fetch_TasksLoc.php", {
-    method: "POST"
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      data.forEach(entry => {
-        setMapMarkers(entry.lat, entry.lon, entry.task_id, null);
-      });
-    });
-}
-
-function fetchBaseInfo() {
   fetch("fetch_BaseInfo.php", {
     method: "POST"
   })
@@ -116,31 +104,23 @@ function fetchBaseInfo() {
     .then((data) => {
       data.forEach(entry => {
         setMapMarkers(entry.lat, entry.lon, 'Base', null);
-      });
+      })
+      return fetch("fetch_TrucksLoc.php", { method: "POST" })
+        .then((response) => response.json())
+        .then((data) => {
+          data.forEach(entry => {
+            setMapMarkers(entry.lat, entry.lon, entry.category, entry.veh_id);
+          });
+          return fetch("fetch_TasksLoc.php", { method: "POST" })
+            .then((response) => response.json())
+            .then((data) => {
+              data.forEach(entry => {
+                setMapMarkers(entry.lat, entry.lon, entry.task_id, null);
+              });
+            });
+        });
     });
 }
-
-function fetchTrucksLoc() {
-  fetch("fetch_TrucksLoc.php", {
-    method: "POST"
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      data.forEach(entry => {
-        setMapMarkers(entry.lat, entry.lon, entry.category, entry.veh_id);
-      });
-    });
-}
-
-/*function revGeocode(query) {
-  var lng = query.lng;
-  var lat = query.lat;
-  fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&limit=1&format=json')
-    .then(result => result.json())
-    .then(result => {
-      updateTruckLoc(parseDisplayName(result.display_name), lat, lng);
-    });
-}*/
 
 function parseDisplayName(displayName) {
   const words = displayName.split(', ');
@@ -148,25 +128,14 @@ function parseDisplayName(displayName) {
   return address;
 }
 
-/*function updateTruckLoc(position, lat, lon) {
-  fetch('update_TruckLoc.php', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({address: position, latitude: lat, longitude: lon})
-  })
-    .then(response => response.json())
-}*/
-
 const taskMarkers = [];
 const truckMarkers = [];
 const baseMarkers = [];
 function setMapMarkers(lat, lon, task_id, veh_id) {
   const latitude = lat;
   const longitude = lon;
-  if (task_id == 'Active Truck') {
-    const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Active Truck'], draggable: false });
+  if (task_id == 'YesTruck') {
+    const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['YesTruck'], draggable: false });
     marker.truckInfo = {
       vehId: veh_id,
       latitude: latitude,
@@ -177,9 +146,8 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
       showTruckPopup(marker);
     });
     truckMarkers.push(marker);
-    //drawLine();
-  } else if (task_id == 'Truck') {
-    const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Truck'], draggable: false });
+  } else if (task_id == 'NoTruck') {
+    const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['NoTruck'], draggable: false });
     marker.truckInfo = {
       vehId: veh_id,
       latitude: latitude,
@@ -214,6 +182,7 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
           if (iconName != "") {
             const marker = new L.Marker([latitude, longitude], { icon: categoryIcons[iconName] });
             marker.taskInfo = {
+              taskVeh: res.veh,
               taskId: task_id,
               latitude: latitude,
               longitude: longitude
@@ -223,11 +192,10 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
               showTaskPopup(marker, res.status);
             });
             taskMarkers.push(marker);
-            if (res.veh == veh_id && truckMarkers.length != 0) {
-              //drawLineOnce(task_id);
-            }
           }
         });
+        drawLine('HEY1234');
+        drawLine('HEY1235');
       });
   }
 }
@@ -247,12 +215,8 @@ function showTaskPopup(marker, status) {
         <b>Good Name:</b> ${taskDetails[0].goodName}<br>
         <b>Quantity:</b> ${taskDetails[0].goodValue}<br>
         <b>Pickup Date:</b> ${taskDetails[0].pickupDate}<br>
-        <b>Vehicle ID:</b> ${taskDetails[0].vehicle}<br>
+        <b>Vehicle ID:</b> ${taskDetails[0].vehicle} <br>
       `;
-
-      if (status !== "Executing") {
-        popupContent += `<button class="custom-button" onclick="handleButtonClick(event, ${marker.taskInfo.taskId})">Take on Task</button>`;
-      }
 
       var popup = L.popup().setLatLng(marker.getLatLng()).setContent(popupContent);
       marker.bindPopup(popup).openPopup();
@@ -290,9 +254,6 @@ function showTruckPopup(marker) {
       marker.bindPopup(popup).openPopup();
     })
 }
-
-
-
 
 const filters = L.control({ position: 'topleft' });
 filters.onAdd = function (map) {
@@ -355,20 +316,20 @@ document.addEventListener("DOMContentLoaded", function () {
             addMarkersByCategory('Executing Offer');
           }
           break;
-        case 'Trucks With Active Tasks':
+        case 'Trucks with Active Tasks':
           if (!checkbox.checked) {
-            removeMarkersByCategory('Active Truck');
+            removeMarkersByCategory('YesTruck');
             hidePolylines();
           } else {
-            addMarkersByCategory('Active Truck');
+            addMarkersByCategory('YesTruck');
             showPolylines();
           }
           break;
-        case 'Trucks Without Active Tasks':
+        case 'Trucks without Active Tasks':
           if (!checkbox.checked) {
-            removeMarkersByCategory('Truck');
+            removeMarkersByCategory('NoTruck');
           } else {
-            addMarkersByCategory('Truck');
+            addMarkersByCategory('NoTruck');
           }
           break;
         case 'Tasks Lines':
@@ -387,21 +348,39 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function removeMarkersByCategory(category) {
-  taskMarkers.forEach(marker => {
-    const iconName = getIconName(marker);
-    if (iconName.includes(category)) {
-      map.removeLayer(marker);
-    }
-  });
+  if (category == 'YesTruck' || category == 'NoTruck') {
+    truckMarkers.forEach(marker => {
+      const iconName = getIconName(marker);
+      if (iconName.includes(category)) {
+        map.removeLayer(marker);
+      }
+    });
+  } else {
+    taskMarkers.forEach(marker => {
+      const iconName = getIconName(marker);
+      if (iconName.includes(category)) {
+        map.removeLayer(marker);
+      }
+    });
+  }
 }
 
 function addMarkersByCategory(category) {
-  taskMarkers.forEach(marker => {
-    const iconName = getIconName(marker);
-    if (iconName.includes(category)) {
-      map.addLayer(marker);
-    }
-  });
+  if (category == 'YesTruck' || category == 'NoTruck') {
+    truckMarkers.forEach(marker => {
+      const iconName = getIconName(marker);
+      if (iconName.includes(category)) {
+        map.addLayer(marker);
+      }
+    });
+  } else {
+    taskMarkers.forEach(marker => {
+      const iconName = getIconName(marker);
+      if (iconName.includes(category)) {
+        map.addLayer(marker);
+      }
+    });
+  }
 }
 
 function getIconName(marker) {
@@ -411,6 +390,7 @@ function getIconName(marker) {
 }
 
 function hidePolylines() {
+  console.log(polylines)
   polylines.forEach(polyline => {
     map.removeLayer(polyline);
   })
@@ -438,8 +418,8 @@ const legendContent = {
   'Pending Offer': 'Pending Offers',
   'Executing Offer': 'Executing Offers',
   'Base': 'Base Location',
-  'Active Truck': 'Trucks with Active Tasks',
-  'Truck': 'Trucks without Active Tasks'
+  'YesTruck': 'Trucks with Active Tasks',
+  'NoTruck': 'Trucks without Active Tasks'
 };
 
 const legend = L.control({ position: 'topleft' });
@@ -459,43 +439,19 @@ L.control.zoom({
 }).addTo(map);
 
 const polylines = [];
-var veh_id;
 function drawLine() {
-  const truckMarker = truckMarkers.find((marker) => marker.truckInfo.vehId == veh_id);
-  const truckLat = truckMarker.getLatLng().lat;
-  const truckLon = truckMarker.getLatLng().lng;
-  const pointA = [truckLat, truckLon];
-  const activeTasks = document.querySelectorAll(".tasks-list .list-item");
-  activeTasks.forEach(function (task) {
-    const taskMarker = taskMarkers.find((marker) => marker.taskInfo.taskId == task.id);
-    if (!taskMarker) {
-      return;
-    }
-    const taskLat = taskMarker.getLatLng().lat;
-    const taskLon = taskMarker.getLatLng().lng;
-    const pointB = [taskLat, taskLon];
-    const polyline = L.polyline([pointA, pointB], { color: '#350052' }).addTo(map);
-    polyline.taskInfo = {
-      task_id: task.id
-    };
-    polylines.push(polyline);
-  });
-}
-
-function drawLineOnce(task_id) {
-  const truckMarker = truckMarkers.find((marker) => marker.truckInfo.vehId == veh_id);
-  const truckLat = truckMarker.getLatLng().lat;
-  const truckLon = truckMarker.getLatLng().lng;
-  const pointA = [truckLat, truckLon];
-  const taskMarker = taskMarkers.find((marker) => marker.taskInfo.taskId == task_id);
-  const taskLat = taskMarker.getLatLng().lat;
-  const taskLon = taskMarker.getLatLng().lng;
-  const pointB = [taskLat, taskLon];
-  const polyline = L.polyline([pointA, pointB], { color: '#350052' }).addTo(map);
-  polyline.taskInfo = {
-    task_id: task_id
-  };
-  polylines.push(polyline);
+  truckMarkers.forEach(function (tmarker) {
+    const pointA = [tmarker.getLatLng().lat, tmarker.getLatLng().lng];
+    const tasksToTruck = taskMarkers.filter(marker => marker.taskInfo.taskVeh == tmarker.truckInfo.vehId);
+    tasksToTruck.forEach(function (task) {
+      const pointB = [task.getLatLng().lat, task.getLatLng().lng];
+      const polyline = L.polyline([pointA, pointB], { color: '#350052' }).addTo(map);
+      polyline.taskInfo = {
+        task_id: task.id
+      };
+      polylines.push(polyline);
+    });
+  })
 }
 
 function removeAllPolylines() {
@@ -519,8 +475,7 @@ document.addEventListener("DOMContentLoaded", function () {
   map.invalidateSize();
   checkWidth();
   fetchTasksLoc();
-  fetchBaseInfo();
-  fetchTrucksLoc();
+  fetchStorageInfo();
 });
 window.addEventListener("resize", (e) => {
   checkWidth();
@@ -724,6 +679,7 @@ storageBtn.addEventListener("click", function () {
 
 const transferedBtn = document.querySelector("#transferedBtn");
 transferedBtn.addEventListener("click", function () {
+  fetchTransferedItems();
   transferedItemsTab.classList.add("active");
   storageUpdateTab.classList.remove("active");
   updateGoodsTab.classList.remove("active");
@@ -1002,15 +958,15 @@ const config = {
   type: 'bar',
   data: {},
   options: {
-      maintainAspectRatio: false,
-      scales: {
-          y: {
-              beginAtZero: true
-          }
-      },
-      legend: {
-        position: "top",
-        align: "start"
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    },
+    legend: {
+      position: "top",
+      align: "start"
     }
   }
 };
@@ -1030,10 +986,10 @@ function fetchAndRenderChart(startDate, endDate) {
 
       // Transform fetched data to match the structure of the chart data
       var transformedData = [];
-      for(let i=0; i<4; i++){
+      for (let i = 0; i < 4; i++) {
         transformedData[i] = transformData(data.datasets[i], startDate, endDate);
       }
-      
+
       // Check if myChart.data.datasets is an array, if not initialize it
       if (!Array.isArray(myChart.data.datasets)) {
         myChart.data.datasets = [];
@@ -1049,7 +1005,7 @@ function fetchAndRenderChart(startDate, endDate) {
       // Update chart data with transformed data
       myChart.data.labels = transformedData[0].labels;
       var legend = ['New Offers', 'New Requests', 'Completed Offers', 'Completed Requests'];
-      for(let i=0; i<4; i++){
+      for (let i = 0; i < 4; i++) {
         myChart.data.datasets[i].data = transformedData[i].data;
         myChart.data.datasets[i].label = legend[i];
       }
@@ -1117,3 +1073,101 @@ const picker = new easepick.create({
     tooltip: true,
   }
 });
+
+//---------- Storage Info -----------//
+function fetchStorageInfo() {
+  fetch("fetch_StorageInfo.php")
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      const storageTable = document.querySelector(".storage-table");
+      if (data.length != 0) {
+        storageTable.classList.add("active");
+        data.forEach((res) => {
+          markup1 =
+            `<tr>` +
+            `<td> ${res.GoodName} </td>` +
+            `<td> ${res.GoodCategory} </td>` +
+            `<td> ${res.location} </td>` +
+            `<td> ${res.GoodValue} </td>` +
+            `</tr>`;
+          document.querySelector(".storage-tbody").insertAdjacentHTML("beforeend", markup1);
+
+          categories = [];
+          if (!categories.includes(res.GoodCategory)) {
+            markup2 =
+              `<li class="category-item">` +
+              `<input type="checkbox" checked></input>` +
+              `<p> ${res.GoodCategory} </p>` +
+              `</li>`;
+            categories.push(res.GoodCategory);
+            document.querySelector(".category-list").insertAdjacentHTML("beforeend", markup2);
+          }
+        });
+      } else {
+        //If there aren't any goods, display the following paragraph
+        storageTable.classList.remove("active");
+        markup = `<p class="error-storage active"><b>Error:&nbsp;</b> There are no Goods at the moment.<p>`;
+        document.querySelector(".storage-container").insertAdjacentHTML("beforeend", markup);
+      }
+    });
+}
+
+function fetchTransferedItems() {
+  goodItems = [];
+  storageItems = [];
+
+  // Fetch storage items
+  fetch("fetch_StorageItems.php")
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.length != 0) {
+        data.forEach((res) => {
+          markup = `<li class="item">` +
+            `<p class="item-text">${res.GoodName}</p>` +
+            `</li>`;
+          document.querySelector(".storage-item-list").insertAdjacentHTML("beforeend", markup);
+          if (!storageItems.includes(res.GoodName)) {
+            storageItems.push(res.GoodName);
+          }
+        });
+      } else {
+        // If there aren't any goods, display the following paragraph
+        markup = `<p class="error-storage active"><b>Error:&nbsp;</b> There are no goods at the storage at the moment.<p>`;
+        document.querySelector(".storage-items-form .item-options").insertAdjacentHTML("beforeend", markup);
+      }
+
+      // Now fetch good items after storage items are fetched
+      return fetch("fetch_GoodItems.php");
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.length != 0) {
+        data.forEach((res) => {
+          if (!storageItems.includes(res.GoodName)) {
+            goodItems.push(res.GoodName);
+            markup = `<li class="item">` +
+              `<p class="item-text">${res.GoodName}</p>` +
+              `</li>`;
+            document.querySelector(".good-item-list").insertAdjacentHTML("beforeend", markup);
+          }
+        });
+      } else {
+        // If there aren't any goods, display the following paragraph
+        markup = `<p class="error-storage active"><b>Error:&nbsp;</b> There are no goods at the moment.<p>`;
+        document.querySelector(".good-items-form .item-options").insertAdjacentHTML("beforeend", markup);
+      }
+    })
+}
+
+//Logging out Actions
+const logoutButton = document.querySelector(".button.logout");
+logoutButton.addEventListener("click", logoutUser);
+function logoutUser() {
+  fetch("/ResQSupply/logout_User.php", {
+    method: "POST",
+    credentials: 'include'
+  });
+  location.href = "/" + "ResQSupply/home.html";
+}

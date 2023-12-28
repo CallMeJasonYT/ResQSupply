@@ -23,9 +23,10 @@ if (mysqli_num_rows($resultVehicles) > 0) {
         $stmtSelectTasks = $conn->prepare("SELECT COUNT(*) as count FROM tasks WHERE task_veh = ? && task_status = ?");
         $stmtSelectTasks->bind_param("ss", $veh_id, $status);
         $stmtSelectTasks->execute();
+        
         $resultTasks = $stmtSelectTasks->get_result();
         $rowTasks = mysqli_fetch_assoc($resultTasks);
-        $category = ($rowTasks['count'] > 0) ? 'Active Truck' : 'Truck';
+        $category = ($rowTasks['count'] > 0) ? 'YesTruck' : 'NoTruck';
         $response[] = [
             'veh_id' => $veh_id,
             'lat' => $rowVehicle['lat'],

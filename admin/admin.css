@@ -229,6 +229,17 @@ section {
 }
 
 /* Home */
+
+.error-storage{
+  display: none;
+}
+
+.error-storage.active{
+  display: flex;
+  font-size: 14px;
+  color: red;
+}
+
 .error {
   display: none;
 }
@@ -627,6 +638,14 @@ table {
   margin-top: 5px;
 }
 
+.storage-table{
+  display: none;
+}
+
+.storage-table.active{
+  display: table;
+}
+
 table,
 th,
 td {
@@ -680,7 +699,7 @@ tbody td.active {
   display: block;
 }
 
-.cat-selection {
+.category-item {
   display: flex;
   padding: 5px;
   align-items: center;
