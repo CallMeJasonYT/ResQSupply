@@ -122,10 +122,31 @@ function fetchTasksLoc() {
     });
 }
 
+function revGeocode(query) {
+  var lng = query.lng;
+  var lat = query.lat;
+  fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&limit=1&format=json')
+    .then(result => result.json())
+    .then(result => {
+      updateBaseLoc(parseDisplayName(result.display_name), lat, lng);
+    });
+}
+
 function parseDisplayName(displayName) {
   const words = displayName.split(', ');
   const address = words.slice(0, 2).join(', ');
   return address;
+}
+
+function updateBaseLoc(position, lat, lon) {
+  fetch('update_BaseLoc.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ address: position, latitude: lat, longitude: lon })
+  })
+    .then(response => response.json())
 }
 
 const taskMarkers = [];
@@ -166,6 +187,13 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
     };
     marker.addTo(map);
     baseMarkers.push(marker);
+
+    marker.on('dragend', function (e) {
+      var position = marker.getLatLng();
+      marker.setLatLng(position).update();
+      map.panTo(position);
+      revGeocode(position);
+    });
   } else {
     fetch("fetch_TasksInfo.php", {
       method: "POST",
@@ -625,335 +653,11 @@ burgerItems.forEach(function (item) {
   });
 });
 
-/* ~~~~~~~~~~ Announcement Creation Functions ~~~~~~~~~~ */
 
-const annTextForm = document.querySelector(".ann-text-form");
-const annItemsForm = document.querySelector(".ann-items-form");
-const annConfirmForm = document.querySelector(".ann-confirm-form");
-const annNextTextBtn = document.querySelector(".ann-next-text");
-const annNextItemsBtn = document.querySelector(".ann-next-items");
-const annSubmitBtn = document.querySelector(".ann-submit");
-const cancelAnn = document.querySelectorAll(".cancela");
-cancelAnn.forEach(function (btn) {
-  btn.addEventListener("click", function () {
-    annTextForm.classList.add("active");
-    annItemsForm.classList.remove("active");
-    annConfirmForm.classList.remove("active");
-  })
-})
-
-annNextTextBtn.addEventListener("click", function () {
-  annTextForm.classList.remove("active");
-  annItemsForm.classList.add("active");
-})
-
-annNextItemsBtn.addEventListener("click", function () {
-  annItemsForm.classList.remove("active");
-  annConfirmForm.classList.add("active");
-})
-
-annSubmitBtn.addEventListener("click", function () {
-  annConfirmForm.classList.remove("active");
-  annTextForm.classList.add("active");
-})
-
-/* ~~~~~~~~~~ Storage Management Functions ~~~~~~~~~~ */
-
-function toggleBottomBorder(clickedButton) {
-  var buttons = document.querySelectorAll(".button");
-  buttons.forEach(function (button) {
-    button.classList.remove("selected");
-  });
-  clickedButton.classList.add("selected");
-}
-
-const storageBtn = document.querySelector("#storageBtn");
-const storageUpdateTab = document.querySelector(".storage-update-tab");
-const transferedItemsTab = document.querySelector(".transfered-items-tab");
-const updateGoodsTab = document.querySelector(".update-goods-tab");
-storageBtn.addEventListener("click", function () {
-  storageUpdateTab.classList.add("active");
-  transferedItemsTab.classList.remove("active");
-  updateGoodsTab.classList.remove("active");
-})
-
-const transferedBtn = document.querySelector("#transferedBtn");
-transferedBtn.addEventListener("click", function () {
-  fetchTransferedItems();
-  transferedItemsTab.classList.add("active");
-  storageUpdateTab.classList.remove("active");
-  updateGoodsTab.classList.remove("active");
-})
-
-const updateBtn = document.querySelector("#updateBtn");
-updateBtn.addEventListener("click", function () {
-  updateGoodsTab.classList.add("active");
-  transferedItemsTab.classList.remove("active");
-  storageUpdateTab.classList.remove("active");
-})
-
-/* ~~~~~~~~~~ Transfered Items Functions ~~~~~~~~~~ */
-
-/* ~~~~~~~~~~ Update Storage Functions ~~~~~~~~~~ */
-
-const cancelUpdate = document.querySelector(".cancelupd");
-const strgQuantityForm = document.querySelector(".storage-quantity-form");
-const strgConfirmForm = document.querySelector(".storage-confirm-form");
-cancelUpdate.addEventListener("click", function () {
-  strgQuantityForm.classList.add("active");
-  strgConfirmForm.classList.remove("active");
-})
-
-const strgNextQuantityBtn = document.querySelector(".strg-next-quantity");
-strgNextQuantityBtn.addEventListener("click", function () {
-  strgQuantityForm.classList.remove("active");
-  strgConfirmForm.classList.add("active");
-})
-
-const strgSubmitBtn = document.querySelector(".storage-submit");
-strgSubmitBtn.addEventListener("click", function () {
-  strgConfirmForm.classList.remove("active");
-  strgQuantityForm.classList.add("active");
-})
-
-/* ~~~~~~~~~~ Update Goods Functions ~~~~~~~~~~ */
-
-let fileInput = document.querySelector(".file-input");
-let fileList = document.getElementById("files-list");
-let numOfFiles = document.getElementById("num-of-files");
-const fileLabel = document.querySelector(".file-label");
-const errorFiletype = document.querySelector(".error.filetype");
-fileInput.addEventListener("change", () => {
-  fileList.innerHTML = "";
-  numOfFiles.textContent = ``;
-  for (i of fileInput.files) {
-    let reader = new FileReader();
-    if (i.type != "application/json") {
-      errorFiletype.classList.add("active");
-      numOfFiles.textContent = 'No Files Selected';
-    } else {
-      errorFiletype.classList.remove("active");
-      let fileName = i.name;
-      let fileSize = (i.size / 1024).toFixed(1);
-      var markup =
-        `<li>` +
-        `<p>${fileName}</p>` +
-        `<div class="details">` +
-        `<p>${fileSize}KB</p>` +
-        `<i class="fa-solid fa-xmark cancelu" aria-hidden="true"></i>` +
-        `</div>` +
-        `</li>`;
-      if (fileSize >= 1024) {
-        fileSize = (fileSize / 1024).toFixed(1);
-        markup =
-          `<li>` +
-          `<p>${fileName}</p>` +
-          `<div class="details">` +
-          `<p>${fileSize}MB</p>` +
-          `<i class="fa-solid fa-xmark cancelu" aria-hidden="true"></i>` +
-          `</div>` +
-          `</li>`;
-      }
-      fileList.insertAdjacentHTML("beforeend", markup);
-      fileInput.classList.remove("active");
-      fileLabel.classList.remove("active");
-      var markup =
-        `<div class="upload-files">` +
-        `<i class="fa-solid fa-arrow-up-from-bracket"></i> Upload Selected File` +
-        `</div>`;
-      const uploadForm = document.querySelector(".upload-form")
-      uploadForm.insertAdjacentHTML("afterbegin", markup);
-
-      const cancelUpload = document.querySelector(".cancelu");
-      cancelUpload.addEventListener("click", function () {
-        fileInput.value = '';
-        fileList.innerHTML = '';
-        document.querySelector(".upload-files").remove();
-        fileInput.classList.add("active");
-        fileLabel.classList.add("active");
-        numOfFiles.textContent = 'No Files Selected';
-      })
-    }
-  }
-});
-
-/* ~~~~~~~~~~ Rescuer Signup Form ~~~~~~~~~~ */
-
-//Show-Hide Password Icon
-const pwShowHide = document.querySelectorAll(".pw_hide");
-pwShowHide.forEach((icon) => {
-  icon.addEventListener("click", () => {
-    let getPwInput = icon.parentElement.querySelector("input");
-    if (getPwInput.type === "password") {
-      getPwInput.type = "text";
-      icon.classList.replace("fa-eye-slash", "fa-eye");
-    } else {
-      getPwInput.type = "password";
-      icon.classList.replace("fa-eye", "fa-eye-slash");
-    }
-  });
-});
-
-//Password Requirements
-let validationRegex = [
-  { regex: /.{8,}/ },
-  { regex: /[A-Z]/ },
-  { regex: /[^A-Za-z0-9]/ },
-  { regex: /^[a-zA-Z0-9!@#$%^&*()-_=+{}\[\]:;<>,.?\/\\|]+$/ },
-];
-
-//Password Requirements Checklist
-const passChecklist = document.querySelectorAll(".checklist-item");
-const passInput = document.querySelector("#pass");
-passInput.addEventListener("keyup", () => {
-  validationRegex.forEach((item, i) => {
-    let isValid = item.regex.test(passInput.value);
-    if (isValid) {
-      passChecklist[i].classList.add("checked");
-    } else {
-      passChecklist[i].classList.remove("checked");
-    }
-  });
-});
-
-//Show-Hide Password Requirements
-const passField = document.querySelector(".field.password");
-passInput.addEventListener("focus", (e) => {
-  e.preventDefault();
-  passField.classList.add("active");
-});
-passInput.addEventListener("blur", (e) => {
-  e.preventDefault();
-  passField.classList.remove("active");
-});
-
-//Password Validation
-function checkPass() {
-  for (var i = 0; i < passChecklist.length; i++) {
-    if (!passChecklist[i].classList.contains("checked")) {
-      passGood = false;
-    } else passGood = true;
-  }
-}
-
-//Username Validation
-const usernamePattern = /^[a-zA-Z0-9]+\s?[a-zA-Z0-9]+$/;
-const usernameField = document.querySelector(".field.username");
-const usernameInput = document.querySelector("#username");
-function checkUsername() {
-  if (!usernameInput.value.match(usernamePattern)) {
-    usernameField.classList.add("invalid");
-    usernameField.classList.remove("duplicate");
-  } else {
-    usernameField.classList.remove("invalid");
-    checkUsernameAvailability();
-  }
-}
-
-//Fullname Validation
-const fullnamePattern = /[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+\s+[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+$/;
-const fullnameField = document.querySelector(".field.fullname");
-const fullnameInput = document.querySelector("#fullname");
-function checkFullname() {
-  if (!fullnameInput.value.match(fullnamePattern)) {
-    return fullnameField.classList.add("invalid");
-  }
-  fullnameField.classList.remove("invalid");
-}
-
-//Phone Number Validation
-const phonePattern = /^[+0-9]+$/;
-const phoneField = document.querySelector(".field.phone");
-const phoneInput = document.querySelector("#phone");
-function checkPhone() {
-  if (!phoneInput.value.match(phonePattern)) {
-    return phoneField.classList.add("invalid");
-  }
-  phoneField.classList.remove("invalid");
-}
-
-//Address Validation
-const addressPattern = /^[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+\s+[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+$/;
-const addressField = document.querySelector(".field.address");
-const addressInput = document.querySelector("#address");
-function checkAddress() {
-  if (!addressInput.value.match(addressPattern)) {
-    return addressField.classList.add("invalid");
-  }
-  addressField.classList.remove("invalid");
-}
-
-// AJAX Request to check the Database for Username Similarity
-function checkUsernameAvailability() {
-  var data = { username: usernameInput.value };
-  fetch("/ResQSupply/check_username.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  })
-    .then((response) => response.json())
-    .then((result) => {
-      if (result != "False") {
-        usernameField.classList.add("duplicate");
-      } else {
-        usernameField.classList.remove("duplicate");
-      }
-    });
-}
-
-//Validation When Typing
-usernameInput.addEventListener("keyup", checkUsername);
-fullnameInput.addEventListener("keyup", checkFullname);
-phoneInput.addEventListener("keyup", checkPhone);
-addressInput.addEventListener("keyup", checkAddress);
-
-//Submit Form Validation When Submiting
-const signupBtn = document.querySelector(".signup");
-signupBtn.addEventListener("click", (e) => {
-  checkUsername();
-  checkFullname();
-  checkPhone();
-  checkAddress();
-  checkPass();
-  if (
-    usernameField.classList.contains("invalid") ||
-    usernameField.classList.contains("duplicate") ||
-    fullnameField.classList.contains("invalid") ||
-    phoneField.classList.contains("invalid") ||
-    addressField.classList.contains("invalid") ||
-    !passGood
-  ) {
-    e.preventDefault();
-  } else {
-    e.preventDefault();
-    var lat;
-    var lon;
-    fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + addressInput.value + '&limit=1')
-      .then(result => result.json())
-      .then(result => {
-        lat = result[0].lat;
-        lon = result[0].lon;
-        submit(lat, lon);
-      });
-  }
-});
-
-const regFormAct = document.querySelector("#signup-form");
-function submit(lat, lon) {
-  fetch("home.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username: usernameInput.value, fullname: fullnameInput.value, phone: phoneInput.value, address: addressInput.value, password: passInput.value, latitude: lat, longitude: lon }),
-  })
-    .then((response) => response.json())
-    .then((result) => {
-
-    });
-}
-
+/* ~~~~~~~~~~ Statistics ~~~~~~~~~~ */
 Chart.defaults.plugins.legend.position = 'top';
 Chart.defaults.plugins.legend.align = 'start';
-//Statistics
+
 const config = {
   type: 'bar',
   data: {},
@@ -1074,46 +778,164 @@ const picker = new easepick.create({
   }
 });
 
-//---------- Storage Info -----------//
-function fetchStorageInfo() {
-  fetch("fetch_StorageInfo.php")
+/* ~~~~~~~~~~ Announcement Creation Functions ~~~~~~~~~~ */
+
+const annTextForm = document.querySelector(".ann-text-form");
+const annItemsForm = document.querySelector(".ann-items-form");
+const annConfirmForm = document.querySelector(".ann-confirm-form");
+const annNextTextBtn = document.querySelector(".ann-next-text");
+const annNextItemsBtn = document.querySelector(".ann-next-items");
+const annSubmitBtn = document.querySelector(".ann-submit");
+const cancelAnn = document.querySelectorAll(".cancela");
+let selectedItems =[];
+
+cancelAnn.forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    annTextForm.classList.add("active");
+    annItemsForm.classList.remove("active");
+    annConfirmForm.classList.remove("active");
+    
+  })
+})
+
+const titleInput = document.querySelector("#title");
+const detailsInput = document.querySelector("#details");
+var titleValue;
+var detailsValue; 
+annNextTextBtn.addEventListener("click", function () {
+  annTextForm.classList.remove("active");
+  annItemsForm.classList.add("active");
+   titleValue = titleInput.value;
+   detailsValue = detailsInput.value;
+   fetchStorageItems();
+})
+
+annNextItemsBtn.addEventListener("click", function () {
+  selectedItems = [];
+  annItemsForm.classList.remove("active");
+  annConfirmForm.classList.add("active");
+  selItems();
+  showAnnouncement();
+})
+
+annSubmitBtn.addEventListener("click", function () {
+  annSubmit();
+  showSuccessMessageAnn();
+})
+
+const successMessageAnn = document.getElementById("successMessageAnn");
+function showSuccessMessageAnn() {
+  successMessageAnn.style.display = "block";
+  setTimeout(() => {
+    successMessageAnn.style.display = "none";
+    annConfirmForm.classList.remove("active");
+    annTextForm.classList.add("active");
+  }, 3000);
+}
+
+const itemSelect = document.querySelector(".item-drop-sel");
+function fetchStorageItems(){
+  fetch("fetch_storageItems.php")
     .then((response) => {
       return response.json();
     })
     .then((data) => {
-      const storageTable = document.querySelector(".storage-table");
       if (data.length != 0) {
-        storageTable.classList.add("active");
+        itemSelect.classList.add("active");
         data.forEach((res) => {
-          markup1 =
-            `<tr>` +
-            `<td> ${res.GoodName} </td>` +
-            `<td> ${res.GoodCategory} </td>` +
-            `<td> ${res.location} </td>` +
-            `<td> ${res.GoodValue} </td>` +
-            `</tr>`;
-          document.querySelector(".storage-tbody").insertAdjacentHTML("beforeend", markup1);
-
-          categories = [];
-          if (!categories.includes(res.GoodCategory)) {
-            markup2 =
-              `<li class="category-item">` +
-              `<input type="checkbox" checked></input>` +
-              `<p> ${res.GoodCategory} </p>` +
-              `</li>`;
-            categories.push(res.GoodCategory);
-            document.querySelector(".category-list").insertAdjacentHTML("beforeend", markup2);
-          }
+          markup =
+          `<li class="item">` +
+          `<p class="item-text">${res.GoodName}</p>` +
+          `</li>`;
+          document.querySelector(".ann-items-form .item-list").insertAdjacentHTML("beforeend", markup);
         });
-      } else {
-        //If there aren't any goods, display the following paragraph
-        storageTable.classList.remove("active");
-        markup = `<p class="error-storage active"><b>Error:&nbsp;</b> There are no Goods at the moment.<p>`;
-        document.querySelector(".storage-container").insertAdjacentHTML("beforeend", markup);
+        itemsBtn = document.querySelectorAll(".ann-items-form .item-list .item");
+        itemsBtnListener();
+      }else{
+        itemSelect.classList.remove("active");
+        markup = `<p class="error-storage active"><b>Error:&nbsp;</b> There are no goods at the storage at the moment.<p>`;
+        document.querySelector(".item-select").insertAdjacentHTML("beforeend", markup);
       }
     });
 }
 
+//Adding Event Listeners to the Item Elements and Displaying the Selected Items Correctly
+var itemsBtn = document.querySelectorAll(".ann-items-form .item-list .item");
+function itemsBtnListener() {
+  itemsBtn.forEach(function (item) {
+    item.addEventListener("click", function () {
+      if (item.classList.contains("selected")) {
+        item.classList.remove("selected");
+      } else {
+        item.classList.add("selected");
+      }
+    });
+  });
+}
+
+//Loading the Selected Items on an Array
+function selItems() {
+  itemsBtn.forEach(function (item) {
+    if (item.classList.contains("selected")) {
+      selectedItems.push(item.innerText);
+    }
+  });
+}
+
+//Show the Final Announcement beore Submititng
+function showAnnouncement(){
+  markup =
+    `<div class="item-title"><b>${titleValue}</b></div>` +
+    `<div class="text">${detailsValue}</div>` +
+    `<div class="needs"><p>Need for: ${selectedItems.join(', ')}</p></div>`;
+    document.querySelector(".ann-text-confirm").insertAdjacentHTML("beforeend", markup);
+}
+
+function annSubmit(){
+  fetch("announcement_Creation.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title: titleValue, details: detailsValue, selectedItems: selectedItems }),
+  })
+    .then((response) => response.json())
+}
+
+/* ~~~~~~~~~~ Storage Management Functions ~~~~~~~~~~ */
+
+function toggleBottomBorder(clickedButton) {
+  var buttons = document.querySelectorAll(".button");
+  buttons.forEach(function (button) {
+    button.classList.remove("selected");
+  });
+  clickedButton.classList.add("selected");
+}
+
+const storageBtn = document.querySelector("#storageBtn");
+const storageUpdateTab = document.querySelector(".storage-update-tab");
+const transferedItemsTab = document.querySelector(".transfered-items-tab");
+const updateGoodsTab = document.querySelector(".update-goods-tab");
+storageBtn.addEventListener("click", function () {
+  storageUpdateTab.classList.add("active");
+  transferedItemsTab.classList.remove("active");
+  updateGoodsTab.classList.remove("active");
+})
+
+const transferedBtn = document.querySelector("#transferedBtn");
+transferedBtn.addEventListener("click", function () {
+  fetchTransferedItems();
+  transferedItemsTab.classList.add("active");
+  storageUpdateTab.classList.remove("active");
+  updateGoodsTab.classList.remove("active");
+})
+
+const updateBtn = document.querySelector("#updateBtn");
+updateBtn.addEventListener("click", function () {
+  updateGoodsTab.classList.add("active");
+  transferedItemsTab.classList.remove("active");
+  storageUpdateTab.classList.remove("active");
+})
+
+/* ~~~~~~~~~~ Transfered Items Functions ~~~~~~~~~~ */
 function fetchTransferedItems() {
   goodItems = [];
   storageItems = [];
@@ -1159,6 +981,387 @@ function fetchTransferedItems() {
         document.querySelector(".good-items-form .item-options").insertAdjacentHTML("beforeend", markup);
       }
     })
+}
+
+
+/* ~~~~~~~~~~ Update Storage Functions ~~~~~~~~~~ */
+
+const cancelUpdate = document.querySelector(".cancelupd");
+const strgQuantityForm = document.querySelector(".storage-quantity-form");
+const strgConfirmForm = document.querySelector(".storage-confirm-form");
+cancelUpdate.addEventListener("click", function () {
+  strgQuantityForm.classList.add("active");
+  strgConfirmForm.classList.remove("active");
+})
+
+const strgNextQuantityBtn = document.querySelector(".strg-next-quantity");
+strgNextQuantityBtn.addEventListener("click", function () {
+  strgQuantityForm.classList.remove("active");
+  strgConfirmForm.classList.add("active");
+})
+
+const strgSubmitBtn = document.querySelector(".storage-submit");
+strgSubmitBtn.addEventListener("click", function () {
+  strgConfirmForm.classList.remove("active");
+  strgQuantityForm.classList.add("active");
+})
+
+/* ~~~~~~~~~~ Update Goods Functions ~~~~~~~~~~ */
+
+let fileInput = document.querySelector(".file-input");
+let fileList = document.getElementById("files-list");
+let numOfFiles = document.getElementById("num-of-files");
+const fileLabel = document.querySelector(".file-label");
+const errorFiletype = document.querySelector(".error.filetype");
+fileInput.addEventListener("change", () => {
+  fileList.innerHTML = "";
+  numOfFiles.textContent = ``;
+  for (i of fileInput.files) {
+    let reader = new FileReader();
+    if (i.type != "application/json") {
+      errorFiletype.classList.add("active");
+      numOfFiles.textContent = 'No Files Selected';
+    } else {
+      errorFiletype.classList.remove("active");
+      let fileName = i.name;
+      let fileSize = (i.size / 1024).toFixed(1);
+      var markup =
+        `<li>` +
+        `<p>${fileName}</p>` +
+        `<div class="details">` +
+        `<p>${fileSize}KB</p>` +
+        `<i class="fa-solid fa-xmark cancelu" aria-hidden="true"></i>` +
+        `</div>` +
+        `</li>`;
+      if (fileSize >= 1024) {
+        fileSize = (fileSize / 1024).toFixed(1);
+        markup =
+          `<li>` +
+          `<p>${fileName}</p>` +
+          `<div class="details">` +
+          `<p>${fileSize}MB</p>` +
+          `<i class="fa-solid fa-xmark cancelu" aria-hidden="true"></i>` +
+          `</div>` +
+          `</li>`;
+      }
+      fileList.insertAdjacentHTML("beforeend", markup);
+      fileInput.classList.remove("active");
+      fileLabel.classList.remove("active");
+      var markup =
+        `<div class="upload-files">` +
+        `<i class="fa-solid fa-arrow-up-from-bracket"></i> Upload Selected File` +
+        `</div>`;
+      const uploadForm = document.querySelector(".upload-form");
+      uploadForm.insertAdjacentHTML("afterbegin", markup);
+
+      uploadFileBtn = document.querySelector(".upload-files");
+      uploadFileListener();
+      const cancelUpload = document.querySelector(".cancelu");
+      cancelUpload.addEventListener("click", function () {
+        fileInput.value = '';
+        fileList.innerHTML = '';
+        document.querySelector(".upload-files").remove();
+        fileInput.classList.add("active");
+        fileLabel.classList.add("active");
+        numOfFiles.textContent = 'No Files Selected';
+      })
+    }
+  }
+});
+
+var uploadFileBtn = document.querySelector(".upload-files");
+function uploadFileListener(){
+  uploadFileBtn.addEventListener("click", function(){
+    const formData = new FormData();
+    formData.append('files[]', fileInput.files[0]);
+    
+    fetch('uploadFile.php',{
+      method: 'POST',
+      body: formData
+    })
+      .then((response) => response.json())
+  })
+}
+const urlBtn = document.querySelector(".url-button");
+
+urlBtn.addEventListener("click", function(){
+  const corsAnywhereUrl = 'https://cors-anywhere.herokuapp.com/';
+  const targetUrl = 'http://usidas.ceid.upatras.gr/web/2023/export.php';
+
+  fetch(`${corsAnywhereUrl}${targetUrl}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Origin': 'http://localhost',
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      fetch('uploadUrl.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+      .then(response => response.json())
+      .then(result => {})
+    })
+})
+
+/* ~~~~~~~~~~ Rescuer Signup Form ~~~~~~~~~~ */
+
+//Show-Hide Password Icon
+const pwShowHide = document.querySelectorAll(".pw_hide");
+pwShowHide.forEach((icon) => {
+  icon.addEventListener("click", () => {
+    let getPwInput = icon.parentElement.querySelector("input");
+    if (getPwInput.type === "password") {
+      getPwInput.type = "text";
+      icon.classList.replace("fa-eye-slash", "fa-eye");
+    } else {
+      getPwInput.type = "password";
+      icon.classList.replace("fa-eye", "fa-eye-slash");
+    }
+  });
+});
+
+//Password Requirements
+let validationRegex = [
+  { regex: /.{8,}/ },
+  { regex: /[A-Z]/ },
+  { regex: /[^A-Za-z0-9]/ },
+  { regex: /^[a-zA-Z0-9!@#$%^&*()-_=+{}\[\]:;<>,.?\/\\|]+$/ },
+];
+
+//Password Requirements Checklist
+const passChecklist = document.querySelectorAll(".checklist-item");
+const passInput = document.querySelector("#pass");
+passInput.addEventListener("keyup", () => {
+  validationRegex.forEach((item, i) => {
+    let isValid = item.regex.test(passInput.value);
+    if (isValid) {
+      passChecklist[i].classList.add("checked");
+    } else {
+      passChecklist[i].classList.remove("checked");
+    }
+  });
+});
+
+//Show-Hide Password Requirements
+const passField = document.querySelector(".field.password");
+passInput.addEventListener("focus", (e) => {
+  e.preventDefault();
+  passField.classList.add("active");
+});
+passInput.addEventListener("blur", (e) => {
+  e.preventDefault();
+  passField.classList.remove("active");
+});
+
+//Password Validation
+function checkPass() {
+  for (var i = 0; i < passChecklist.length; i++) {
+    if (!passChecklist[i].classList.contains("checked")) {
+      passGood = false;
+    } else passGood = true;
+  }
+}
+
+//Username Validation
+const usernamePattern = /^[a-zA-Z0-9]+\s?[a-zA-Z0-9]+$/;
+const usernameField = document.querySelector(".field.username");
+const usernameInput = document.querySelector("#username");
+function checkUsername() {
+  if (!usernameInput.value.match(usernamePattern)) {
+    usernameField.classList.add("invalid");
+    usernameField.classList.remove("duplicate");
+  } else {
+    usernameField.classList.remove("invalid");
+    checkUsernameAvailability();
+  }
+}
+
+// TruckId Validation
+const truckidPattern = /^[A-Z]{3}\d{4}$/;
+const truckidField = document.querySelector(".field.truck-id");
+const truckidInput = document.querySelector("#truckid");
+function checkTruckId() {
+  if (!truckidInput.value.match(truckidPattern)) {
+    truckidField.classList.add("invalid");
+    truckidField.classList.remove("duplicate");
+  } else {
+    truckidField.classList.remove("invalid");
+    checktruckidAvailability();
+  }
+}
+
+//Fullname Validation
+const fullnamePattern = /[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+\s+[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+$/;
+const fullnameField = document.querySelector(".field.fullname");
+const fullnameInput = document.querySelector("#fullname");
+function checkFullname() {
+  if (!fullnameInput.value.match(fullnamePattern)) {
+    return fullnameField.classList.add("invalid");
+  }
+  fullnameField.classList.remove("invalid");
+}
+
+//Phone Number Validation
+const phonePattern = /^[+0-9]+$/;
+const phoneField = document.querySelector(".field.phone");
+const phoneInput = document.querySelector("#phone");
+function checkPhone() {
+  if (!phoneInput.value.match(phonePattern)) {
+    return phoneField.classList.add("invalid");
+  }
+  phoneField.classList.remove("invalid");
+}
+
+//Address Validation
+const addressPattern = /^[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+\s+[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+$/;
+const addressField = document.querySelector(".field.address");
+const addressInput = document.querySelector("#address");
+function checkAddress() {
+  if (!addressInput.value.match(addressPattern)) {
+    return addressField.classList.add("invalid");
+  }
+  addressField.classList.remove("invalid");
+}
+
+// AJAX Request to check the Database for Username Similarity
+function checkUsernameAvailability() {
+  var data = { username: usernameInput.value };
+  fetch("/ResQSupply/check_username.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      if (result != "False") {
+        usernameField.classList.add("duplicate");
+      } else {
+        usernameField.classList.remove("duplicate");
+      }
+    });
+}
+
+// AJAX Request to check the Database for TruckID Similarity
+function checktruckidAvailability() {
+  var data = { truckid: truckidInput.value };
+  fetch("check_truckid.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      if (result != "False") {
+        truckidField.classList.add("duplicate");
+      } else {
+        truckidField.classList.remove("duplicate");
+      }
+    });
+}
+
+//Validation When Typing
+usernameInput.addEventListener("keyup", checkUsername);
+fullnameInput.addEventListener("keyup", checkFullname);
+phoneInput.addEventListener("keyup", checkPhone);
+addressInput.addEventListener("keyup", checkAddress);
+truckidInput.addEventListener("keyup", checkTruckId);
+
+//Submit Form Validation When Submiting
+const successMessage = document.getElementById("successMessage");
+const signupBtn = document.querySelector(".signup");
+signupBtn.addEventListener("click", (e) => {
+  checkUsername();
+  checkFullname();
+  checkPhone();
+  checkAddress();
+  checkPass();
+  checkTruckId()
+  if (
+    usernameField.classList.contains("invalid") ||
+    usernameField.classList.contains("duplicate") ||
+    fullnameField.classList.contains("invalid") ||
+    phoneField.classList.contains("invalid") ||
+    addressField.classList.contains("invalid") ||
+    !passGood
+  ) {
+    e.preventDefault();
+  } else {
+    e.preventDefault();
+    var lat;
+    var lon;
+    fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + addressInput.value + '&limit=1')
+      .then(result => result.json())
+      .then(result => {
+        lat = result[0].lat;
+        lon = result[0].lon;
+        submit(lat, lon);
+      });
+      showSuccessMessage();
+  }
+});
+
+function showSuccessMessage() {
+  successMessage.style.display = "block";
+  setTimeout(() => {
+    successMessage.style.display = "none";
+  }, 3000);
+}
+
+function submit(lat, lon){
+  fetch("rescuer_Creation.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: usernameInput.value, fullname: fullnameInput.value, phone: phoneInput.value, truckid: truckidInput.value, address: addressInput.value, password: passInput.value, latitude: lat, longitude: lon}),
+  })
+    .then((response) => response.json())
+}
+
+//---------- Storage Info -----------//
+function fetchStorageInfo() {
+  fetch("fetch_StorageInfo.php")
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      const storageTable = document.querySelector(".storage-table");
+      if (data.length != 0) {
+        storageTable.classList.add("active");
+        data.forEach((res) => {
+          markup1 =
+            `<tr>` +
+            `<td> ${res.GoodName} </td>` +
+            `<td> ${res.GoodCategory} </td>` +
+            `<td> ${res.location} </td>` +
+            `<td> ${res.GoodValue} </td>` +
+            `</tr>`;
+          document.querySelector(".storage-tbody").insertAdjacentHTML("beforeend", markup1);
+
+          categories = [];
+          if (!categories.includes(res.GoodCategory)) {
+            markup2 =
+              `<li class="category-item">` +
+              `<input type="checkbox" checked></input>` +
+              `<p> ${res.GoodCategory} </p>` +
+              `</li>`;
+            categories.push(res.GoodCategory);
+            document.querySelector(".category-list").insertAdjacentHTML("beforeend", markup2);
+          }
+        });
+      } else {
+        //If there aren't any goods, display the following paragraph
+        storageTable.classList.remove("active");
+        markup = `<p class="error-storage active"><b>Error:&nbsp;</b> There are no Goods at the moment.<p>`;
+        document.querySelector(".storage-container").insertAdjacentHTML("beforeend", markup);
+      }
+    });
 }
 
 //Logging out Actions

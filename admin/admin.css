@@ -127,7 +127,7 @@ section {
 .burger-sect {
   position: absolute;
   width: calc(100vw - 40px);
-  height: calc(100vh - 140px);
+  height: calc(100dvh - 140px);
   z-index: 1001;
   display: none;
 }
@@ -142,9 +142,9 @@ section {
 .statistics-sect {
   justify-content: center;
   align-items: center;
-  min-height: calc(100vh - 160px);
+  min-height: calc(100dvh - 160px);
   display: none;
-  gap: calc(100vh - 90vh + 15px);
+  gap: calc(100dvh - 90dvh + 15px);
 }
 
 .statistics-sect{
@@ -166,7 +166,7 @@ section {
 }
 
 .map {
-  height: calc(100vh - 310px);
+  height: calc(100dvh - 320px);
   width: 100%;
   display: none;
 }
@@ -183,7 +183,7 @@ section {
 
   .map {
     max-width: calc(calc(100vw - 40px) / 2);
-    height: calc(100vh - 170px) !important;
+    height: calc(100dvh - 170px) !important;
   }
 
   .storage-sect {
@@ -220,7 +220,7 @@ section {
 
 @media screen and (min-width: 1300px) {
   .map-container {
-    max-width: 100vh !important;
+    max-width: 100dvh !important;
   }
   .chartBox,
   .date-pick{
@@ -297,15 +297,23 @@ section {
 }
 
 .item-select {
+  display: block;
   border: none;
   border-bottom: 1px solid #7070708f;
 }
 
-.item-drop-sel {
+.item-drop-sel{
+  display: none;
+}
+.item-drop-sel.active{
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 5px;
+}
+
+.ann-items-form .item-list .item.selected {
+  background: #1788a19f;
 }
 
 .item-btn {
@@ -357,8 +365,8 @@ ul {
   outline: none;
   font-size: 14px;
   border-radius: 5px;
-  padding: 0 20px 0 10px;
   border: 1px solid #B3B3B3;
+  width: 100px;
 }
 
 .address-search:focus,
@@ -935,7 +943,7 @@ form .input-box {
   display: none;
   align-self: center;
   justify-content: center;
-  max-height: calc(100vh - 160px);
+  max-height: calc(100dvh - 160px);
   width: 100%;
 }
 
@@ -1242,7 +1250,7 @@ label,
 }
 .chartCard {
   width: calc(100vw - 40px);
-  height: calc(calc(100vh - 180px) - calc(10vh - 15px));
+  height: calc(calc(100dvh - 180px) - calc(10dvh - 15px));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1263,7 +1271,7 @@ label,
   overflow-x: scroll;
 }
 .containerBody{
-  height: calc(calc(100vh - 300px) - calc(10vh - 15px));
+  height: calc(calc(100dvh - 300px) - calc(10dvh - 15px));
 }
 
 .date-pick{
@@ -1288,4 +1296,40 @@ label,
   border-radius: 5px;
   padding: 0 20px 0 10px;
   border: 1px solid #B3B3B3;
+}
+
+#successMessage {
+  display: none;
+}
+
+#successMessage p{
+  font-family: 500;
+  color: rgb(32, 204, 104);
+}
+
+#successMessageAnn {
+  display: none;
+}
+
+#successMessageAnn p{
+  font-family: 500;
+  color: rgb(32, 204, 104);
+}
+
+/* CSS Styles */
+.item-title {
+  font-size: 22px;
+}
+
+.text {
+  font-size: 16px;
+}
+
+.needs {
+  font-size: 18px;
+}
+
+/* Optional: Add some padding and border to the container */
+.ann-text-confirm {
+  margin-bottom: 5px;
 }

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0" />
   <title>ResQSupply</title>
   <link rel="stylesheet" href="admin.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -89,6 +89,12 @@
                   autocomplete="on" />
                 <i class="fa-solid fa-truck truck"></i>
               </div>
+              <span class="check truckid">
+                <p class="check-text">Please enter a Valid TruckID</p>
+              </span>
+              <span class="check1 truckid">
+                <p class="check-text">This TruckID is taken</p>
+              </span>
             </div>
             <div class="field address">
               <div class="input-box">
@@ -116,6 +122,9 @@
                   <li class="checklist-item">Containing English Characters </li>
                 </ul>
               </span>
+            </div>
+            <div id="successMessage">
+              <p>Submission successful! Thank you.</p>
             </div>
             <button type="submit" class="button signup">Signup Now</button>
           </form>
@@ -179,8 +188,9 @@
         </div>
         <div class="ann-text-confirm">
         </div>
-        <ul class="selected-items-confirm">
-        </ul>
+        <div id="successMessageAnn">
+          <p>Submission successful! Thank you.</p>
+        </div>
         <button type="button" class="button ann-submit"> Submit </button>
       </div>
     </section>

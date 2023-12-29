@@ -198,7 +198,6 @@ submitBtn.addEventListener("click", (e) => {
   }
 });
 
-const regFormAct = document.querySelector("#signup-form");
 function submit(lat, lon){
   fetch("home.php", {
     method: "POST",
