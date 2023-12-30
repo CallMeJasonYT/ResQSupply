@@ -245,8 +245,8 @@ section {
 }
 
 .error.active {
+  font-size: 20px !important;
   display: flex;
-  font-size: 14px;
   color: red;
 }
 
@@ -1332,4 +1332,12 @@ label,
 /* Optional: Add some padding and border to the container */
 .ann-text-confirm {
   margin-bottom: 5px;
+}
+
+.empty{
+  margin-top: 10px;
+  background: #e0e0e0;
+  border-radius: 5px;
+  padding: 10px;
+  display: block;
 }

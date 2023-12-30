@@ -951,3 +951,11 @@ li.selected {
   background-color: #0e505e;
   transform: scale(0.98);
 }
+
+.empty{
+  margin-top: 10px;
+  background: #e0e0e0;
+  border-radius: 5px;
+  padding: 10px;
+  display: block;
+}

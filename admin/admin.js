@@ -648,6 +648,7 @@ burgerItems.forEach(function (item) {
         storageSection.classList.remove("active");
         burgerSect.classList.remove("active");
         statsTab.classList.remove("active");
+        fetchUpdateStorage()
         break;
     }
   });
@@ -787,27 +788,27 @@ const annNextTextBtn = document.querySelector(".ann-next-text");
 const annNextItemsBtn = document.querySelector(".ann-next-items");
 const annSubmitBtn = document.querySelector(".ann-submit");
 const cancelAnn = document.querySelectorAll(".cancela");
-let selectedItems =[];
+let selectedItems = [];
 
 cancelAnn.forEach(function (btn) {
   btn.addEventListener("click", function () {
     annTextForm.classList.add("active");
     annItemsForm.classList.remove("active");
     annConfirmForm.classList.remove("active");
-    
+
   })
 })
 
 const titleInput = document.querySelector("#title");
 const detailsInput = document.querySelector("#details");
 var titleValue;
-var detailsValue; 
+var detailsValue;
 annNextTextBtn.addEventListener("click", function () {
   annTextForm.classList.remove("active");
   annItemsForm.classList.add("active");
-   titleValue = titleInput.value;
-   detailsValue = detailsInput.value;
-   fetchStorageItems();
+  titleValue = titleInput.value;
+  detailsValue = detailsInput.value;
+  fetchStorageItems();
 })
 
 annNextItemsBtn.addEventListener("click", function () {
@@ -834,7 +835,7 @@ function showSuccessMessageAnn() {
 }
 
 const itemSelect = document.querySelector(".item-drop-sel");
-function fetchStorageItems(){
+function fetchStorageItems() {
   fetch("fetch_storageItems.php")
     .then((response) => {
       return response.json();
@@ -844,16 +845,16 @@ function fetchStorageItems(){
         itemSelect.classList.add("active");
         data.forEach((res) => {
           markup =
-          `<li class="item">` +
-          `<p class="item-text">${res.GoodName}</p>` +
-          `</li>`;
+            `<li class="item">` +
+            `<p class="item-text">${res.GoodName}</p>` +
+            `</li>`;
           document.querySelector(".ann-items-form .item-list").insertAdjacentHTML("beforeend", markup);
         });
         itemsBtn = document.querySelectorAll(".ann-items-form .item-list .item");
         itemsBtnListener();
-      }else{
+      } else {
         itemSelect.classList.remove("active");
-        markup = `<p class="error-storage active"><b>Error:&nbsp;</b> There are no goods at the storage at the moment.<p>`;
+        markup = `<p class="empty">There aren't any Goods in the Storage at the moment.</p>`;
         document.querySelector(".item-select").insertAdjacentHTML("beforeend", markup);
       }
     });
@@ -883,15 +884,15 @@ function selItems() {
 }
 
 //Show the Final Announcement beore Submititng
-function showAnnouncement(){
+function showAnnouncement() {
   markup =
     `<div class="item-title"><b>${titleValue}</b></div>` +
     `<div class="text">${detailsValue}</div>` +
     `<div class="needs"><p>Need for: ${selectedItems.join(', ')}</p></div>`;
-    document.querySelector(".ann-text-confirm").insertAdjacentHTML("beforeend", markup);
+  document.querySelector(".ann-text-confirm").insertAdjacentHTML("beforeend", markup);
 }
 
-function annSubmit(){
+function annSubmit() {
   fetch("announcement_Creation.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -918,6 +919,7 @@ storageBtn.addEventListener("click", function () {
   storageUpdateTab.classList.add("active");
   transferedItemsTab.classList.remove("active");
   updateGoodsTab.classList.remove("active");
+  fetchUpdateStorage();
 })
 
 const transferedBtn = document.querySelector("#transferedBtn");
@@ -936,75 +938,252 @@ updateBtn.addEventListener("click", function () {
 })
 
 /* ~~~~~~~~~~ Transfered Items Functions ~~~~~~~~~~ */
+var goodListItems = [];
+var storageItemsNames = [];
+var storageListItems = [];
 function fetchTransferedItems() {
-  goodItems = [];
-  storageItems = [];
-
   // Fetch storage items
-  fetch("fetch_StorageItems.php")
+  fetch("fetch_storageItems.php")
     .then((response) => response.json())
     .then((data) => {
-      if (data.length != 0) {
+      emptyGoodStorageLists();
+      if (data.length !== 0) {
         data.forEach((res) => {
-          markup = `<li class="item">` +
+          const markup = `<li class="item">` +
             `<p class="item-text">${res.GoodName}</p>` +
             `</li>`;
           document.querySelector(".storage-item-list").insertAdjacentHTML("beforeend", markup);
-          if (!storageItems.includes(res.GoodName)) {
-            storageItems.push(res.GoodName);
-          }
+          storageItemsNames.push(res.GoodName);
         });
-      } else {
-        // If there aren't any goods, display the following paragraph
-        markup = `<p class="error-storage active"><b>Error:&nbsp;</b> There are no goods at the storage at the moment.<p>`;
-        document.querySelector(".storage-items-form .item-options").insertAdjacentHTML("beforeend", markup);
-      }
 
-      // Now fetch good items after storage items are fetched
+        const items = document.querySelectorAll(".storage-item-list .item");
+        items.forEach((item) => {
+          storageListItems.push(item);
+        });
+        storageItemsEventListener();
+      } else {
+        if (!document.querySelector(".storage-items-form .empty")) {
+          const markup = `<p class="empty">There aren't any Goods in the Storage at the moment.</p>`;
+          document.querySelector(".storage-items-form .item-options").insertAdjacentHTML("beforeend", markup);
+        }
+      }
       return fetch("fetch_GoodItems.php");
     })
     .then((response) => response.json())
     .then((data) => {
-      if (data.length != 0) {
+      if (data.length !== 0) {
         data.forEach((res) => {
-          if (!storageItems.includes(res.GoodName)) {
-            goodItems.push(res.GoodName);
-            markup = `<li class="item">` +
+          if (!storageItemsNames.includes(res.GoodName)) {
+            const markup = `<li class="item">` +
               `<p class="item-text">${res.GoodName}</p>` +
               `</li>`;
             document.querySelector(".good-item-list").insertAdjacentHTML("beforeend", markup);
           }
         });
+
+        const items = document.querySelectorAll(".good-item-list .item");
+        items.forEach((item) => {
+          goodListItems.push(item);
+        });
+        goodsItemsEventListener();
       } else {
-        // If there aren't any goods, display the following paragraph
-        markup = `<p class="error-storage active"><b>Error:&nbsp;</b> There are no goods at the moment.<p>`;
-        document.querySelector(".good-items-form .item-options").insertAdjacentHTML("beforeend", markup);
+        if (!document.querySelector(".good-items-form .empty")) {
+          const markup = `<p class="empty">There aren't any Available Goods at the moment</p>`;
+          document.querySelector(".good-items-form .item-options").insertAdjacentHTML("beforeend", markup);
+        }
       }
-    })
+    });
 }
 
+var storageListenersAdded = [];
+var goodListenersAdded = [];
+function storageItemsEventListener() {
+  storageListItems.forEach(function (item, index) {
+    if (!storageListenersAdded[index]) {
+      item.addEventListener("click", function () {
+        const clonedItem = item.cloneNode(true);
+        document.querySelector(".good-item-list").appendChild(clonedItem);
+        goodListItems.push(clonedItem);
+        storageListItems.splice(storageListItems.indexOf(item), 1);
+        storageListenersAdded.splice(index, 1);
+        sortItems(".storage-item-list");
+        sortItems(".good-item-list");
+        goodsItemsEventListener();
+        item.remove();
+      });
+      storageListenersAdded[index] = true;
+    }
+  });
+}
+
+function goodsItemsEventListener() {
+  goodListItems.forEach(function (item, index) {
+    if (!goodListenersAdded[index]) {
+      item.addEventListener("click", function () {
+        const clonedItem = item.cloneNode(true);
+        document.querySelector(".storage-item-list").appendChild(clonedItem);
+        storageListItems.push(clonedItem);
+        goodListItems.splice(goodListItems.indexOf(item), 1);
+        goodListenersAdded.splice(index, 1);
+        sortItems(".storage-item-list");
+        sortItems(".good-item-list");
+        storageItemsEventListener();
+        item.remove();
+      });
+      goodListenersAdded[index] = true;
+    }
+  });
+}
+
+function emptyGoodStorageLists(){
+  const goodsItems = document.querySelector(".good-item-list");
+  const storageItems = document.querySelector(".storage-item-list");
+  goodsItems.innerHTML = "";
+  goodListItems = [];
+  goodListenersAdded = [];
+  storageItems.innerHTML = "";
+  storageListItems = [];
+  storageListenersAdded = [];
+}
+
+function sortItems(selector) {
+  const list = document.querySelectorAll(selector + " .item");
+  const sortedList = Array.from(list).sort((a, b) => {
+    const textA = a.querySelector(".item-text").innerText.toLowerCase();
+    const textB = b.querySelector(".item-text").innerText.toLowerCase();
+    console.log(textA)
+    console.log(textB)
+    return textA.localeCompare(textB);
+  });
+  console.log(sortedList);
+  document.querySelector(selector).innerHTML = "";
+
+  sortedList.forEach((item) => {
+    console.log(item)
+    document.querySelector(selector).appendChild(item);
+  });
+}
 
 /* ~~~~~~~~~~ Update Storage Functions ~~~~~~~~~~ */
-
+var errorNoChange
 const cancelUpdate = document.querySelector(".cancelupd");
 const strgQuantityForm = document.querySelector(".storage-quantity-form");
 const strgConfirmForm = document.querySelector(".storage-confirm-form");
+let quantityChanges = {};
+
 cancelUpdate.addEventListener("click", function () {
   strgQuantityForm.classList.add("active");
   strgConfirmForm.classList.remove("active");
+  clearFinalChanges();
 })
 
-const strgNextQuantityBtn = document.querySelector(".strg-next-quantity");
-strgNextQuantityBtn.addEventListener("click", function () {
-  strgQuantityForm.classList.remove("active");
-  strgConfirmForm.classList.add("active");
-})
+function clearFinalChanges() {
+  const itemsList = document.querySelector(".storage-confirm-form .items-list");
+  itemsList.innerHTML = "";
+  errorNoChange.classList.remove("active");
+}
+
+function storageNextEventListener() {
+  const strgNextQuantityBtn = document.querySelector(".strg-next-quantity");
+  strgNextQuantityBtn.addEventListener("click", function () {
+    displayFinalChanges();
+    if (Object.keys(quantityChanges).length == 0) {
+      errorNoChange.classList.add("active");
+    }else{
+      strgQuantityForm.classList.remove("active");
+      strgConfirmForm.classList.add("active");
+    }
+  })
+}
 
 const strgSubmitBtn = document.querySelector(".storage-submit");
 strgSubmitBtn.addEventListener("click", function () {
   strgConfirmForm.classList.remove("active");
   strgQuantityForm.classList.add("active");
+  quantityChanges = {};
 })
+
+function fetchUpdateStorage() {
+  fetch("fetch_storageItems.php")
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      const storageForm = document.querySelector(".storage-quantity-form");
+      if (data.length != 0) {
+        if (!storageForm.querySelector(".item-select")) {
+          markup1 =
+            `<div class="item-select">` +
+            `<ul class="items-list">` +
+            `</ul>` +
+            `</div>`;
+          storageForm.insertAdjacentHTML("beforeend", markup1);
+        }
+        data.forEach((res) => {
+          const existingItem = storageForm.querySelector(`.item-text[data-goodname="${res.GoodName}"]`);
+          if (!existingItem) {
+            markup =
+              `<li class="item">` +
+              `<div class="item-count">` +
+              `<p class="item-text" data-goodname="${res.GoodName}">${res.GoodName}</p>` +
+              `<div class="item-quantity">` +
+              `<p class="quantity-text">Quantity:</p>` +
+              `<input class="quantity-input" type="number" value="${res.GoodValue}" oninput="validity.valid||(value='0');" onchange="updateQuantity(this, '${res.GoodName}')">` +
+              `<p class="reset-button" onclick="resetQuantity(this, ${res.GoodValue})"> Reset </p>` +
+              `</div>` +
+              `</div>` +
+              `</li>`;
+            storageForm.querySelector(".items-list").insertAdjacentHTML("beforeend", markup);
+          }
+        });
+        if (!storageForm.querySelector(".strg-next-quantity")) {
+          markup2 = `<button type="button" class="button strg-next-quantity"> Next </button>`;
+          storageForm.insertAdjacentHTML("beforeend", markup2);
+          storageNextEventListener();
+        }
+        if (!storageForm.querySelector(".error.nochange")) {
+          markup3 =
+           `<div class="error nochange">`+
+            `<p><b>Error:&nbsp;</b> No changes were made.</p>`+
+            `</div>`;
+          storageForm.insertAdjacentHTML("beforeend", markup3);
+          errorNoChange = document.querySelector(".error.nochange");
+        }
+      } else {
+        if (!storageForm.querySelector(".storage-quantity-form .empty")) {
+          markup = `<p class="empty">There aren't any Goods in the Storage at the moment.</p>`;
+          storageForm.insertAdjacentHTML("beforeend", markup);
+        }
+      }
+    });
+}
+
+function resetQuantity(button, initialValue) {
+  const inputElement = button.parentElement.querySelector('.quantity-input');
+  inputElement.value = initialValue;
+  const goodName = inputElement.parentElement.parentElement.querySelector('.item-text').getAttribute('data-goodname');
+  delete quantityChanges[goodName];
+}
+
+function updateQuantity(inputElement, goodName) {
+  quantityChanges[goodName] = parseInt(inputElement.value);
+}
+
+function displayFinalChanges(){
+   for (const goodName in quantityChanges) {
+    const newQuantity = quantityChanges[goodName];
+    markup =
+      `<li class="item">`+
+      `<div class="item-count">`+
+      `<p class="item-text"> ${goodName} </p>`+
+      `<div class="item-quantity">`+
+      `<p class="quantity-text">Quantity: ${newQuantity}</p>`+
+      `</div>`+
+      `</li>`;
+    document.querySelector(".storage-confirm-form .items-list").insertAdjacentHTML("beforeend", markup);
+   }
+}
+
 
 /* ~~~~~~~~~~ Update Goods Functions ~~~~~~~~~~ */
 
@@ -1070,12 +1249,12 @@ fileInput.addEventListener("change", () => {
 });
 
 var uploadFileBtn = document.querySelector(".upload-files");
-function uploadFileListener(){
-  uploadFileBtn.addEventListener("click", function(){
+function uploadFileListener() {
+  uploadFileBtn.addEventListener("click", function () {
     const formData = new FormData();
     formData.append('files[]', fileInput.files[0]);
-    
-    fetch('uploadFile.php',{
+
+    fetch('uploadFile.php', {
       method: 'POST',
       body: formData
     })
@@ -1084,7 +1263,7 @@ function uploadFileListener(){
 }
 const urlBtn = document.querySelector(".url-button");
 
-urlBtn.addEventListener("click", function(){
+urlBtn.addEventListener("click", function () {
   const corsAnywhereUrl = 'https://cors-anywhere.herokuapp.com/';
   const targetUrl = 'http://usidas.ceid.upatras.gr/web/2023/export.php';
 
@@ -1106,8 +1285,8 @@ urlBtn.addEventListener("click", function(){
         },
         body: JSON.stringify(data),
       })
-      .then(response => response.json())
-      .then(result => {})
+        .then(response => response.json())
+        .then(result => { })
     })
 })
 
@@ -1304,7 +1483,7 @@ signupBtn.addEventListener("click", (e) => {
         lon = result[0].lon;
         submit(lat, lon);
       });
-      showSuccessMessage();
+    showSuccessMessage();
   }
 });
 
@@ -1315,11 +1494,11 @@ function showSuccessMessage() {
   }, 3000);
 }
 
-function submit(lat, lon){
+function submit(lat, lon) {
   fetch("rescuer_Creation.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username: usernameInput.value, fullname: fullnameInput.value, phone: phoneInput.value, truckid: truckidInput.value, address: addressInput.value, password: passInput.value, latitude: lat, longitude: lon}),
+    body: JSON.stringify({ username: usernameInput.value, fullname: fullnameInput.value, phone: phoneInput.value, truckid: truckidInput.value, address: addressInput.value, password: passInput.value, latitude: lat, longitude: lon }),
   })
     .then((response) => response.json())
 }
@@ -1358,7 +1537,7 @@ function fetchStorageInfo() {
       } else {
         //If there aren't any goods, display the following paragraph
         storageTable.classList.remove("active");
-        markup = `<p class="error-storage active"><b>Error:&nbsp;</b> There are no Goods at the moment.<p>`;
+        markup = `<p class="empty">There aren't any Goods in the Storage at the moment.</p>`;
         document.querySelector(".storage-container").insertAdjacentHTML("beforeend", markup);
       }
     });

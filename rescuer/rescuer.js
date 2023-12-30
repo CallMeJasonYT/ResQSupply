@@ -585,6 +585,7 @@ const loadItemsForm = document.querySelector(".load-items-form");
 const unloadTab = document.querySelector(".unload-tab");
 loadBtn.addEventListener("click", (e) => {
   distanceErrorUnload.classList.remove("active");
+  truckloadErrorUnload.classList.remove("active");
   loadTab.classList.add("active");
   truckloadTab.classList.remove("active");
   unloadTab.classList.remove("active");
@@ -601,6 +602,7 @@ const truckloadBtn = document.querySelector("#truckloadBtn");
 //Truckload Button
 truckloadBtn.addEventListener("click", (e) => {
   distanceErrorUnload.classList.remove("active");
+  truckloadErrorUnload.classList.remove("active");
   distanceErrorLoad.classList.remove("active");
   truckloadTab.classList.add("active");
   loadTab.classList.remove("active");
@@ -704,6 +706,7 @@ const unloadQuantity = document.querySelector(".unload-quantity-form");
 const unloadItemsTab = document.querySelector(".unload-items-tab");
 unloadBtn.addEventListener("click", (e) => {
   distanceErrorLoad.classList.remove("active");
+  truckloadErrorUnload.classList.remove("active");
   unloadTab.classList.add("active");
   loadTab.classList.remove("active");
   truckloadTab.classList.remove("active");
@@ -721,10 +724,12 @@ unloadBtn.addEventListener("click", (e) => {
 
 //Unload Truck Plus Button
 const distanceErrorUnload = document.querySelector(".unload-tab .error.distance")
+const truckloadErrorUnload = document.querySelector(".unload-tab .error.truckload")
 unloadTruckBtn.addEventListener("click", (e) => {
   const distance = calculateDistance(truckMarkers[0].getLatLng(), baseMarkers[0].getLatLng());
-  if (distance <= 100) {
+  if (distance <= 100 && truckLoadArray.length != 0) {
     distanceErrorUnload.classList.remove("active");
+    truckloadErrorUnload.classList.remove("active");
     unloadTruckBtn.classList.remove("active");
     unloadQuantity.classList.add("active");
     unloadItemsTab.classList.add("active");
@@ -732,8 +737,12 @@ unloadTruckBtn.addEventListener("click", (e) => {
     quantityUnLoad();
     unloadEventListener();
     maxBtnEventListener();
-  } else {
+  } else if(distance > 100){
     distanceErrorUnload.classList.add("active");
+    truckloadErrorUnload.classList.remove("active");
+  } else if(truckLoadArray.length == 0){
+    truckloadErrorUnload.classList.add("active");
+    distanceErrorUnload.classList.remove("active");
   }
 });
 
@@ -1120,21 +1129,27 @@ function fetchTruckLoad() {
       return response.json();
     })
     .then((data) => {
-      data.forEach((res) => {
-        const markupItem =
-          `<li class="list-item">` +
-          `<div class="item-title"><b>${res.loadGoodN}</b>` +
-          `<p class="quantity"> Quantity: ${res.loadGoodV}</p>` +
-          `</div>` +
-          `</li>`
-        document.querySelector(".truckload-tab .truckload-list").insertAdjacentHTML("beforeend", markupItem);
-        var itemData = {
-          "itemText": res.loadGoodN,
-          "itemQ": res.loadGoodV
-        };
+      if (data.length != 0) {
+        data.forEach((res) => {
+          const markupItem =
+            `<li class="list-item">` +
+            `<div class="item-title"><b>${res.loadGoodN}</b>` +
+            `<p class="quantity"> Quantity: ${res.loadGoodV}</p>` +
+            `</div>` +
+            `</li>`
+          document.querySelector(".truckload-tab .truckload-list").insertAdjacentHTML("beforeend", markupItem);
+          var itemData = {
+            "itemText": res.loadGoodN,
+            "itemQ": res.loadGoodV
+          };
         truckLoadArray.push(itemData);
-      });
-      truckLoadItems = document.querySelectorAll(".truckload-list .list-item");
+        });
+        truckLoadItems = document.querySelectorAll(".truckload-list .list-item");
+      }else{
+        markup = `<p class="empty" >The TruckLoad is Empty.</p>`;
+        document.querySelector(".truckload-tab").insertAdjacentHTML("beforeend", markup);
+      }
+      
     });
 }
 
@@ -1169,7 +1184,7 @@ function fetchActiveTasks() {
       return response.json();
     })
     .then((data) => {
-      if (data != "False") {
+      if (data.length != 0) {
         data.forEach((res) => {
           markup =
             `<li class="list-item" id=${res.id}>` +

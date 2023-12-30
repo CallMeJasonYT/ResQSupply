@@ -13,7 +13,7 @@ if (!$conn) {
 }
 
 $stmtSelect = $conn->prepare(
-    "SELECT str_goodn
+    "SELECT str_goodn, str_goodv
     FROM storage
     ORDER BY str_goodn ASC");
 
@@ -24,6 +24,7 @@ if (mysqli_num_rows($result) > 0) {
     while ($row = mysqli_fetch_assoc($result)) {
         $response[] = [
             'GoodName' => $row['str_goodn'],
+            'GoodValue' => $row['str_goodv'],
         ];
     }
 }

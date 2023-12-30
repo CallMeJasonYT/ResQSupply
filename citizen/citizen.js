@@ -1051,13 +1051,19 @@ function fetchCitInfo() {
     });
 }
 
-var nAddressButtons = document.querySelectorAll(".field.address .button");
-nAddressButtons.forEach(function (nAddressButton) {
-  nAddressButton.addEventListener("click", function () {
-    var nAddress = document.querySelector(".field.address.active .address-text");
-    changeAddress(nAddress.value);
-  })
+var nAddressButton = document.querySelector(".button.addressSubmit");
+nAddressButton.addEventListener("click", function () {
+  var nAddress = document.querySelector(".field.address.active .address-text");
+  changeAddress(nAddress.value);
+  showSuccessMessage();
 });
+
+function showSuccessMessage() {
+  successMessage.style.display = "block";
+  setTimeout(() => {
+    successMessage.style.display = "none";
+  }, 3000);
+}
 
 function changeAddress(newAddress) {
   if (!addressField.classList.contains("invalid")) {

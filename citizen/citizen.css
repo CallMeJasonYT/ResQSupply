@@ -724,3 +724,12 @@ li.selected {
   border: 6px solid transparent;
   background-clip: content-box;
 }
+
+#successMessage {
+  display: none;
+}
+
+#successMessage p{
+  font-family: 500;
+  color: rgb(32, 204, 104);
+}

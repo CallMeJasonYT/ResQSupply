@@ -39,8 +39,6 @@ if (mysqli_num_rows($result) > 0) {
             'category' => $row['task_cat'],
         ];
     }
-} else {
-    $response = "False";
 }
 
 $stmtSelect->close();
