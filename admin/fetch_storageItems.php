@@ -16,7 +16,6 @@ $stmtSelect = $conn->prepare(
     "SELECT str_goodn, str_goodv
     FROM storage
     ORDER BY str_goodn ASC");
-
 $stmtSelect->execute();
 $result = $stmtSelect->get_result();
 
@@ -28,6 +27,8 @@ if (mysqli_num_rows($result) > 0) {
         ];
     }
 }
+
+$stmtSelect->close();
 
 header('Content-Type: application/json');
 echo json_encode($response);

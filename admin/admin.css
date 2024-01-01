@@ -211,7 +211,7 @@ section {
   .storage-confirm-form,
   .goods-items-form,
   .storage-items-form,
-  .transfered-items-tab .button,
+  .transferred-items-tab .button,
   .upload-form,
   .url-form {
     max-width: 720px !important;
@@ -851,7 +851,7 @@ form .input-box {
 .ann-text-form .button,
 .ann-items-form .button,
 .ann-confirm-form .button,
-.transfered-items-tab .button,
+.transferred-items-tab .button,
 .storage-update-tab .button,
 .storage-confirm-form .button {
   background: #0a7388;
@@ -863,7 +863,7 @@ form .input-box {
   color: #fff;
 }
 
-.transfered-items-tab .button {
+.transferred-items-tab .button {
   max-width: 560px;
 }
 
@@ -938,7 +938,7 @@ form .input-box {
 }
 
 .storage-update-tab,
-.transfered-items-tab,
+.transferred-items-tab,
 .update-goods-tab {
   display: none;
   align-self: center;
@@ -947,7 +947,7 @@ form .input-box {
   width: 100%;
 }
 
-.transfered-items-tab,
+.transferred-items-tab,
 .update-goods-tab {
   flex-direction: column;
   align-items: center;
@@ -955,7 +955,7 @@ form .input-box {
 
 .ann-tab,
 .storage-update-tab.active,
-.transfered-items-tab.active,
+.transferred-items-tab.active,
 .update-goods-tab.active {
   display: flex;
 }
@@ -1051,7 +1051,7 @@ form .input-box {
   overflow-y: auto;
 }
 
-.transfered-items-tab .item-options,
+.transferred-items-tab .item-options,
 .items-list {
   max-height: 85px;
   overflow-y: auto;
@@ -1303,7 +1303,7 @@ label,
 }
 
 #successMessage p{
-  font-family: 500;
+  font-weight: 500;
   color: rgb(32, 204, 104);
 }
 
@@ -1312,11 +1312,28 @@ label,
 }
 
 #successMessageAnn p{
-  font-family: 500;
+  font-weight: 500;
   color: rgb(32, 204, 104);
 }
 
-/* CSS Styles */
+#successMessageStorage {
+  display: none;
+}
+
+#successMessageStorage p{
+  font-weight: 500;
+  color: rgb(32, 204, 104);
+}
+
+#successMessagetransferred {
+  display: none;
+}
+
+#successMessagetransferred p{
+  font-weight: 500;
+  color: rgb(32, 204, 104);
+}
+
 .item-title {
   font-size: 22px;
 }

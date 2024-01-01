@@ -198,14 +198,14 @@
     <section class="storage-mngmt-sect">
       <!-- Storage Tab Control Menu -->
       <div class="storage-tab-control">
-        <button type="button" id="transferedBtn" class="button" onclick="toggleBottomBorder(this)">Transfered
+        <button type="button" id="transferredBtn" class="button" onclick="toggleBottomBorder(this)">Transferred
           Items</button>
         <button type="button" id="storageBtn" class="button selected" onclick="toggleBottomBorder(this)">Update
           Storage</button>
         <button type="button" id="updateBtn" class="button" onclick="toggleBottomBorder(this)">Update Goods</button>
       </div>
       <!-- Tranfered Items Tab -->
-      <div class="transfered-items-tab">
+      <div class="transferred-items-tab">
         <!-- Goods Table -->
         <div class="goods-items-form active">
           <div class="item-select">
@@ -228,6 +228,9 @@
             </div>
           </div>
         </div>
+        <div id="successMessagetransferred">
+          <p>Submission successful! Thank you.</p>
+        </div>
         <button type="button" class="button exchange-submit"> Submit Changes </button>
       </div>
       <!-- Storage Management -->
@@ -245,6 +248,9 @@
           <div class="item-select">
             <ul class="items-list">
             </ul>
+          </div>
+          <div id="successMessageStorage">
+            <p>Submission successful! Thank you.</p>
           </div>
           <button type="button" class="button storage-submit"> Submit </button>
         </div>

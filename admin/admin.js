@@ -418,7 +418,6 @@ function getIconName(marker) {
 }
 
 function hidePolylines() {
-  console.log(polylines)
   polylines.forEach(polyline => {
     map.removeLayer(polyline);
   })
@@ -602,6 +601,7 @@ burgerItems.forEach(function (item) {
         burgerSect.classList.remove("active");
         burgerIco.classList.add("active");
         burgerIcox.classList.remove("active");
+        fetchStorageInfo();
         map.invalidateSize();
         break;
       case 'stats':
@@ -649,6 +649,7 @@ burgerItems.forEach(function (item) {
         burgerSect.classList.remove("active");
         statsTab.classList.remove("active");
         fetchUpdateStorage()
+        quantityChanges = [];
         break;
     }
   });
@@ -913,35 +914,45 @@ function toggleBottomBorder(clickedButton) {
 
 const storageBtn = document.querySelector("#storageBtn");
 const storageUpdateTab = document.querySelector(".storage-update-tab");
-const transferedItemsTab = document.querySelector(".transfered-items-tab");
+const transferredItemsTab = document.querySelector(".transferred-items-tab");
 const updateGoodsTab = document.querySelector(".update-goods-tab");
 storageBtn.addEventListener("click", function () {
   storageUpdateTab.classList.add("active");
-  transferedItemsTab.classList.remove("active");
+  transferredItemsTab.classList.remove("active");
   updateGoodsTab.classList.remove("active");
+  quantityChanges = [];
   fetchUpdateStorage();
 })
 
-const transferedBtn = document.querySelector("#transferedBtn");
-transferedBtn.addEventListener("click", function () {
-  fetchTransferedItems();
-  transferedItemsTab.classList.add("active");
+const transferredBtn = document.querySelector("#transferredBtn");
+transferredBtn.addEventListener("click", function () {
+  fetchtransferredItems();
+  quantityChanges = [];
+  transferredItemsTab.classList.add("active");
   storageUpdateTab.classList.remove("active");
   updateGoodsTab.classList.remove("active");
 })
 
 const updateBtn = document.querySelector("#updateBtn");
 updateBtn.addEventListener("click", function () {
+  quantityChanges = [];
   updateGoodsTab.classList.add("active");
-  transferedItemsTab.classList.remove("active");
+  transferredItemsTab.classList.remove("active");
   storageUpdateTab.classList.remove("active");
 })
 
-/* ~~~~~~~~~~ Transfered Items Functions ~~~~~~~~~~ */
+/* ~~~~~~~~~~ transferred Items Functions ~~~~~~~~~~ */
 var goodListItems = [];
 var storageItemsNames = [];
 var storageListItems = [];
-function fetchTransferedItems() {
+const successMessagetransferred = document.getElementById("successMessagetransferred");
+function showSuccessMessagetransferred() {
+  successMessagetransferred.style.display = "block";
+  setTimeout(() => {
+    successMessagetransferred.style.display = "none";
+  }, 3000);
+}
+function fetchtransferredItems() {
   // Fetch storage items
   fetch("fetch_storageItems.php")
     .then((response) => response.json())
@@ -1051,37 +1062,49 @@ function sortItems(selector) {
   const sortedList = Array.from(list).sort((a, b) => {
     const textA = a.querySelector(".item-text").innerText.toLowerCase();
     const textB = b.querySelector(".item-text").innerText.toLowerCase();
-    console.log(textA)
-    console.log(textB)
     return textA.localeCompare(textB);
   });
-  console.log(sortedList);
   document.querySelector(selector).innerHTML = "";
 
   sortedList.forEach((item) => {
-    console.log(item)
     document.querySelector(selector).appendChild(item);
   });
 }
+
+const submittransferredBtn = document.querySelector(".exchange-submit");
+submittransferredBtn.addEventListener("click", submitTranferedItems);
+
+function submitTranferedItems(){
+  showSuccessMessagetransferred();
+  var itemNames = [];
+  storageListItems.forEach((item) => {
+    itemNames.push(item.innerText);
+  })
+
+  fetch("submit_TranferedItems.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(itemNames)
+  })
+    .then((response) => response.json())
+    .then((data) => {})
+}
+
 
 /* ~~~~~~~~~~ Update Storage Functions ~~~~~~~~~~ */
 var errorNoChange
 const cancelUpdate = document.querySelector(".cancelupd");
 const strgQuantityForm = document.querySelector(".storage-quantity-form");
 const strgConfirmForm = document.querySelector(".storage-confirm-form");
-let quantityChanges = {};
+let quantityChanges = [];
 
 cancelUpdate.addEventListener("click", function () {
   strgQuantityForm.classList.add("active");
   strgConfirmForm.classList.remove("active");
-  clearFinalChanges();
-})
-
-function clearFinalChanges() {
-  const itemsList = document.querySelector(".storage-confirm-form .items-list");
-  itemsList.innerHTML = "";
+  document.querySelector(".storage-confirm-form .items-list").innerHTML = "";
   errorNoChange.classList.remove("active");
-}
+  fetchUpdateStorage();
+})
 
 function storageNextEventListener() {
   const strgNextQuantityBtn = document.querySelector(".strg-next-quantity");
@@ -1096,12 +1119,24 @@ function storageNextEventListener() {
   })
 }
 
+const successMessageStorage = document.getElementById("successMessageStorage");
 const strgSubmitBtn = document.querySelector(".storage-submit");
 strgSubmitBtn.addEventListener("click", function () {
-  strgConfirmForm.classList.remove("active");
-  strgQuantityForm.classList.add("active");
-  quantityChanges = {};
+  submitChanges();
+  showSuccessMessageStorage();
 })
+
+function showSuccessMessageStorage() {
+  successMessageStorage.style.display = "block";
+  setTimeout(() => {
+    errorNoChange.classList.remove("active");
+    successMessageStorage.style.display = "none";
+    strgConfirmForm.classList.remove("active");
+    strgQuantityForm.classList.add("active");
+    quantityChanges = [];
+    fetchUpdateStorage();
+  }, 3000);
+}
 
 function fetchUpdateStorage() {
   fetch("fetch_storageItems.php")
@@ -1110,6 +1145,7 @@ function fetchUpdateStorage() {
     })
     .then((data) => {
       const storageForm = document.querySelector(".storage-quantity-form");
+      document.querySelector(".storage-confirm-form .items-list").innerHTML = "";
       if (data.length != 0) {
         if (!storageForm.querySelector(".item-select")) {
           markup1 =
@@ -1184,7 +1220,20 @@ function displayFinalChanges(){
    }
 }
 
-
+function submitChanges(){
+  const itemsToSend = {};
+  for (const goodName in quantityChanges) {
+    itemsToSend[goodName] = quantityChanges[goodName];
+  }
+  fetch("update_Quantity.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(itemsToSend)
+  })
+    .then((response) => response.json())
+    .then((data) => {document.querySelector(".storage-quantity-form .items-list").innerHTML = "";})
+}
+  
 /* ~~~~~~~~~~ Update Goods Functions ~~~~~~~~~~ */
 
 let fileInput = document.querySelector(".file-input");
@@ -1277,7 +1326,6 @@ urlBtn.addEventListener("click", function () {
   })
     .then(response => response.json())
     .then(data => {
-      console.log(data);
       fetch('uploadUrl.php', {
         method: 'POST',
         headers: {
