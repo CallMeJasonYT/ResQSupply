@@ -367,6 +367,7 @@ ul {
   border-radius: 5px;
   border: 1px solid #B3B3B3;
   width: 100px;
+  padding: 5px;
 }
 
 .address-search:focus,
@@ -436,6 +437,7 @@ input[type="checkbox"] {
   border-radius: 50%;
   border: 2px solid #0e505e;
   margin-right: 10px;
+  padding: 10px;
   cursor: pointer;
 }
 
@@ -701,15 +703,17 @@ tbody td.active {
   z-index: 1;
   border-radius: 5px;
   top: 40px;
+  cursor: pointer;
 }
 
-.dropdown:hover .dropdown-content {
+.dropdown-content.active {
   display: block;
 }
 
 .category-item {
   display: flex;
   padding: 5px;
+  text-align: start;
   align-items: center;
   color: #000000;
 }

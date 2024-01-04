@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 
 $sname = "localhost";
@@ -15,7 +14,7 @@ if (!$conn) {
 
 $task_cat = "Offer";
 
-$query = "SELECT task_id, task_date_create, task_goodn, task_date_pickup, task_goodv, task_status FROM tasks INNER JOIN users ON user_id=task_cit_id WHERE username=? AND task_cat=?";
+$query = "SELECT task_id, task_date_create, task_goodn, task_date_pickup, task_goodv, task_status FROM tasks INNER JOIN users ON user_id=task_cit_id WHERE username=? AND task_cat=? ORDER BY task_date_create DESC";
 $stmt = mysqli_prepare($conn, $query);
 mysqli_stmt_bind_param($stmt, "ss", $_SESSION["username"], $task_cat);
 mysqli_stmt_execute($stmt);

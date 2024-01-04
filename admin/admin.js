@@ -1553,6 +1553,8 @@ function submit(lat, lon) {
 
 //---------- Storage Info -----------//
 function fetchStorageInfo() {
+  var categories = [];
+  var selectedCategories = []; 
   fetch("fetch_StorageInfo.php")
     .then((response) => {
       return response.json();
@@ -1571,7 +1573,6 @@ function fetchStorageInfo() {
             `</tr>`;
           document.querySelector(".storage-tbody").insertAdjacentHTML("beforeend", markup1);
 
-          categories = [];
           if (!categories.includes(res.GoodCategory)) {
             markup2 =
               `<li class="category-item">` +
@@ -1582,13 +1583,46 @@ function fetchStorageInfo() {
             document.querySelector(".category-list").insertAdjacentHTML("beforeend", markup2);
           }
         });
+        categoryEventListener();
+        updateDisplayedCategories();
       } else {
-        //If there aren't any goods, display the following paragraph
         storageTable.classList.remove("active");
         markup = `<p class="empty">There aren't any Goods in the Storage at the moment.</p>`;
         document.querySelector(".storage-container").insertAdjacentHTML("beforeend", markup);
       }
     });
+}
+
+function categoryEventListener() {
+  const catItem = document.querySelectorAll(".category-item");
+  const dropdown = document.querySelector(".dropdown-button");
+  const dropdownContent = document.querySelector(".dropdown-content");
+
+  catItem.forEach((catItem) => {
+    catItem.addEventListener("click", (e) => {
+      var checkbox = catItem.querySelector("input[type=checkbox]");
+      checkbox.checked = !checkbox.checked;
+      updateDisplayedCategories();
+    });
+  });
+
+  dropdown.addEventListener("click", (e) => {
+    dropdownContent.classList.toggle("active");
+    updateDisplayedCategories();
+  });
+}
+
+function updateDisplayedCategories() {
+  const selectedCategories = Array.from(document.querySelectorAll('.category-item input[type=checkbox]:checked')).map(checkbox => checkbox.nextSibling.textContent.trim());
+  const categoryRows = document.querySelectorAll('.storage-tbody tr');
+  categoryRows.forEach(row => {
+    const category = row.querySelector('td:nth-child(2)').textContent.trim();
+    if(!selectedCategories.includes(category)){
+      row.style.display = 'none';
+    }else {
+      row.style.display = '';
+    }
+  });
 }
 
 //Logging out Actions
