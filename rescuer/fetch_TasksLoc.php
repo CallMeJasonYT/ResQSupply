@@ -2,20 +2,18 @@
 session_start();
 
 $sname = "localhost";
-$unmae = "root";
+$uname = "root";
 $password = "";
 $db_name = "resqsupply";
-$conn = mysqli_connect($sname, $unmae, $password, $db_name);
-$response = [];
+$conn = new mysqli($sname, $uname, $password, $db_name);
 
 if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+    echo "Connection failed!";
 }
 
-$stmtSelect = $conn->prepare(
-    "SELECT task_id, task_status, X(task_loc) AS lat, Y(task_loc) AS lon
-    FROM tasks");
+$response = [];
 
+$stmtSelect = $conn->prepare("SELECT task_id, task_status, X(task_loc) AS lat, Y(task_loc) AS lon FROM tasks");
 $stmtSelect->execute();
 $result = $stmtSelect->get_result();
 

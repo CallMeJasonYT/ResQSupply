@@ -140,17 +140,15 @@
           </div>
           <div class="field title">
             <div class="input-box">
-              <input name="ann-title" id="title" type="text" placeholder="Enter the Title of your Announcement"
-                minlength="8" maxlength="50" required />
+              <input name="ann-title" id="title" type="text" placeholder="Enter the Title of your Announcement" maxlength="50"/>
             </div>
           </div>
           <div class="field details">
             <div class="input-box">
-              <input name="ann-details" id="details" type="text" placeholder="Enter the Details of your Announcement"
-                minlength="8" maxlength="100" required />
+              <input name="ann-details" id="details" type="text" placeholder="Enter the Details of your Announcement" maxlength="200"/>
             </div>
           </div>
-          <button type="button" class="button ann-next-text"> Next </button>
+          <button type="submit" class="button ann-next-text"> Next </button>
         </div>
       </div>
       <!-- Announcement Items -->
@@ -236,9 +234,10 @@
       <!-- Storage Management -->
       <div class="storage-update-tab active">
         <!-- Storage Items Tab -->
-        <div class="storage-quantity-form active">
+        <div class="storage-quantity-form">
           <p class="form-title">Base Storage</p>
         </div>
+        <p class="empty">There aren't any Goods in the Storage at the moment.</p>
         <!-- Confirm Storage Updates -->
         <div class="storage-confirm-form">
           <div class="cancelbtn">
@@ -359,29 +358,31 @@
     <section class="storage-sect active">
       <div class="storage-container">
         <p class="storage-status"> Storage Status </p>
-        <table class="storage-table">
-          <thead>
-            <tr>
-              <th> Item </th>
-              <th>
-                <div class="dropdown">
-                  <div class="dropdown-button">
-                    <button class="dropbtn">Category</button>
-                    <i class="fa-solid fa-caret-down"></i>
+        <div class="table-container">
+          <table class="storage-table">
+            <thead>
+              <tr>
+                <th> Item </th>
+                <th>
+                  <div class="dropdown">
+                    <div class="dropdown-button">
+                      <button class="dropbtn">Category</button>
+                      <i class="fa-solid fa-caret-down"></i>
+                    </div>
+                    <div class="dropdown-content">
+                      <ul class="category-list">
+                      </ul>
+                    </div>
                   </div>
-                  <div class="dropdown-content">
-                    <ul class="category-list">
-                    </ul>
-                  </div>
-                </div>
-              </th>
-              <th> Location </th>
-              <th> Quantity </th>
-            </tr>
-          </thead>
-          <tbody class="storage-tbody">
-          </tbody>
-        </table>
+                </th>
+                <th> Location </th>
+                <th> Quantity </th>
+              </tr>
+            </thead>
+            <tbody class="storage-tbody">
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
   </main>

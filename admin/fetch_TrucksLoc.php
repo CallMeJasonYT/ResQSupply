@@ -2,15 +2,16 @@
 session_start();
 
 $sname = "localhost";
-$unmae = "root";
+$uname = "root";
 $password = "";
 $db_name = "resqsupply";
-$conn = mysqli_connect($sname, $unmae, $password, $db_name);
-$response = [];
+$conn = new mysqli($sname, $uname, $password, $db_name);
 
 if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+    echo "Connection failed!";
 }
+
+$response = [];
 
 $stmtSelectVehicles = $conn->prepare("SELECT veh_id, veh_loc, X(veh_cords) AS lat, Y(veh_cords) AS lon FROM vehicles");
 $stmtSelectVehicles->execute();
@@ -23,7 +24,7 @@ if (mysqli_num_rows($resultVehicles) > 0) {
         $stmtSelectTasks = $conn->prepare("SELECT COUNT(*) as count FROM tasks WHERE task_veh = ? && task_status = ?");
         $stmtSelectTasks->bind_param("ss", $veh_id, $status);
         $stmtSelectTasks->execute();
-        
+
         $resultTasks = $stmtSelectTasks->get_result();
         $rowTasks = mysqli_fetch_assoc($resultTasks);
         $category = ($rowTasks['count'] > 0) ? 'YesTruck' : 'NoTruck';
@@ -33,15 +34,12 @@ if (mysqli_num_rows($resultVehicles) > 0) {
             'lon' => $rowVehicle['lon'],
             'category' => $category
         ];
-
         $stmtSelectTasks->close();
     }
 }
-
 $stmtSelectVehicles->close();
 
 header('Content-Type: application/json');
 echo json_encode($response);
-
 $conn->close();
 ?>

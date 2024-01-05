@@ -2,41 +2,37 @@
 session_start();
 
 $sname = "localhost";
-$unmae = "root";
+$uname = "root";
 $password = "";
 $db_name = "resqsupply";
-$conn = mysqli_connect($sname, $unmae, $password, $db_name);
+$conn = new mysqli($sname, $uname, $password, $db_name);
 
 if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+    echo "Connection failed!";
 }
 
 $username = $_SESSION["username"];
-
-$stmtSelect = $conn->prepare("SELECT res_veh FROM rescuer INNER JOIN users ON user_id = res_id WHERE username = ?");
-if (!$stmtSelect) {
-    die("Prepare failed: " . $conn->error);
-}
-
-$stmtSelect->bind_param('s', $username);
-$stmtSelect->execute();
-
-$stmtSelect->bind_result($veh_id);
-
 $response = [];
 
-while ($stmtSelect->fetch()) {
+$stmtSelect = $conn->prepare(
+    "SELECT res_veh FROM rescuer 
+    INNER JOIN users ON user_id = res_id 
+    WHERE username = ?"
+);
+$stmtSelect->bind_param('s', $username);
+$stmtSelect->execute();
+$result = $stmtSelect->get_result();
+
+while ($row = mysqli_fetch_assoc($result)) {
     $response[] = [
         'username' => $username,
-        'vehicle' => $veh_id
+        'vehicle' => $row['res_veh']
     ];
-    $_SESSION['veh_id'] = $veh_id;
+    $_SESSION['veh_id'] = $row['res_veh'];
 }
-
 $stmtSelect->close();
 
 header('Content-Type: application/json');
-echo json_encode(['data' => $response]);
-
+echo json_encode($response);
 $conn->close();
 ?>

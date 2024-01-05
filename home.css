@@ -72,7 +72,7 @@ div {
   position: fixed;
   max-width: 370px;
   width: 100%;
-  top: 50%;
+  top: 55%;
   left: 50%;
   z-index: 101;
   background: #fff;
@@ -86,6 +86,11 @@ div {
 
 .signup_form {
   display: none;
+}
+
+#signup-form{
+  max-height: calc(100dvh - 175px);
+  overflow-y: scroll;
 }
 
 .form_container.active .signup_form {
@@ -298,4 +303,20 @@ form .input-box {
 .list-item.checked::before {
   content: '\f00c \00a0';
   color: #00000046;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #a3a3a3;
+  border-radius: 20px;
+  border: 6px solid transparent;
+  background-clip: content-box;
 }

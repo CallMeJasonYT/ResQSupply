@@ -539,6 +539,7 @@ const burgerIcox = document.querySelector(".burgerx");
 const burgerIco = document.querySelector(".burgeri");
 
 function deskCustomization() {
+  mainModule.style.flexDirection = "row";
   var storageSection = document.querySelector('.storage-sect');
   var mapSection = document.querySelector('.map-sect');
   var mainElement = document.querySelector('main');
@@ -555,6 +556,7 @@ function mobileApply() {
 
 //Activating 
 function mobileCustomization() {
+  mainModule.style.flexDirection = "column";
   var storageSection = document.querySelector('.storage-sect');
   var mapSection = document.querySelector('.map-sect');
   var mainElement = document.querySelector('main');
@@ -568,6 +570,9 @@ function mobileCustomization() {
 //Burger Open
 const burgerSect = document.querySelector(".burger-sect");
 burgerIco.addEventListener("click", (e) => {
+  annTextForm.classList.add("active");
+  annItemsForm.classList.remove("active");
+  annConfirmForm.classList.remove("active");
   burgerIco.classList.remove("active");
   burgerIcox.classList.add("active");
   burgerSect.classList.add("active");
@@ -588,6 +593,7 @@ burgerIcox.addEventListener("click", (e) => {
 const burgerItems = document.querySelectorAll(".burger-item");
 const mapSection = document.querySelector(".map-sect");
 const storageSection = document.querySelector(".storage-sect");
+const mainModule = document.querySelector("main");
 burgerItems.forEach(function (item) {
   item.addEventListener("click", function () {
     switch (item.id) {
@@ -601,6 +607,11 @@ burgerItems.forEach(function (item) {
         burgerSect.classList.remove("active");
         burgerIco.classList.add("active");
         burgerIcox.classList.remove("active");
+        if (cnt == 1) {
+          mainModule.style.flexDirection = "row";
+        } else {
+          mainModule.style.flexDirection = "column";
+        }
         fetchStorageInfo();
         map.invalidateSize();
         break;
@@ -614,7 +625,8 @@ burgerItems.forEach(function (item) {
         annCreateSect.classList.remove("active");
         storageMngSect.classList.remove("active");
         rescAccSect.classList.remove("active");
-        fetchAndRenderChart('2023-12-15', '2023-12-25');
+        mainModule.style.flexDirection = "column";
+        fetchAndRenderChart(getLastWeekDate(), getCurrentDate());
         break;
       case 'resacc':
         rescAccSect.classList.add("active");
@@ -626,6 +638,7 @@ burgerItems.forEach(function (item) {
         annCreateSect.classList.remove("active");
         storageMngSect.classList.remove("active");
         statsTab.classList.remove("active");
+        mainModule.style.flexDirection = "column";
         break;
       case 'announcement':
         annCreateSect.classList.add("active");
@@ -637,6 +650,7 @@ burgerItems.forEach(function (item) {
         storageSection.classList.remove("active");
         burgerSect.classList.remove("active");
         statsTab.classList.remove("active");
+        mainModule.style.flexDirection = "column";
         break;
       case 'storage':
         storageMngSect.classList.add("active");
@@ -648,15 +662,32 @@ burgerItems.forEach(function (item) {
         storageSection.classList.remove("active");
         burgerSect.classList.remove("active");
         statsTab.classList.remove("active");
-        fetchUpdateStorage()
+        mainModule.style.flexDirection = "column";
+        fetchUpdateStorage();
         quantityChanges = [];
         break;
     }
   });
 });
 
-
 /* ~~~~~~~~~~ Statistics ~~~~~~~~~~ */
+function getCurrentDate() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function getLastWeekDate() {
+  const today = new Date();
+  const sevenDaysAgo = new Date(today - 7 * 24 * 60 * 60 * 1000); // 7 days ago in milliseconds
+  const year = sevenDaysAgo.getFullYear();
+  const month = String(sevenDaysAgo.getMonth() + 1).padStart(2, '0');
+  const day = String(sevenDaysAgo.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 Chart.defaults.plugins.legend.position = 'top';
 Chart.defaults.plugins.legend.align = 'start';
 
@@ -677,7 +708,7 @@ const config = {
   }
 };
 
-// render init block
+// Render Initial Block
 const myChart = new Chart(
   document.getElementById('myChart'),
   config
@@ -686,10 +717,13 @@ const myChart = new Chart(
 const containerBody = document.querySelector('.containerBody');
 const chartBox = document.querySelector('.chartBox');
 function fetchAndRenderChart(startDate, endDate) {
-  fetch('statistics.php')
+  fetch('statistics.php', {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ start: startDate, end: endDate })
+  })
     .then(response => response.json())
     .then(data => {
-
       // Transform fetched data to match the structure of the chart data
       var transformedData = [];
       for (let i = 0; i < 4; i++) {
@@ -735,17 +769,12 @@ function fetchAndRenderChart(startDate, endDate) {
 
 function transformData(jsonData, startDate, endDate) {
   let dates = [];
-
   let currentDateObj = new Date(startDate);
   const endDateObj = new Date(endDate);
 
   while (currentDateObj <= endDateObj) {
-    let month = currentDateObj.getMonth() + 1;
-    let day = currentDateObj.getDate();
-
-    if (day < 10) {
-      day = '0' + day;
-    }
+    let month = (currentDateObj.getMonth() + 1).toString().padStart(2, '0');
+    let day = currentDateObj.getDate().toString().padStart(2, '0');
 
     let date = `${currentDateObj.getFullYear()}-${month}-${day}`;
     dates.push(date);
@@ -757,7 +786,7 @@ function transformData(jsonData, startDate, endDate) {
   let finalDatas = [];
 
   for (const [index, date] of dates.entries()) {
-    if (jsonData.data.count[date]) {
+    if (jsonData.data.length != 0 && jsonData.data.count[date]) {
       finalLabels.push(date);
       finalDatas.push(jsonData.data.count[date]);
     } else {
@@ -775,10 +804,28 @@ const picker = new easepick.create({
     'custom_date_picker.css'
   ],
   plugins: ['RangePlugin'],
+  autoApply: false,
   RangePlugin: {
     tooltip: true,
+  },
+  setup(picker) {
+    picker.on('select', (e) => {
+      let startDate = picker.getStartDate('YYYY-MM-DD');
+      let endDate = picker.getEndDate('YYYY-MM-DD');
+      fetchAndRenderChart(dateConverter(startDate), dateConverter(endDate));
+    });
   }
 });
+
+function dateConverter(dateString) {
+  const inputDate = new Date(dateString);
+  const year = inputDate.getFullYear();
+  const month = (inputDate.getMonth() + 1).toString().padStart(2, '0');
+  const day = inputDate.getDate().toString().padStart(2, '0');
+  const outputDateString = `${year}-${month}-${day}`;
+
+  return outputDateString;
+}
 
 /* ~~~~~~~~~~ Announcement Creation Functions ~~~~~~~~~~ */
 
@@ -796,7 +843,9 @@ cancelAnn.forEach(function (btn) {
     annTextForm.classList.add("active");
     annItemsForm.classList.remove("active");
     annConfirmForm.classList.remove("active");
-
+    selectedItems = [];
+    document.querySelector(".ann-items-form .item-list").innerHTML = "";
+    document.querySelector(".ann-text-confirm").innerHTML = "";
   })
 })
 
@@ -843,6 +892,9 @@ function fetchStorageItems() {
     })
     .then((data) => {
       if (data.length != 0) {
+        if(document.querySelector(".ann-items-form .empty")){
+          document.querySelector(".ann-items-form .empty").remove();
+        }
         itemSelect.classList.add("active");
         data.forEach((res) => {
           markup =
@@ -855,8 +907,13 @@ function fetchStorageItems() {
         itemsBtnListener();
       } else {
         itemSelect.classList.remove("active");
-        markup = `<p class="empty">There aren't any Goods in the Storage at the moment.</p>`;
-        document.querySelector(".item-select").insertAdjacentHTML("beforeend", markup);
+        if(document.querySelector(".ann-items-form .item-list li")){
+          document.querySelector(".ann-items-form .item-list").innerHTML = "";
+        }
+        if(!document.querySelector(".ann-items-form .empty")){
+          markup = `<p class="empty">There aren't any Goods in the Storage at the moment.</p>`;
+          document.querySelector(".item-select").insertAdjacentHTML("beforeend", markup);
+        }
       }
     });
 }
@@ -941,7 +998,7 @@ updateBtn.addEventListener("click", function () {
   storageUpdateTab.classList.remove("active");
 })
 
-/* ~~~~~~~~~~ transferred Items Functions ~~~~~~~~~~ */
+/* ~~~~~~~~~~ Transferred Items Functions ~~~~~~~~~~ */
 var goodListItems = [];
 var storageItemsNames = [];
 var storageListItems = [];
@@ -1015,6 +1072,10 @@ function storageItemsEventListener() {
         const clonedItem = item.cloneNode(true);
         document.querySelector(".good-item-list").appendChild(clonedItem);
         goodListItems.push(clonedItem);
+        if(storageListItems.length - 1 == 0){
+          const markup = `<p class="empty">There aren't any Available Goods at the moment</p>`;
+          document.querySelector(".storage-items-form .item-options").insertAdjacentHTML("beforeend", markup);
+        }
         storageListItems.splice(storageListItems.indexOf(item), 1);
         storageListenersAdded.splice(index, 1);
         sortItems(".storage-item-list");
@@ -1040,13 +1101,17 @@ function goodsItemsEventListener() {
         sortItems(".good-item-list");
         storageItemsEventListener();
         item.remove();
+        console.log(storageListItems)
+        if(storageListItems != null && document.querySelector(".transferred-items-tab .empty")){
+          document.querySelector(".transferred-items-tab .empty").remove();
+        }
       });
       goodListenersAdded[index] = true;
     }
   });
 }
 
-function emptyGoodStorageLists(){
+function emptyGoodStorageLists() {
   const goodsItems = document.querySelector(".good-item-list");
   const storageItems = document.querySelector(".storage-item-list");
   goodsItems.innerHTML = "";
@@ -1074,7 +1139,7 @@ function sortItems(selector) {
 const submittransferredBtn = document.querySelector(".exchange-submit");
 submittransferredBtn.addEventListener("click", submitTranferedItems);
 
-function submitTranferedItems(){
+function submitTranferedItems() {
   showSuccessMessagetransferred();
   var itemNames = [];
   storageListItems.forEach((item) => {
@@ -1087,7 +1152,7 @@ function submitTranferedItems(){
     body: JSON.stringify(itemNames)
   })
     .then((response) => response.json())
-    .then((data) => {})
+    .then((data) => { })
 }
 
 
@@ -1112,7 +1177,7 @@ function storageNextEventListener() {
     displayFinalChanges();
     if (Object.keys(quantityChanges).length == 0) {
       errorNoChange.classList.add("active");
-    }else{
+    } else {
       strgQuantityForm.classList.remove("active");
       strgConfirmForm.classList.add("active");
     }
@@ -1147,6 +1212,8 @@ function fetchUpdateStorage() {
       const storageForm = document.querySelector(".storage-quantity-form");
       document.querySelector(".storage-confirm-form .items-list").innerHTML = "";
       if (data.length != 0) {
+        storageForm.classList.add("active");
+        document.querySelector(".storage-update-tab .empty").classList.remove("active");
         if (!storageForm.querySelector(".item-select")) {
           markup1 =
             `<div class="item-select">` +
@@ -1155,6 +1222,7 @@ function fetchUpdateStorage() {
             `</div>`;
           storageForm.insertAdjacentHTML("beforeend", markup1);
         }
+        storageForm.querySelector(".items-list").innerHTML = "";
         data.forEach((res) => {
           const existingItem = storageForm.querySelector(`.item-text[data-goodname="${res.GoodName}"]`);
           if (!existingItem) {
@@ -1179,17 +1247,18 @@ function fetchUpdateStorage() {
         }
         if (!storageForm.querySelector(".error.nochange")) {
           markup3 =
-           `<div class="error nochange">`+
-            `<p><b>Error:&nbsp;</b> No changes were made.</p>`+
+            `<div class="error nochange">` +
+            `<p><b>Error:&nbsp;</b> No changes were made.</p>` +
             `</div>`;
           storageForm.insertAdjacentHTML("beforeend", markup3);
           errorNoChange = document.querySelector(".error.nochange");
         }
       } else {
-        if (!storageForm.querySelector(".storage-quantity-form .empty")) {
-          markup = `<p class="empty">There aren't any Goods in the Storage at the moment.</p>`;
-          storageForm.insertAdjacentHTML("beforeend", markup);
+        storageForm.classList.remove("active");
+        if(storageForm.querySelector(".items-list")){
+          storageForm.querySelector(".items-list").innerHTML = "";
         }
+        document.querySelector(".storage-update-tab .empty").classList.add("active");
       }
     });
 }
@@ -1205,22 +1274,22 @@ function updateQuantity(inputElement, goodName) {
   quantityChanges[goodName] = parseInt(inputElement.value);
 }
 
-function displayFinalChanges(){
-   for (const goodName in quantityChanges) {
+function displayFinalChanges() {
+  for (const goodName in quantityChanges) {
     const newQuantity = quantityChanges[goodName];
     markup =
-      `<li class="item">`+
-      `<div class="item-count">`+
-      `<p class="item-text"> ${goodName} </p>`+
-      `<div class="item-quantity">`+
-      `<p class="quantity-text">Quantity: ${newQuantity}</p>`+
-      `</div>`+
+      `<li class="item">` +
+      `<div class="item-count">` +
+      `<p class="item-text"> ${goodName} </p>` +
+      `<div class="item-quantity">` +
+      `<p class="quantity-text">Quantity: ${newQuantity}</p>` +
+      `</div>` +
       `</li>`;
     document.querySelector(".storage-confirm-form .items-list").insertAdjacentHTML("beforeend", markup);
-   }
+  }
 }
 
-function submitChanges(){
+function submitChanges() {
   const itemsToSend = {};
   for (const goodName in quantityChanges) {
     itemsToSend[goodName] = quantityChanges[goodName];
@@ -1231,9 +1300,9 @@ function submitChanges(){
     body: JSON.stringify(itemsToSend)
   })
     .then((response) => response.json())
-    .then((data) => {document.querySelector(".storage-quantity-form .items-list").innerHTML = "";})
+    .then((data) => { document.querySelector(".storage-quantity-form .items-list").innerHTML = ""; })
 }
-  
+
 /* ~~~~~~~~~~ Update Goods Functions ~~~~~~~~~~ */
 
 let fileInput = document.querySelector(".file-input");
@@ -1510,13 +1579,14 @@ signupBtn.addEventListener("click", (e) => {
   checkPhone();
   checkAddress();
   checkPass();
-  checkTruckId()
+  checkTruckId();
   if (
     usernameField.classList.contains("invalid") ||
     usernameField.classList.contains("duplicate") ||
     fullnameField.classList.contains("invalid") ||
     phoneField.classList.contains("invalid") ||
     addressField.classList.contains("invalid") ||
+    truckidField.classList.contains("invalid") ||
     !passGood
   ) {
     e.preventDefault();
@@ -1549,12 +1619,19 @@ function submit(lat, lon) {
     body: JSON.stringify({ username: usernameInput.value, fullname: fullnameInput.value, phone: phoneInput.value, truckid: truckidInput.value, address: addressInput.value, password: passInput.value, latitude: lat, longitude: lon }),
   })
     .then((response) => response.json())
+    .then((data) =>{
+      addressInput.value = "";
+      phoneInput.value = "";
+      fullnameInput.value = "";
+      usernameInput.value = "";
+      truckidInput.value = "";
+      passInput.value = "";
+    })
 }
 
 //---------- Storage Info -----------//
 function fetchStorageInfo() {
   var categories = [];
-  var selectedCategories = []; 
   fetch("fetch_StorageInfo.php")
     .then((response) => {
       return response.json();
@@ -1563,6 +1640,8 @@ function fetchStorageInfo() {
       const storageTable = document.querySelector(".storage-table");
       if (data.length != 0) {
         storageTable.classList.add("active");
+        document.querySelector(".storage-tbody").innerHTML = "";
+        document.querySelector(".category-list").innerHTML = "";
         data.forEach((res) => {
           markup1 =
             `<tr>` +
@@ -1595,9 +1674,6 @@ function fetchStorageInfo() {
 
 function categoryEventListener() {
   const catItem = document.querySelectorAll(".category-item");
-  const dropdown = document.querySelector(".dropdown-button");
-  const dropdownContent = document.querySelector(".dropdown-content");
-
   catItem.forEach((catItem) => {
     catItem.addEventListener("click", (e) => {
       var checkbox = catItem.querySelector("input[type=checkbox]");
@@ -1605,21 +1681,23 @@ function categoryEventListener() {
       updateDisplayedCategories();
     });
   });
-
-  dropdown.addEventListener("click", (e) => {
-    dropdownContent.classList.toggle("active");
-    updateDisplayedCategories();
-  });
 }
+
+const dropdown = document.querySelector(".dropdown-button");
+const dropdownContent = document.querySelector(".dropdown-content");
+dropdown.addEventListener("click", (e) => {
+  dropdownContent.classList.toggle("active");
+  updateDisplayedCategories();
+});
 
 function updateDisplayedCategories() {
   const selectedCategories = Array.from(document.querySelectorAll('.category-item input[type=checkbox]:checked')).map(checkbox => checkbox.nextSibling.textContent.trim());
   const categoryRows = document.querySelectorAll('.storage-tbody tr');
   categoryRows.forEach(row => {
     const category = row.querySelector('td:nth-child(2)').textContent.trim();
-    if(!selectedCategories.includes(category)){
+    if (!selectedCategories.includes(category)) {
       row.style.display = 'none';
-    }else {
+    } else {
       row.style.display = '';
     }
   });

@@ -1,17 +1,19 @@
 <?php
-
 session_start();
 
 $sname = "localhost";
-$unmae = "root";
+$uname = "root";
 $password = "";
 $db_name = "resqsupply";
-$conn = mysqli_connect($sname, $unmae, $password, $db_name);
+$conn = new mysqli($sname, $uname, $password, $db_name);
+
+if (!$conn) {
+    echo "Connection failed!";
+}
 
 $data = file_get_contents("php://input");
-
 $dataArray = json_decode($data, true);
-
+$response = [];
 $veh = $_SESSION['veh_id'];
 
 foreach ($dataArray['data'] as $data) {
@@ -71,6 +73,5 @@ foreach ($dataArray['data'] as $data) {
 $response = "OK";
 header('Content-Type: application/json');
 echo json_encode($response);
-
 $conn->close();
 ?>

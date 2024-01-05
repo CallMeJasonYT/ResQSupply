@@ -138,17 +138,18 @@ section {
 
 .rescuer-acc-sect,
 .ann-create-sect,
-.storage-mngmt-sect,
-.statistics-sect {
-  justify-content: center;
-  align-items: center;
-  min-height: calc(100dvh - 160px);
+.storage-mngmt-sect {
   display: none;
-  gap: calc(100dvh - 90dvh + 15px);
+  max-width: 720px;
+  width: 100%;
+  min-height: calc(100dvh - 160px);
+  margin: auto;
+  transition: all 0.4s ease-out;
 }
 
-.statistics-sect{
-  gap: 0px;
+.statistics-sect {
+  display: none;
+  width: 100%;
   flex-direction: column;
   align-items: flex-start;
 }
@@ -183,7 +184,13 @@ section {
 
   .map {
     max-width: calc(calc(100vw - 40px) / 2);
-    height: calc(100dvh - 170px) !important;
+    height: calc(100dvh - 160px) !important;
+  }
+
+  .rescuer-acc-sect,
+  .ann-create-sect,
+  .storage-mngmt-sect {
+    max-width: 960px !important
   }
 
   .storage-sect {
@@ -191,30 +198,21 @@ section {
     margin-top: 0;
   }
 
-  .storage-container{
-    max-width: calc(calc(100vw - 40px) / 2) !important; 
+  .storage-container {
+    max-width: calc(calc(100vw - 40px) / 2) !important;
   }
 
-  .form-container {
-    max-width: 560px !important;
+  .table-container {
+    max-height: calc(100dvh - 190px) !important;
+  }
+
+  .address-search {
+    width: 200px !important;
   }
 
   .chartBox,
-  .date-pick{
+  .date-pick {
     max-width: 960px !important;
-  }
-
-  .ann-text-form,
-  .ann-items-form,
-  .ann-confirm-form,
-  .storage-quantity-form,
-  .storage-confirm-form,
-  .goods-items-form,
-  .storage-items-form,
-  .transferred-items-tab .button,
-  .upload-form,
-  .url-form {
-    max-width: 720px !important;
   }
 }
 
@@ -222,19 +220,20 @@ section {
   .map-container {
     max-width: 100dvh !important;
   }
+
   .chartBox,
-  .date-pick{
+  .date-pick {
     max-width: 1280px !important;
   }
 }
 
 /* Home */
 
-.error-storage{
+.error-storage {
   display: none;
 }
 
-.error-storage.active{
+.error-storage.active {
   display: flex;
   font-size: 14px;
   color: red;
@@ -302,10 +301,11 @@ section {
   border-bottom: 1px solid #7070708f;
 }
 
-.item-drop-sel{
+.item-drop-sel {
   display: none;
 }
-.item-drop-sel.active{
+
+.item-drop-sel.active {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -366,7 +366,7 @@ ul {
   font-size: 14px;
   border-radius: 5px;
   border: 1px solid #B3B3B3;
-  width: 100px;
+  width: 130px;
   padding: 5px;
 }
 
@@ -410,7 +410,7 @@ ul {
   cursor: pointer;
 }
 
-.filter img{
+.filter img {
   margin-right: 10px;
 }
 
@@ -453,23 +453,11 @@ input[type="checkbox"]:checked {
 .storage-container {
   margin: auto;
   max-width: 720px;
-  max-height: 150px;
-  overflow-y: auto;
 }
 
 .map-container {
   margin: auto;
   max-width: 720px;
-}
-
-@media screen and (min-width: 960px) {
-
-  .statistics,
-  .rescuer-account,
-  .announcement-creation,
-  .storage-mngmt {
-    max-width: 720px;
-  }
 }
 
 .storage-status {
@@ -578,6 +566,12 @@ input[type="checkbox"]:checked {
   background-clip: content-box;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .legend {
   background: rgba(255, 255, 255, 0.9);
   padding: 10px;
@@ -648,11 +642,16 @@ table {
   margin-top: 5px;
 }
 
-.storage-table{
+.table-container {
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.storage-table {
   display: none;
 }
 
-.storage-table.active{
+.storage-table.active {
   display: table;
 }
 
@@ -745,20 +744,22 @@ tbody td.active {
 
 .form-container {
   position: relative;
-  margin: 10px;
-  max-width: 370px;
   width: 100%;
   z-index: 101;
   background: #fff;
   border: 1px solid #074957a4;
   padding: 25px;
   border-radius: 12px;
-  transition: all 0.4s ease-out;
   pointer-events: auto;
 }
 
 .signup_form {
   display: block;
+}
+
+#signup-form {
+  overflow-y: scroll;
+  max-height: calc(100dvh - 255px);
 }
 
 .form .title {
@@ -865,10 +866,6 @@ form .input-box {
   transition: all 0.4s ease-out;
   border-radius: 10px;
   color: #fff;
-}
-
-.transferred-items-tab .button {
-  max-width: 560px;
 }
 
 /* Signup Form Styling */
@@ -1006,10 +1003,7 @@ form .input-box {
 .url-form {
   position: relative;
   width: 100%;
-  max-width: 560px;
   padding: 25px;
-  margin-top: 5px;
-  margin-bottom: 15px;
   border: 1px solid #525151;
   border-radius: 6px;
   background: #ffffff;
@@ -1025,7 +1019,6 @@ form .input-box {
 .upload-form,
 .url-form {
   padding: 15px;
-  margin-bottom: 10px;
 }
 
 .ann-text-form.active,
@@ -1040,6 +1033,27 @@ form .input-box {
   display: block;
 }
 
+.goods-items-form {
+  margin-bottom: 10px;
+}
+
+.storage-items-form {
+  margin: 10px 0;
+}
+
+.upload-form {
+  margin-bottom: 10px;
+}
+
+.url-form {
+  margin-top: 10px;
+}
+
+.form.ann-form {
+  overflow-y: scroll;
+  max-height: calc(100dvh - 210px);
+}
+
 .ann-text-form .input-box input {
   padding: 0;
 }
@@ -1051,13 +1065,17 @@ form .input-box {
 }
 
 .item-options {
-  max-height: 150px;
+  max-height: calc(100dvh - 340px);
   overflow-y: auto;
 }
 
-.transferred-items-tab .item-options,
+.transferred-items-tab .item-options {
+  overflow-y: scroll;
+  max-height: calc(calc(100dvh - 455px)/2);
+}
+
 .items-list {
-  max-height: 85px;
+  max-height: calc(100dvh - 370px);
   overflow-y: auto;
 }
 
@@ -1100,8 +1118,7 @@ li.selected {
 }
 
 .storage-tab-control {
-  padding: 10px 0px;
-  padding-top: 0px;
+  margin-bottom: 10px;
   display: flex;
   align-items: flex-start;
   width: 100%;
@@ -1112,7 +1129,6 @@ li.selected {
   display: flex;
   justify-content: center;
   font-size: 20px;
-  margin-bottom: 10px;
   color: #0e505e;
 }
 
@@ -1248,10 +1264,12 @@ label,
   background: #1A1A1A;
   color: rgba(54, 162, 235, 1);
 }
+
 .chartMenu p {
   padding: 10px;
   font-size: 20px;
 }
+
 .chartCard {
   width: calc(100vw - 40px);
   height: calc(calc(100dvh - 180px) - calc(10dvh - 15px));
@@ -1259,6 +1277,7 @@ label,
   align-items: center;
   justify-content: center;
 }
+
 .chartBox {
   width: calc(100vw - 40px);
   max-width: 720px;
@@ -1269,16 +1288,17 @@ label,
   background: white;
 }
 
-.container{
+.container {
   width: 100%;
   max-width: calc(100vw - 40px);
   overflow-x: scroll;
 }
-.containerBody{
+
+.containerBody {
   height: calc(calc(100dvh - 300px) - calc(10dvh - 15px));
 }
 
-.date-pick{
+.date-pick {
   display: flex;
   max-width: 720px;
   transition: all 0.4s ease-out;
@@ -1287,13 +1307,13 @@ label,
   width: 100%;
 }
 
-.date-text{
+.date-text {
   margin-right: 20px;
   font-size: 18px;
   font-weight: 500;
 }
 
-#datepicker{
+#datepicker {
   height: 30px;
   outline: none;
   font-size: 14px;
@@ -1306,7 +1326,7 @@ label,
   display: none;
 }
 
-#successMessage p{
+#successMessage p {
   font-weight: 500;
   color: rgb(32, 204, 104);
 }
@@ -1315,7 +1335,7 @@ label,
   display: none;
 }
 
-#successMessageAnn p{
+#successMessageAnn p {
   font-weight: 500;
   color: rgb(32, 204, 104);
 }
@@ -1324,7 +1344,7 @@ label,
   display: none;
 }
 
-#successMessageStorage p{
+#successMessageStorage p {
   font-weight: 500;
   color: rgb(32, 204, 104);
 }
@@ -1333,7 +1353,7 @@ label,
   display: none;
 }
 
-#successMessagetransferred p{
+#successMessagetransferred p {
   font-weight: 500;
   color: rgb(32, 204, 104);
 }
@@ -1355,10 +1375,18 @@ label,
   margin-bottom: 5px;
 }
 
-.empty{
+.empty {
   margin-top: 10px;
+  width: 100%;
   background: #e0e0e0;
   border-radius: 5px;
   padding: 10px;
+  display: block;
+}
+
+.storage-update-tab .empty{
+  display: none;
+}
+.storage-update-tab .empty.active{
   display: block;
 }

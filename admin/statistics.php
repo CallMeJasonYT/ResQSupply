@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 $sname = "localhost";
 $uname = "root";
@@ -6,16 +7,23 @@ $password = "";
 $db_name = "resqsupply";
 $conn = new mysqli($sname, $uname, $password, $db_name);
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if (!$conn) {
+    echo "Connection failed!";
 }
+
+$data = file_get_contents("php://input");
+$dateData = json_decode($data);
+$startDate = $dateData->start;
+$endDate = $dateData->end;
 
 $stmtSelect = $conn->prepare(
     "SELECT DATE(task_date_create) AS task_date, COUNT(*) AS offer_count
     FROM tasks
     WHERE task_cat = 'Offer'
+    AND DATE(task_date_create) BETWEEN ? AND ?
     GROUP BY DATE(task_date_create);");
 
+$stmtSelect->bind_param("ss", $startDate, $endDate);
 $stmtSelect->execute();
 $resultSet1 = $stmtSelect->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmtSelect->close();
@@ -24,28 +32,35 @@ $stmtSelect = $conn->prepare(
     "SELECT DATE(task_date_create) AS task_date, COUNT(*) AS request_count
     FROM tasks
     WHERE task_cat = 'Request'
+    AND DATE(task_date_create) BETWEEN ? AND ?
     GROUP BY DATE(task_date_create);");
 
+$stmtSelect->bind_param("ss", $startDate, $endDate);
 $stmtSelect->execute();
 $resultSet2 = $stmtSelect->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmtSelect->close();
 
 $stmtSelect = $conn->prepare(
-    "SELECT DATE(task_date_pickup) AS task_pickup, COUNT(*) AS offer_pickup
+    "SELECT DATE(task_complete) AS task_pickup, COUNT(*) AS offer_pickup
     FROM tasks
     WHERE task_cat = 'Offer'
-    GROUP BY DATE(task_date_pickup);");
+    AND DATE(task_complete) BETWEEN ? AND ?
+    AND task_status = 'Completed'
+    GROUP BY DATE(task_complete);");
 
+$stmtSelect->bind_param("ss", $startDate, $endDate);
 $stmtSelect->execute();
 $resultSet3 = $stmtSelect->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmtSelect->close();
 
 $stmtSelect = $conn->prepare(
-    "SELECT DATE(task_date_pickup) AS task_pickup, COUNT(*) AS request_pickup
+    "SELECT DATE(task_complete) AS task_pickup, COUNT(*) AS request_pickup
     FROM tasks
     WHERE task_cat = 'Request'
-    GROUP BY DATE(task_date_pickup);");
+    AND DATE(task_complete) BETWEEN ? AND ?
+    GROUP BY DATE(task_complete);");
 
+$stmtSelect->bind_param("ss", $startDate, $endDate);
 $stmtSelect->execute();
 $resultSet4 = $stmtSelect->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmtSelect->close();
@@ -94,4 +109,5 @@ $data = [
 
 header('Content-Type: application/json');
 echo json_encode($data);
+$conn->close();
 ?>

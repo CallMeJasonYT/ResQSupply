@@ -1,21 +1,21 @@
 <?php
+session_start();
 
 $sname = "localhost";
-$unmae = "root";
+$uname = "root";
 $password = "";
 $db_name = "resqsupply";
-$conn = mysqli_connect($sname, $unmae, $password, $db_name);
-$response = [];
+$conn = new mysqli($sname, $uname, $password, $db_name);
 
 if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+    echo "Connection failed!";
 }
 
-$query = "SELECT str_goodn, str_goodv FROM storage";
+$response = [];
 
-$stmt = mysqli_prepare($conn, $query);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
+$stmtSelect = $conn->prepare("SELECT str_goodn, str_goodv FROM storage");
+$stmtSelect->execute();
+$result = $stmtSelect->get_result();
 
 while ($row = mysqli_fetch_assoc($result)) {
     $response[] = [
@@ -24,8 +24,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     ];
 }
 
-mysqli_close($conn);
-
 header('Content-Type: application/json');
 echo json_encode($response);
+$conn->close();
 ?>

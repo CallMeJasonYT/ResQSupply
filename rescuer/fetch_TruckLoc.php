@@ -2,23 +2,19 @@
 session_start();
 
 $sname = "localhost";
-$unmae = "root";
+$uname = "root";
 $password = "";
 $db_name = "resqsupply";
-$conn = mysqli_connect($sname, $unmae, $password, $db_name);
-$response = [];
+$conn = new mysqli($sname, $uname, $password, $db_name);
 
 if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+    echo "Connection failed!";
 }
 
+$response = [];
 $veh = $_SESSION['veh_id'];
 
-$stmtSelect = $conn->prepare(
-    "SELECT veh_loc, X(veh_cords) AS lat, Y(veh_cords) AS lon 
-    FROM vehicles 
-    WHERE veh_id = ?");
-
+$stmtSelect = $conn->prepare("SELECT veh_loc, X(veh_cords) AS lat, Y(veh_cords) AS lon FROM vehicles WHERE veh_id = ?");
 $stmtSelect->bind_param('s', $veh);
 $stmtSelect->execute();
 $result = $stmtSelect->get_result();

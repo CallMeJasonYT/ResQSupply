@@ -2,24 +2,26 @@
 session_start();
 
 $sname = "localhost";
-$unmae = "root";
+$uname = "root";
 $password = "";
 $db_name = "resqsupply";
-$conn = mysqli_connect($sname, $unmae, $password, $db_name);
-$response = [];
+$conn = new mysqli($sname, $uname, $password, $db_name);
 
 if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+    echo "Connection failed!";
 }
 
-$task_cat = "Offer";
+$response = [];
 
-$query = "SELECT task_id, task_date_create, task_goodn, task_date_pickup, task_goodv, task_status FROM tasks INNER JOIN users ON user_id=task_cit_id WHERE username=? AND task_cat=? ORDER BY task_date_create DESC";
-$stmt = mysqli_prepare($conn, $query);
-mysqli_stmt_bind_param($stmt, "ss", $_SESSION["username"], $task_cat);
-mysqli_stmt_execute($stmt);
-
-$result = mysqli_stmt_get_result($stmt);
+$stmtSelect = $conn->prepare(
+    "SELECT task_id, task_date_create, task_goodn, task_date_pickup, task_goodv, task_status FROM tasks 
+    INNER JOIN users ON user_id = task_cit_id 
+    WHERE username = ? AND task_cat = 'Offer' 
+    ORDER BY task_date_create DESC"
+);
+$stmtSelect->bind_param("s", $_SESSION["username"]);
+$stmtSelect->execute();
+$result = $stmtSelect->get_result();
 
 if (mysqli_num_rows($result) > 0) {
     while ($row = mysqli_fetch_assoc($result)) {
@@ -35,9 +37,9 @@ if (mysqli_num_rows($result) > 0) {
 } else {
     $response = "False";
 }
-
-mysqli_close($conn);
+$stmtSelect->close();
 
 header('Content-Type: application/json');
 echo json_encode($response);
+$conn->close();
 ?>

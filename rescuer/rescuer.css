@@ -127,7 +127,7 @@ section {
 .burger-sect {
   position: relative;
   width: calc(100vw - 40px);
-  height: calc(100vh - 140px);
+  height: calc(100dvh - 140px);
   z-index: 1001;
   display: none;
 }
@@ -137,7 +137,7 @@ section {
 }
 
 .map {
-  height: calc(100vh - 310px);
+  height: calc(100dvh - 310px);
   transition: all 0.4s ease-out;
   display: none;
   width: 100%
@@ -155,11 +155,11 @@ section {
 
 @media screen and (min-height: 800px) {
   .map {
-    height: calc(calc(100vh - 170px) / 2) !important;
+    height: calc(calc(100dvh - 170px) / 2) !important;
   }
 
   .active-tasks-list {
-    max-height: calc(calc(100vh - 240px) / 2) !important;
+    max-height: calc(calc(100dvh - 240px) / 2) !important;
   }
 }
 
@@ -170,7 +170,7 @@ section {
   }
 
   .map {
-    height: calc(100vh - 170px) !important;
+    height: calc(100dvh - 170px) !important;
     max-width: calc(calc(100vw - 40px) / 2);
   }
 
@@ -184,7 +184,7 @@ section {
   }
 
   .active-tasks-list {
-    max-height: calc(100vh - 210px) !important;
+    max-height: calc(100dvh - 210px) !important;
   }
 
   .tasks-container {
@@ -230,7 +230,7 @@ section {
 
 @media screen and (min-width: 1300px) {
   .map-container {
-    max-width: 100vh !important;
+    max-width: 100dvh !important;
   }
 
   .burger-sect div {
@@ -556,6 +556,12 @@ input[type="checkbox"]:checked {
   background-clip: content-box;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .legend {
   background: rgba(255, 255, 255, 0.9);
   padding: 10px;
@@ -623,12 +629,12 @@ input[type="checkbox"]:checked {
 }
 
 .item-options {
-  max-height: calc(100vh - 530px);
+  max-height: calc(100dvh - 530px);
   overflow-y: auto;
 }
 
 .selected-items-list {
-  max-height: calc(100vh - 470px);
+  max-height: calc(100dvh - 470px);
   overflow-y: auto;
   border: none;
   border-bottom: 1px solid #7070708f;
@@ -739,7 +745,7 @@ li.selected {
   background: #e0e0e0;
   border-radius: 5px;
   padding: 10px;
-  max-height: calc(10vh + 30px);
+  max-height: calc(10dvh + 30px);
   overflow-y: auto;
   display: block;
 }
@@ -922,7 +928,7 @@ li.selected {
 
 .truckload-list {
   margin-top: 10px;
-  max-height: calc(100vh - 360px);
+  max-height: calc(100dvh - 360px);
   overflow-y: auto;
 }
 
@@ -952,7 +958,7 @@ li.selected {
   transform: scale(0.98);
 }
 
-.empty{
+.empty {
   margin-top: 10px;
   background: #e0e0e0;
   border-radius: 5px;

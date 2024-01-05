@@ -2,20 +2,19 @@
 session_start();
 
 $sname = "localhost";
-$unmae = "root";
+$uname = "root";
 $password = "";
 $db_name = "resqsupply";
-$conn = mysqli_connect($sname, $unmae, $password, $db_name);
-$response = [];
-$itemsInStorage = [];
-$itemsInGoods = [];
+$conn = new mysqli($sname, $uname, $password, $db_name);
+
+if (!$conn) {
+    echo "Connection failed!";
+}
 
 $input_data = file_get_contents("php://input");
 $itemsInGoods = json_decode($input_data);
-
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+$response = [];
+$itemsInStorage = [];
 
 $stmtSelect = $conn->prepare("SELECT str_goodn FROM storage");
 $stmtSelect->execute();
@@ -50,8 +49,8 @@ if (mysqli_num_rows($result) > 0) {
 $stmtSelect->close();
 
 $stmtDelete = $conn->prepare("DELETE FROM storage WHERE str_goodn = ?");
-foreach ($itemsInStorage as $item){
-    if(!in_array($item, $itemsInGoods)){
+foreach ($itemsInStorage as $item) {
+    if (!in_array($item, $itemsInGoods)) {
         $stmtDelete->bind_param("s", $item);
         $stmtDelete->execute();
     }

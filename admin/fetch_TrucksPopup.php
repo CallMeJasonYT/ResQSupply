@@ -1,18 +1,19 @@
 <?php
+session_start();
 
 $sname = "localhost";
-$unmae = "root";
+$uname = "root";
 $password = "";
 $db_name = "resqsupply";
-$conn = mysqli_connect($sname, $unmae, $password, $db_name);
-$response = [];
+$conn = new mysqli($sname, $uname, $password, $db_name);
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if (!$conn) {
+    echo "Connection failed!";
 }
 
 $data = file_get_contents("php://input");
 $dataObject = json_decode($data);
+$response = [];
 $veh_id = $dataObject->vehicleID;
 
 $stmtSelect = $conn->prepare("SELECT load_goodn, load_goodv
@@ -51,8 +52,7 @@ if (mysqli_num_rows($result) > 0) {
     $stmtSelect->close();
 }
 
-$conn->close();
-
 header('Content-Type: application/json');
 echo json_encode($response);
+$conn->close();
 ?>

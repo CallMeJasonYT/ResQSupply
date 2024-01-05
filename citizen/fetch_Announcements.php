@@ -1,18 +1,21 @@
 <?php
+session_start();
 
 $sname = "localhost";
-$unmae = "root";
+$uname = "root";
 $password = "";
 $db_name = "resqsupply";
-$conn = mysqli_connect($sname, $unmae, $password, $db_name);
-$response = [];
+$conn = new mysqli($sname, $uname, $password, $db_name);
 
 if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+    echo "Connection failed!";
 }
 
-$query = "SELECT ann_id, ann_title, ann_text, ann_date, needs_goodn FROM announcements INNER JOIN needs WHERE ann_id=needs_ann_id";
-$result = mysqli_query($conn, $query);
+$response = [];
+
+$stmtSelect = $conn->prepare("SELECT ann_id, ann_title, ann_text, ann_date, needs_goodn FROM announcements INNER JOIN needs WHERE ann_id=needs_ann_id");
+$stmtSelect->execute();
+$result = $stmtSelect->get_result();
 
 if (mysqli_num_rows($result) > 0) {
     $groupedData = array();
@@ -31,9 +34,9 @@ if (mysqli_num_rows($result) > 0) {
 } else {
     $response = "False";
 }
-
-mysqli_close($conn);
+$stmtSelect->close();
 
 header('Content-Type: application/json');
 echo json_encode($response);
+$conn->close();
 ?>

@@ -2,31 +2,29 @@
 session_start();
 
 $sname = "localhost";
-$unmae = "root";
+$uname = "root";
 $password = "";
 $db_name = "resqsupply";
-$conn = mysqli_connect($sname, $unmae, $password, $db_name);
-$response = [];
+$conn = new mysqli($sname, $uname, $password, $db_name);
 
 if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+    echo "Connection failed!";
 }
-
-$veh = $_SESSION['veh_id'];
 
 $data = file_get_contents("php://input");
 $dataObject = json_decode($data);
+$veh = $_SESSION['veh_id'];
+$response = [];
 $taskId = $dataObject->taskId;
-
 $currentDateTime = date('Y-m-d H:i:s');
 
-$stmt = $conn->prepare("UPDATE tasks SET task_status = 'executing', task_date_pickup = ?, task_veh = ? WHERE task_id = ?");
-$stmt->bind_param('ssi', $currentDateTime, $veh, $taskId);
-$stmt->execute();
+$stmtUpdate = $conn->prepare("UPDATE tasks SET task_status = 'executing', task_date_pickup = ?, task_veh = ? WHERE task_id = ?");
+$stmtUpdate->bind_param('ssi', $currentDateTime, $veh, $taskId);
+$stmtUpdate->execute();
+$stmtUpdate->close();
 
 $response = "OK";
 header('Content-Type: application/json');
 echo json_encode($response);
-
 $conn->close();
 ?>

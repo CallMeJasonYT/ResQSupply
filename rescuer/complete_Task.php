@@ -2,20 +2,19 @@
 session_start();
 
 $sname = "localhost";
-$unmae = "root";
+$uname = "root";
 $password = "";
 $db_name = "resqsupply";
-$conn = mysqli_connect($sname, $unmae, $password, $db_name);
+$conn = new mysqli($sname, $uname, $password, $db_name);
 
 if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+    echo "Connection failed!";
 }
 
 $data = file_get_contents("php://input");
 $requestData = json_decode($data);
 $continue = true;
 $veh = $_SESSION['veh_id'];
-
 $taskId = $requestData->taskId;
 
 $stmtSelect = $conn->prepare("SELECT task_goodn, task_goodv, task_cat FROM tasks WHERE task_id = ?");
@@ -74,15 +73,15 @@ if ($stmtSelect->fetch()) {
     }
 }
 
-if ($continue != false) {
-    $stmtUpdate = $conn->prepare("UPDATE tasks SET task_status = 'Completed' WHERE task_id = ?");
-    $stmtUpdate->bind_param("i", $taskId);
+if ($continue) {
+    $currentDateTime = date('Y-m-d H:i:s');
+    $stmtUpdate = $conn->prepare("UPDATE tasks SET task_status = 'Completed', task_complete = ? WHERE task_id = ?");
+    $stmtUpdate->bind_param("si", $currentDateTime, $taskId);
     $stmtUpdate->execute();
     $stmtUpdate->close();
 }
 
 header('Content-Type: application/json');
 echo json_encode($response = $continue);
-
 $conn->close();
 ?>

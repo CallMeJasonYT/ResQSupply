@@ -2,24 +2,26 @@
 session_start();
 
 $sname = "localhost";
-$unmae = "root";
+$uname = "root";
 $password = "";
 $db_name = "resqsupply";
-$conn = mysqli_connect($sname, $unmae, $password, $db_name);
-$response = [];
+$conn = new mysqli($sname, $uname, $password, $db_name);
 
-// Check connection
 if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+    echo "Connection failed!";
 }
 
 $veh = $_SESSION['veh_id'];
+$response = [];
 
-$stmt = $conn->prepare("SELECT load_goodn, SUM(load_goodv) as total_load_goodv FROM loads
-                        WHERE load_veh = ? GROUP BY load_goodn;");
-$stmt->bind_param('s', $veh);
-$stmt->execute();
-$result = $stmt->get_result();
+$stmtSelect = $conn->prepare(
+    "SELECT load_goodn, SUM(load_goodv) as total_load_goodv FROM loads
+    WHERE load_veh = ? 
+    GROUP BY load_goodn;"
+);
+$stmtSelect->bind_param('s', $veh);
+$stmtSelect->execute();
+$result = $stmtSelect->get_result();
 
 while ($row = mysqli_fetch_assoc($result)) {
     $response[] = [
@@ -27,9 +29,9 @@ while ($row = mysqli_fetch_assoc($result)) {
         'loadGoodV' => $row['total_load_goodv']
     ];
 }
-
-mysqli_close($conn);
+$stmtSelect->close();
 
 header('Content-Type: application/json');
 echo json_encode($response);
+$conn->close();
 ?>

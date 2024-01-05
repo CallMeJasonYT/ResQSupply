@@ -2,17 +2,16 @@
 session_start();
 
 $sname = "localhost";
-$unmae = "root";
+$uname = "root";
 $password = "";
 $db_name = "resqsupply";
-$conn = mysqli_connect($sname, $unmae, $password, $db_name);
+$conn = new mysqli($sname, $uname, $password, $db_name);
 
 if (!$conn) {
     echo "Connection failed!";
 }
 
 $data = file_get_contents("php://input");
-
 $RegData = json_decode($data);
 
 $title = $RegData->title;
@@ -32,8 +31,9 @@ foreach ($selectedItems as $item) {
     $stmtInsert->execute();
     $stmtInsert->close();
 }
-$conn->close();
+
 $response = "OK";
 header('Content-Type: application/json');
 echo json_encode($response);
+$conn->close();
 ?>

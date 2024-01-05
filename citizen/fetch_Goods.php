@@ -1,44 +1,44 @@
 <?php
+session_start();
 
 $sname = "localhost";
-$unmae = "root";
+$uname = "root";
 $password = "";
 $db_name = "resqsupply";
-$conn = mysqli_connect($sname, $unmae, $password, $db_name);
-$response = [];
+$conn = new mysqli($sname, $uname, $password, $db_name);
 
 if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+    echo "Connection failed!";
 }
 
-$queryItems = "SELECT str_goodn FROM storage";
-$stmtItems = mysqli_prepare($conn, $queryItems);
-mysqli_stmt_execute($stmtItems);
-$resultItems = mysqli_stmt_get_result($stmtItems);
-
+$response = [];
 $items = [];
+
+$stmtSelectItems = $conn->prepare("SELECT str_goodn FROM storage");
+$stmtSelectItems->execute();
+$resultItems = $stmtSelectItems->get_result();
 
 while ($row = mysqli_fetch_assoc($resultItems)) {
     $items[] = $row['str_goodn'];
 }
+$stmtSelectItems->close();
 
-$stmtSelect = $conn->prepare("SELECT cat_name FROM categories INNER JOIN goods ON good_cat_id = cat_id INNER JOIN storage ON str_goodn = good_name");
-$stmtSelect->execute();
-$result = $stmtSelect->get_result();
+$stmtSelectCat = $conn->prepare("SELECT cat_name FROM categories INNER JOIN goods ON good_cat_id = cat_id INNER JOIN storage ON str_goodn = good_name");
+$stmtSelectCat->execute();
+$resultCat = $stmtSelectCat->get_result();
 
 $categories = [];
-if (mysqli_num_rows($result) > 0) {
-    while ($row = mysqli_fetch_assoc($result)) {
+if (mysqli_num_rows($resultCat) > 0) {
+    while ($row = mysqli_fetch_assoc($resultCat)) {
         $categories[] = $row['cat_name'];
     }
 }
-$stmtSelect->close();
+$stmtSelectCat->close();
 
 $response['items'] = $items;
 $response['categories'] = $categories;
 
-mysqli_close($conn);
-
 header('Content-Type: application/json');
 echo json_encode($response);
+$conn->close();
 ?>

@@ -1,11 +1,15 @@
 <?php
+session_start();
 
 $sname = "localhost";
-$unmae = "root";
+$uname = "root";
 $password = "";
 $db_name = "resqsupply";
-$conn = mysqli_connect($sname, $unmae, $password, $db_name);
-$response = '';
+$conn = new mysqli($sname, $uname, $password, $db_name);
+
+if (!$conn) {
+    echo "Connection failed!";
+}
 
 $data = file_get_contents("php://input");
 $regData = json_decode($data);
@@ -25,6 +29,5 @@ $stmtSelect->close();
 
 header('Content-Type: application/json');
 echo json_encode($response);
-
 $conn->close();
 ?>

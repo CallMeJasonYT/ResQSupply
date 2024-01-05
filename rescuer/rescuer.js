@@ -1121,15 +1121,19 @@ function unloadTruck() {
 }
 
 //Fetching the Items of the Truck
+var empty = false;
 function fetchTruckLoad() {
-  fetch("fetch_TruckLoad.php", {
-    method: "POST"
-  })
+  fetch("fetch_TruckLoad.php")
     .then((response) => {
       return response.json();
     })
     .then((data) => {
+      document.querySelector(".truckload-tab .truckload-list").innerHTML = "";
+      if(empty){
+        document.querySelector(".truckload-tab .empty").remove();
+      }
       if (data.length != 0) {
+        empty = false;
         data.forEach((res) => {
           const markupItem =
             `<li class="list-item">` +
@@ -1146,10 +1150,10 @@ function fetchTruckLoad() {
         });
         truckLoadItems = document.querySelectorAll(".truckload-list .list-item");
       }else{
-        markup = `<p class="empty" >The TruckLoad is Empty.</p>`;
+        empty = true;
+        markup = `<p class="empty">The TruckLoad is Empty.</p>`;
         document.querySelector(".truckload-tab").insertAdjacentHTML("beforeend", markup);
       }
-      
     });
 }
 
@@ -1160,16 +1164,13 @@ function fetchResInfo() {
   })
     .then((response) => response.json())
     .then((data) => {
-      const userData = data.data[0];
-      veh_id = userData.vehicle;
-      if (userData) {
-        const markupWelcome = `<div class="welcome">Welcome, ${userData.username}!</div>`;
+      veh_id = data[0].vehicle;
+      if (data[0]) {
+        const markupWelcome = `<div class="welcome">Welcome, ${data[0].username}!</div>`;
         document.querySelector(".footer").insertAdjacentHTML("afterBegin", markupWelcome);
-
         const markupVehicle =
-          `<p class="truckNum">Truck ID: ${userData.vehicle}</p>` +
-          `<p class="truckOwner">Owner: ${userData.username}</p>`;
-
+          `<p class="truckNum">Truck ID: ${data[0].vehicle}</p>` +
+          `<p class="truckOwner">Owner: ${data[0].username}</p>`;
         document.querySelector(".truck-info").insertAdjacentHTML("beforeEnd", markupVehicle);
       }
       fetchTruckLoad();

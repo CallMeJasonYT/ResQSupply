@@ -2,10 +2,10 @@
 session_start();
 
 $sname = "localhost";
-$unmae = "root";
+$uname = "root";
 $password = "";
 $db_name = "resqsupply";
-$conn = mysqli_connect($sname, $unmae, $password, $db_name);
+$conn = new mysqli($sname, $uname, $password, $db_name);
 
 if (!$conn) {
     echo "Connection failed!";
@@ -13,6 +13,7 @@ if (!$conn) {
 
 $cat_id = array();
 $good_name = array();
+$response = [];
 
 $stmtSelect = $conn->prepare("SELECT cat_id FROM categories");
 $stmtSelect->execute();
@@ -35,11 +36,11 @@ $stmtSelect->close();
 $data = file_get_contents("php://input");
 $jsonData = json_decode($data);
 
-foreach ($jsonData->categories as $category){
+foreach ($jsonData->categories as $category) {
     $id = $category->id;
     $name = $category->category_name;
-    
-    if(!in_array($id, $cat_id) && $name != ""){
+
+    if (!in_array($id, $cat_id) && $name != "") {
         $stmtInsert = $conn->prepare("INSERT INTO categories (cat_id, cat_name) VALUES (?, ?)");
         $stmtInsert->bind_param("is", $id, $name);
         $stmtInsert->execute();
@@ -48,18 +49,18 @@ foreach ($jsonData->categories as $category){
     }
 }
 
-foreach ($jsonData->items as $item){
+foreach ($jsonData->items as $item) {
     $name = $item->name;
     $category_id = $item->category;
-    if(!empty($item->details)){
+    if (!empty($item->details)) {
         $detail_name = $item->details[0]->detail_name;
         $detail_value = $item->details[0]->detail_value;
-    }else {
+    } else {
         $detail_name = null;
         $detail_value = null;
     }
 
-    if(!in_array(strtolower(str_replace(' ', '', $name)), $good_name) && in_array($category_id, $cat_id) && $name != ""){
+    if (!in_array(strtolower(str_replace(' ', '', $name)), $good_name) && in_array($category_id, $cat_id) && $name != "") {
         $stmtInsert = $conn->prepare("INSERT INTO goods (good_name, good_detn, good_detv, good_cat_id) VALUES (?, ?, ?, ?)");
         $stmtInsert->bind_param("ssii", $name, $detail_name, $detail_value, $category_id);
         $stmtInsert->execute();
@@ -69,6 +70,6 @@ foreach ($jsonData->items as $item){
 }
 
 $response = "OK";
-//header('Content-Type: application/json');
 echo json_encode($response);
+$conn->close();
 ?>

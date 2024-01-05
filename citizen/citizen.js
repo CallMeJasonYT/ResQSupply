@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", function () {
   fetchOffers();
   fetchRequests();
   itemCatConn();
-  loadGoods();
 });
 window.addEventListener("resize", (e) => {
   checkWidth();
@@ -27,16 +26,6 @@ function itemCatConn() {
     .then((data) => {
       catItemConnection = data;
     });
-}
-
-//Loading Goods into the database
-function loadGoods() {
-  fetch("load_goods.php", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    }
-  });
 }
 
 //Logging out Actions

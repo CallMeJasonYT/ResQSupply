@@ -2,19 +2,18 @@
 session_start();
 
 $sname = "localhost";
-$unmae = "root";
+$uname = "root";
 $password = "";
 $db_name = "resqsupply";
-$conn = mysqli_connect($sname, $unmae, $password, $db_name);
-$response = [];
+$conn = new mysqli($sname, $uname, $password, $db_name);
 
 if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+    echo "Connection failed!";
 }
 
 $data = file_get_contents("php://input");
-
 $dataObject = json_decode($data);
+$response = [];
 $task_id = $dataObject->taskID;
 
 $stmtSelect = $conn->prepare(
@@ -22,8 +21,8 @@ $stmtSelect = $conn->prepare(
     FROM citizen
     INNER JOIN tasks
     ON cit_id = task_cit_id
-    WHERE task_id = ?");
-
+    WHERE task_id = ?"
+);
 $stmtSelect->bind_param("i", $task_id);
 $stmtSelect->execute();
 $result = $stmtSelect->get_result();
@@ -41,6 +40,5 @@ $stmtSelect->close();
 
 header('Content-Type: application/json');
 echo json_encode($response);
-
 $conn->close();
 ?>
