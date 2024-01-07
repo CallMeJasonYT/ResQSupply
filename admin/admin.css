@@ -207,7 +207,8 @@ section {
 }
 
 .error.emptytitle.active,
-.error.emptydetails.active {
+.error.emptydetails.active,
+.error.address.active {
   font-size: 10px !important;
   display: flex;
   color: red;
@@ -814,7 +815,7 @@ label,
 .url-button {
   display: block;
   position: relative;
-  background-color: #0d6a8f;
+  background-color: #0a7388;
   color: #ffffff;
   font-size: 18px;
   font-weight: 500;

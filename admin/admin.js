@@ -222,8 +222,7 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
             taskMarkers.push(marker);
           }
         });
-        drawLine('HEY1234');
-        drawLine('HEY1235');
+        drawLine();
       });
   }
 }
@@ -307,6 +306,8 @@ function replaceMapWithMenu() {
 }
 
 //Add or Remove Markers when the xmark is clicked
+let polylinesHidden = false;
+let polylinesHiddenOffers = false;
 document.addEventListener("DOMContentLoaded", function () {
   const xmark = document.querySelector(".cancelf");
   xmark.addEventListener('click', () => {
@@ -340,17 +341,21 @@ document.addEventListener("DOMContentLoaded", function () {
         case 'Executing Offers':
           if (!checkbox.checked) {
             removeMarkersByCategory('Executing Offer');
+            polylinesHiddenOffers = true;
           } else {
             addMarkersByCategory('Executing Offer');
+            polylinesHiddenOffers = false;
           }
           break;
         case 'Trucks with Active Tasks':
           if (!checkbox.checked) {
             removeMarkersByCategory('YesTruck');
             hidePolylines();
+            polylinesHidden = true;
           } else {
             addMarkersByCategory('YesTruck');
             showPolylines();
+            polylinesHidden = false;
           }
           break;
         case 'Trucks without Active Tasks':
@@ -363,7 +368,7 @@ document.addEventListener("DOMContentLoaded", function () {
         case 'Tasks Lines':
           if (!checkbox.checked) {
             hidePolylines();
-          } else {
+          } else if (!polylinesHidden && !polylinesHiddenOffers){
             showPolylines();
           }
           break;
@@ -823,7 +828,6 @@ function dateConverter(dateString) {
   const month = (inputDate.getMonth() + 1).toString().padStart(2, '0');
   const day = inputDate.getDate().toString().padStart(2, '0');
   const outputDateString = `${year}-${month}-${day}`;
-
   return outputDateString;
 }
 
@@ -1550,6 +1554,7 @@ const addressPattern = /^[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉ
 const addressField = document.querySelector(".field.address");
 const addressInput = document.querySelector("#address");
 function checkAddress() {
+  errorAddress.classList.remove("active");
   if (!addressInput.value.match(addressPattern)) {
     return addressField.classList.add("invalid");
   }
@@ -1602,6 +1607,7 @@ truckidInput.addEventListener("keyup", checkTruckId);
 //Submit Form Validation When Submiting
 const successMessage = document.getElementById("successMessage");
 const signupBtn = document.querySelector(".signup");
+const errorAddress = document.querySelector(".error.address")
 signupBtn.addEventListener("click", (e) => {
   checkUsername();
   checkFullname();
@@ -1621,16 +1627,18 @@ signupBtn.addEventListener("click", (e) => {
     e.preventDefault();
   } else {
     e.preventDefault();
-    var lat;
-    var lon;
     fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + addressInput.value + '&limit=1')
       .then(result => result.json())
       .then(result => {
-        lat = result[0].lat;
-        lon = result[0].lon;
-        submit(lat, lon);
-      });
-    showSuccessMessage();
+        if (result.length == 0) {
+          errorAddress.classList.add("active");
+        } else {
+          var lat = result[0].lat;
+          var lon = result[0].lon;
+          submit(lat, lon);
+          showSuccessMessage();
+        }
+      })
   }
 });
 
@@ -1684,7 +1692,7 @@ function fetchStorageInfo() {
           if (!categories.includes(res.GoodCategory)) {
             markup2 =
               `<li class="category-item">` +
-              `<input type="checkbox" checked></input>` +
+              `<input type="checkbox" checked>` +
               `<p> ${res.GoodCategory} </p>` +
               `</li>`;
             categories.push(res.GoodCategory);
@@ -1702,10 +1710,14 @@ function fetchStorageInfo() {
 }
 
 function categoryEventListener() {
-  const catItem = document.querySelectorAll(".category-item");
-  catItem.forEach((catItem) => {
-    catItem.addEventListener("click", (e) => {
-      var checkbox = catItem.querySelector("input[type=checkbox]");
+  var catItems = document.querySelectorAll(".category-item p");
+  console.log(catItems)
+  catItems.forEach((catItem) => {
+    var checkbox = catItem.parentNode.querySelector('input[type="checkbox"]');
+    checkbox.addEventListener('click', function(){
+      updateDisplayedCategories();
+    })
+    catItem.addEventListener('click', function() {
       checkbox.checked = !checkbox.checked;
       updateDisplayedCategories();
     });
