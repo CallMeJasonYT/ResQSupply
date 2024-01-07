@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
 
+/* ~~~~~~~~~~~~~ General Styles ~~~~~~~~~~~~~ */
 * {
   margin: 0;
   padding: 0;
@@ -48,7 +49,17 @@ div {
   transform: scale(0.98);
 }
 
-/* Home */
+.error {
+  display: none;
+}
+
+.error.active {
+  font-size: 10px !important;
+  display: flex;
+  color: red;
+}
+
+/* ~~~~~~~~~~~~~ Home Styles ~~~~~~~~~~~~~ */
 .home {
   position: relative;
   height: 100vh;
@@ -67,7 +78,7 @@ div {
   z-index: 100;
 }
 
-/* General Form Styling */
+/* ~~~~~~~~~~~~~ Form Styles ~~~~~~~~~~~~~ */
 .form_container {
   position: fixed;
   max-width: 370px;
@@ -200,23 +211,13 @@ form .input-box {
   border-radius: 10px;
 }
 
-@media screen and (min-width:640px) {
-  .form_container {
-    max-width: 500px;
-  }
-
-  .input-box {
-    margin-top: 20px;
-  }
-}
-
 .login_signup {
   font-size: 12px;
   text-align: center;
   margin-top: 15px;
 }
 
-/* Login Form Styling */
+/* Login Form Styles */
 .checkbox {
   display: flex;
   align-items: center;
@@ -235,7 +236,7 @@ form .input-box {
   color: #0b0217;
 }
 
-/* Signup Form Styling */
+/* Signup Form Styles */
 .field .password-check {
   margin-top: 10px;
   position: relative;
@@ -305,6 +306,19 @@ form .input-box {
   color: #00000046;
 }
 
+/* ~~~~~~~~~~~~~ Media ~~~~~~~~~~~~~ */
+@media screen and (min-width:640px) {
+  .form_container {
+    max-width: 500px;
+  }
+
+  .input-box {
+    margin-top: 20px;
+  }
+}
+
+
+/* ~~~~~~~~~~~~~ Webkit ~~~~~~~~~~~~~ */
 ::-webkit-scrollbar {
   width: 5px;
 }

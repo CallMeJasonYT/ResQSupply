@@ -19,9 +19,10 @@ $dataObject = json_decode($data);
 $taskId = $dataObject->taskId;
 $currentDateTime = date('Y-m-d H:i:s');
 
-$stmt = $conn->prepare("UPDATE tasks SET task_status = 'executing', task_date_pickup = ?, task_veh = ? WHERE task_id = ?");
-$stmt->bind_param('ssi', $currentDateTime, $veh, $taskId);
-$stmt->execute();
+$stmtUpdate = $conn->prepare("UPDATE tasks SET task_status = 'executing', task_date_pickup = ?, task_veh = ? WHERE task_id = ?");
+$stmtUpdate->bind_param('ssi', $currentDateTime, $veh, $taskId);
+$stmtUpdate->execute();
+$stmtUpdate->close();
 
 $response = "OK";
 header('Content-Type: application/json');

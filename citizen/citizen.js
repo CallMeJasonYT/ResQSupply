@@ -201,6 +201,7 @@ addressInput.addEventListener("keyup", checkAddress);
 //Address Validation 
 const addressPattern = /^[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+\s+[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+$/;
 function checkAddress() {
+  errorAddress.classList.remove("active");
   if (!addressInput.value.match(addressPattern)) {
     return addressField.classList.add("invalid");
   }
@@ -1044,7 +1045,6 @@ var nAddressButton = document.querySelector(".button.addressSubmit");
 nAddressButton.addEventListener("click", function () {
   var nAddress = document.querySelector(".field.address.active .address-text");
   changeAddress(nAddress.value);
-  showSuccessMessage();
 });
 
 function showSuccessMessage() {
@@ -1054,6 +1054,7 @@ function showSuccessMessage() {
   }, 3000);
 }
 
+const errorAddress = document.querySelector(".error.address")
 function changeAddress(newAddress) {
   if (!addressField.classList.contains("invalid")) {
     var lat;
@@ -1061,10 +1062,15 @@ function changeAddress(newAddress) {
     fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + newAddress + '&limit=1')
       .then(result => result.json())
       .then(result => {
-            lat = result[0].lat;
-            lon = result[0].lon;
-            updateLoc(newAddress, lat, lon);
-      });
+        if (result.length > 0) {
+          lat = result[0].lat;
+          lon = result[0].lon;
+          updateLoc(newAddress, lat, lon);
+          showSuccessMessage();
+        } else {
+          errorAddress.classList.add("active");
+        }
+      })
   }
 }
 

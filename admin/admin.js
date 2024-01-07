@@ -854,12 +854,18 @@ const detailsInput = document.querySelector("#details");
 var titleValue;
 var detailsValue;
 annNextTextBtn.addEventListener("click", function () {
-  annTextForm.classList.remove("active");
-  annItemsForm.classList.add("active");
-  titleValue = titleInput.value;
-  detailsValue = detailsInput.value;
-  fetchStorageItems();
+  checkInput()
 })
+
+titleInput.addEventListener("input", function () {
+  const errorTitle = document.querySelector(".error.emptytitle");
+  errorTitle.classList.remove("active");
+});
+
+detailsInput.addEventListener("input", function () {
+  const errorDetails = document.querySelector(".error.emptydetails");
+  errorDetails.classList.remove("active");
+});
 
 annNextItemsBtn.addEventListener("click", function () {
   selectedItems = [];
@@ -959,6 +965,29 @@ function annSubmit() {
     .then((response) => response.json())
 }
 
+function checkInput() {
+  const errorTitle = document.querySelector(".error.emptytitle");
+  const errorDetails = document.querySelector(".error.emptydetails");
+  if(titleInput.value != '' && detailsInput.value != '') {
+    annTextForm.classList.remove("active");
+    annItemsForm.classList.add("active");
+    titleValue = titleInput.value;
+    detailsValue = detailsInput.value;
+    errorTitle.classList.remove("active");
+    errorDetails.classList.remove("active");
+    fetchStorageItems();
+  } 
+  else if(titleInput.value == '' && detailsInput.value == '') {
+    errorTitle.classList.add("active");
+    errorDetails.classList.add("active");
+  }
+  else if(titleInput.value == '') {
+    errorTitle.classList.add("active");
+  }
+  else if(detailsInput.value == '') {
+    errorDetails.classList.add("active");
+  }
+}
 /* ~~~~~~~~~~ Storage Management Functions ~~~~~~~~~~ */
 
 function toggleBottomBorder(clickedButton) {

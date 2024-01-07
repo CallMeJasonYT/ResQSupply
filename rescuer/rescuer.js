@@ -236,7 +236,7 @@ function showTaskPopup(marker, status) {
       `;
 
       if (status !== "Executing") {
-        popupContent += `<button class="custom-button" onclick="handleButtonClick(event, ${marker.taskInfo.taskId})">Take on Task</button>`;
+        popupContent += `<button class="task-button" onclick="handleButtonClick(event, ${marker.taskInfo.taskId})">Take on Task</button>`;
       }
 
       var popup = L.popup().setLatLng(marker.getLatLng()).setContent(popupContent);
@@ -646,21 +646,21 @@ loadTruckBtn.addEventListener("click", (e) => {
 
 //Load Truck Items
 const loadQuantity = document.querySelector(".load-quantity-form");
-const nextButton1 = document.querySelector(".button.next1");
-nextButton1.addEventListener("click", (e) => {
+const selectItemsLoadBtn = document.querySelector(".button.selectItemsLoad");
+selectItemsLoadBtn.addEventListener("click", (e) => {
   noItemError();
   overQuantity();
 });
 
 //Load Truck Quantity
 const loadConfirm = document.querySelector(".load-confirm-form");
-const nextButton2 = document.querySelector(".button.next2");
-nextButton2.addEventListener("click", (e) => {
+const selectQuantityLoadBtn = document.querySelector(".button.selectQuantityLoad");
+selectQuantityLoadBtn.addEventListener("click", (e) => {
   zeroQuantity();
 });
 
 //Load Truck Confirm
-const submitButtonLoad = document.querySelector(".button.submit1");
+const submitButtonLoad = document.querySelector(".button.submitLoad");
 submitButtonLoad.addEventListener("click", (e) => {
   loadConfirm.classList.remove("active");
   loadTruckBtn.classList.add("active");
@@ -747,16 +747,16 @@ unloadTruckBtn.addEventListener("click", (e) => {
 });
 
 //Unload Truck Quantity
-const nextButton3 = document.querySelector(".button.next3");
+const selectItemsUnloadBtn = document.querySelector(".button.selectItemsUnload");
 const unloadConfirm = document.querySelector(".unload-confirm-form");
-nextButton3.addEventListener("click", (e) => {
+selectItemsUnloadBtn.addEventListener("click", (e) => {
   unloadQuantity.classList.remove("active");
   unloadConfirm.classList.add("active");
   submitUnload();
 });
 
 //Unload Truck Confirm
-const submitButtonUnload = document.querySelector(".button.submit2");
+const submitButtonUnload = document.querySelector(".button.submitUnload");
 submitButtonUnload.addEventListener("click", (e) => {
   unloadConfirm.classList.remove("active");
   unloadTruckBtn.classList.add("active");

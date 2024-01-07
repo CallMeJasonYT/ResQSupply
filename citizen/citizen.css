@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
 
+/* ~~~~~~~~~~~~~ General Styles ~~~~~~~~~~~~~ */
 * {
   margin: 0;
   padding: 0;
@@ -134,11 +135,21 @@ section {
   width: 100%;
 }
 
-/* Home */
-.main-tab {
-  display: flex;
+ul {
+  list-style-type: none;
 }
 
+#successMessage {
+  display: none;
+}
+
+#successMessage p {
+  font-family: 500;
+  color: rgb(32, 204, 104);
+}
+
+/* ~~~~~~~~~~~~~ Burger Menu Styles ~~~~~~~~~~~~~ */
+/* General Styles */
 .burger-sect {
   position: absolute;
   width: calc(100vw - 40px);
@@ -182,6 +193,109 @@ section {
   transition: 0.2s ease-in;
 }
 
+.burger-menu .button {
+  margin-top: 5px;
+  background: #0a7388;
+  border-radius: 10px;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.field.address,
+.emergency-num {
+  display: none;
+}
+
+.field.address.active,
+.emergency-num.active {
+  display: block;
+  padding: 15px;
+  overflow-y: scroll;
+  border: #7070704b solid 1px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+/* Change Address Styles */
+.input-box {
+  position: relative;
+  margin-top: 5px;
+  transition: all 0.4s ease-out;
+  width: 100%;
+  height: 40px;
+}
+
+.input-box input {
+  height: 100%;
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 0 30px;
+  color: #333;
+  transition: all 0.2s ease;
+  border-bottom: 1.5px solid #aaaaaa;
+}
+
+.input-box input:focus {
+  border-color: #0a7388;
+}
+
+.input-box i {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #707070;
+}
+
+.input-box i.address {
+  left: 10px;
+}
+
+.input-box input:focus~i.address {
+  color: #0a7388;
+}
+
+.field .check {
+  align-items: center;
+  margin-top: 6px;
+  color: #d93025;
+  font-size: 14px;
+  display: none;
+}
+
+.error {
+  display: none;
+}
+
+.error.active {
+  font-size: 10px !important;
+  display: flex;
+  color: red;
+}
+
+/* Emergency Numbers Styles */
+.emergency-num ul {
+  max-height: calc(100dvh - 370px);
+}
+
+.numbers {
+  font-size: 18px;
+  text-align: left;
+  padding: 5px;
+}
+
+.numbers:hover {
+  background-color: #70707042;
+  border-radius: 6px;
+}
+
+/* ~~~~~~~~~~~~~ Home Styles ~~~~~~~~~~~~~ */
+/*General Styles*/
+.main-tab {
+  display: flex;
+}
+
 .requests-tab,
 .announcements-tab,
 .offers-tab {
@@ -197,10 +311,6 @@ section {
 .announcements-tab.active,
 .offers-tab.active {
   display: block;
-}
-
-ul {
-  list-style-type: none;
 }
 
 .requests-list li:last-child,
@@ -306,24 +416,12 @@ ul {
   font-size: 14px;
 }
 
-.people {
-  padding-top: 5px;
-}
-
 .status {
-  padding-bottom: 5px;
-}
-
-.announcements-list .datetime {
   padding-bottom: 5px;
 }
 
 .text {
   font-size: 14px;
-}
-
-.add-req {
-  display: none;
 }
 
 .add-req.active,
@@ -469,91 +567,6 @@ li.selected {
   margin-left: 5px;
 }
 
-.field.address,
-.emergency-num {
-  display: none;
-}
-
-.emergency-num ul {
-  max-height: calc(100dvh - 370px);
-}
-
-.field.address.active,
-.emergency-num.active {
-  display: block;
-  padding: 15px;
-  overflow-y: scroll;
-  border: #7070704b solid 1px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  border-radius: 5px;
-}
-
-.burger-menu .button {
-  margin-top: 5px;
-  background: #0a7388;
-  border-radius: 10px;
-  color: #fff;
-  margin-bottom: 10px;
-}
-
-.numbers {
-  font-size: 18px;
-  text-align: left;
-  padding: 5px;
-}
-
-.numbers:hover {
-  background-color: #70707042;
-  border-radius: 6px;
-}
-
-.input-box {
-  position: relative;
-  margin-top: 5px;
-  transition: all 0.4s ease-out;
-  width: 100%;
-  height: 40px;
-}
-
-.input-box input {
-  height: 100%;
-  width: 100%;
-  border: none;
-  outline: none;
-  padding: 0 30px;
-  color: #333;
-  transition: all 0.2s ease;
-  border-bottom: 1.5px solid #aaaaaa;
-}
-
-.input-box input:focus {
-  border-color: #0a7388;
-}
-
-.input-box i {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 20px;
-  color: #707070;
-}
-
-.input-box i.address {
-  left: 10px;
-}
-
-.input-box input:focus~i.address {
-  color: #0a7388;
-}
-
-.field .check {
-  align-items: center;
-  margin-top: 6px;
-  color: #d93025;
-  font-size: 14px;
-  display: none;
-}
-
 .requests-form .check,
 .offers-form .check {
   align-items: center;
@@ -621,6 +634,20 @@ li.selected {
   color: #fff;
 }
 
+/* Requests */
+.people {
+  padding-top: 5px;
+}
+
+.add-req {
+  display: none;
+}
+/* Announcements */
+.announcements-list .datetime {
+  padding-bottom: 5px;
+}
+
+/* ~~~~~~~~~~~~~ Footer Styles ~~~~~~~~~~~~~ */
 .footer {
   height: 50px;
   border: none;
@@ -646,6 +673,8 @@ li.selected {
   text-align: center;
 }
 
+
+/* ~~~~~~~~~~~~~ Media ~~~~~~~~~~~~~ */
 @media screen and (min-width:850px) {
   .footer .copyright {
     display: block;
@@ -709,6 +738,8 @@ li.selected {
   }
 }
 
+
+/* ~~~~~~~~~~~~~ Webkit ~~~~~~~~~~~~~ */
 ::-webkit-scrollbar {
   width: 5px;
 }
@@ -723,13 +754,4 @@ li.selected {
   border-radius: 20px;
   border: 6px solid transparent;
   background-clip: content-box;
-}
-
-#successMessage {
-  display: none;
-}
-
-#successMessage p {
-  font-family: 500;
-  color: rgb(32, 204, 104);
 }

@@ -109,6 +109,7 @@ const addressPattern = /^[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉ
 const addressField = document.querySelector(".field.address");
 const addressInput = document.querySelector("#address");
 function checkAddress() {
+  errorAddress.classList.remove("active");
   if (!addressInput.value.match(addressPattern)) {
     return addressField.classList.add("invalid");
   }
@@ -169,12 +170,14 @@ addressInput.addEventListener("keyup", checkAddress);
 //Submit Form Validation When Submiting
 const submitBtn = document.querySelector("#submit");
 const emailInput = document.querySelector("#emailInput");
+const errorAddress = document.querySelector(".error.address")
 submitBtn.addEventListener("click", (e) => {
   checkUsername();
   checkFullname();
   checkPhone();
   checkAddress();
   checkPass();
+
   if (
     usernameField.classList.contains("invalid") ||
     usernameField.classList.contains("duplicate") ||
@@ -188,25 +191,47 @@ submitBtn.addEventListener("click", (e) => {
     e.preventDefault();
     var lat;
     var lon;
+
     fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + addressInput.value + '&limit=1')
-      .then(result => result.json())
       .then(result => {
-            lat = result[0].lat;
-            lon = result[0].lon;
-            submit(lat,lon);
-      });
+        if (!result.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return result.json();
+      })
+      .then(result => {
+        if (result.length > 0 && result[0].lat && result[0].lon) {
+          lat = result[0].lat;
+          lon = result[0].lon;
+          submit(lat, lon);
+        } else {
+          errorAddress.classList.add("active");
+        }
+      })
   }
 });
 
-function submit(lat, lon){
+function submit(lat, lon) {
   fetch("home.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username: usernameInput.value, fullname: fullnameInput.value, phone: phoneInput.value, address: addressInput.value, password: passInput.value, email: emailInput.value, latitude: lat, longitude: lon}),
+    body: JSON.stringify({
+      username: usernameInput.value,
+      fullname: fullnameInput.value,
+      phone: phoneInput.value,
+      address: addressInput.value,
+      password: passInput.value,
+      email: emailInput.value,
+      latitude: lat,
+      longitude: lon
+    }),
   })
     .then((response) => response.json())
     .then((result) => {
       window.location.href = "citizen/citizen.html";
+    })
+    .catch(error => {
+      console.error("Error during form submission:", error.message);
     });
 }
 
