@@ -656,6 +656,11 @@ burgerItems.forEach(function (item) {
         burgerSect.classList.remove("active");
         statsTab.classList.remove("active");
         mainModule.style.flexDirection = "column";
+        titleInput.value = '';
+        detailsInput.value = '';
+        selectedItems = [];
+        document.querySelector(".ann-items-form .item-list").innerHTML = "";
+        document.querySelector(".ann-text-confirm").innerHTML = "";
         break;
       case 'storage':
         storageMngSect.classList.add("active");
@@ -850,6 +855,8 @@ cancelAnn.forEach(function (btn) {
     selectedItems = [];
     document.querySelector(".ann-items-form .item-list").innerHTML = "";
     document.querySelector(".ann-text-confirm").innerHTML = "";
+    titleInput.value = '';
+    detailsInput.value = '';
   })
 })
 
@@ -871,17 +878,19 @@ detailsInput.addEventListener("input", function () {
   errorDetails.classList.remove("active");
 });
 
+const errorNone = document.querySelector(".error.none");
 annNextItemsBtn.addEventListener("click", function () {
-  selectedItems = [];
-  annItemsForm.classList.remove("active");
-  annConfirmForm.classList.add("active");
-  selItems();
-  showAnnouncement();
+    selItems();
 })
 
 annSubmitBtn.addEventListener("click", function () {
   annSubmit();
   showSuccessMessageAnn();
+  selectedItems = [];
+  document.querySelector(".ann-items-form .item-list").innerHTML = "";
+  document.querySelector(".ann-text-confirm").innerHTML = "";
+  titleInput.value = '';
+  detailsInput.value = '';
 })
 
 const successMessageAnn = document.getElementById("successMessageAnn");
@@ -891,6 +900,8 @@ function showSuccessMessageAnn() {
     successMessageAnn.style.display = "none";
     annConfirmForm.classList.remove("active");
     annTextForm.classList.add("active");
+    titleInput.value = '';
+    detailsInput.value = '';
   }, 3000);
 }
 
@@ -948,7 +959,15 @@ function selItems() {
     if (item.classList.contains("selected")) {
       selectedItems.push(item.innerText);
     }
-  });
+  })
+  if(selectedItems.length != 0){
+    annItemsForm.classList.remove("active");
+    annConfirmForm.classList.add("active");
+    errorNone.classList.remove("active");
+    showAnnouncement();
+  }else{
+    errorNone.classList.add("active");
+  }
 }
 
 //Show the Final Announcement beore Submititng
@@ -1012,6 +1031,12 @@ storageBtn.addEventListener("click", function () {
   updateGoodsTab.classList.remove("active");
   quantityChanges = [];
   fetchUpdateStorage();
+  fileInput.value = '';
+  fileList.innerHTML = '';
+  document.querySelector(".upload-files").remove();
+  fileInput.classList.add("active");
+  fileLabel.classList.add("active");
+  numOfFiles.textContent = 'No Files Selected';
 })
 
 const transferredBtn = document.querySelector("#transferredBtn");
@@ -1021,6 +1046,12 @@ transferredBtn.addEventListener("click", function () {
   transferredItemsTab.classList.add("active");
   storageUpdateTab.classList.remove("active");
   updateGoodsTab.classList.remove("active");
+  fileInput.value = '';
+  fileList.innerHTML = '';
+  document.querySelector(".upload-files").remove();
+  fileInput.classList.add("active");
+  fileLabel.classList.add("active");
+  numOfFiles.textContent = 'No Files Selected';
 })
 
 const updateBtn = document.querySelector("#updateBtn");
@@ -1087,11 +1118,6 @@ function fetchtransferredItems() {
           goodListItems.push(item);
         });
         goodsItemsEventListener();
-      } else {
-        if (!document.querySelector(".good-items-form .empty")) {
-          const markup = `<p class="empty">There aren't any Available Goods at the moment</p>`;
-          document.querySelector(".good-items-form .item-options").insertAdjacentHTML("beforeend", markup);
-        }
       }
     });
 }
@@ -1134,7 +1160,6 @@ function goodsItemsEventListener() {
         sortItems(".good-item-list");
         storageItemsEventListener();
         item.remove();
-        console.log(storageListItems)
         if(storageListItems != null && document.querySelector(".transferred-items-tab .empty")){
           document.querySelector(".transferred-items-tab .empty").remove();
         }
@@ -1343,6 +1368,7 @@ let fileList = document.getElementById("files-list");
 let numOfFiles = document.getElementById("num-of-files");
 const fileLabel = document.querySelector(".file-label");
 const errorFiletype = document.querySelector(".error.filetype");
+const successMessageUpload = document.getElementById("successMessageUpload");
 fileInput.addEventListener("change", () => {
   fileList.innerHTML = "";
   numOfFiles.textContent = ``;
@@ -1399,9 +1425,11 @@ fileInput.addEventListener("change", () => {
   }
 });
 
+const successMessageURL = document.getElementById("successMessageURL");
 var uploadFileBtn = document.querySelector(".upload-files");
 function uploadFileListener() {
   uploadFileBtn.addEventListener("click", function () {
+    showSuccessMessageUpload();
     const formData = new FormData();
     formData.append('files[]', fileInput.files[0]);
 
@@ -1415,6 +1443,7 @@ function uploadFileListener() {
 const urlBtn = document.querySelector(".url-button");
 
 urlBtn.addEventListener("click", function () {
+  showSuccessMessageURL()
   const corsAnywhereUrl = 'https://cors-anywhere.herokuapp.com/';
   const targetUrl = 'http://usidas.ceid.upatras.gr/web/2023/export.php';
 
@@ -1439,6 +1468,26 @@ urlBtn.addEventListener("click", function () {
         .then(result => { })
     })
 })
+
+function showSuccessMessageURL() {
+  successMessageURL.style.display = "block";
+  setTimeout(() => {
+    successMessageURL.style.display = "none";
+  }, 3000);
+}
+
+function showSuccessMessageUpload() {
+  successMessageUpload.style.display = "block";
+  setTimeout(() => {
+    successMessageUpload.style.display = "none";
+    fileInput.value = '';
+    fileList.innerHTML = '';
+    document.querySelector(".upload-files").remove();
+    fileInput.classList.add("active");
+    fileLabel.classList.add("active");
+    numOfFiles.textContent = 'No Files Selected';
+  }, 3000);
+}
 
 /* ~~~~~~~~~~ Rescuer Signup Form ~~~~~~~~~~ */
 
@@ -1711,7 +1760,6 @@ function fetchStorageInfo() {
 
 function categoryEventListener() {
   var catItems = document.querySelectorAll(".category-item p");
-  console.log(catItems)
   catItems.forEach((catItem) => {
     var checkbox = catItem.parentNode.querySelector('input[type="checkbox"]');
     checkbox.addEventListener('click', function(){

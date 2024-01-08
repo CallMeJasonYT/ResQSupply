@@ -178,7 +178,7 @@
           </div>
         </div>
         <div class="error none">
-          <p>Please Select an Item</p>
+          <b>Error:&nbsp;</b> <p>Please Select an Item</p>
         </div>
         <button type="button" class="button ann-next-items"> Next </button>
       </div>
@@ -260,6 +260,9 @@
       <!-- Update Goods Tab -->
       <div class="update-goods-tab">
         <div class="upload-form active">
+          <div id="successMessageUpload">
+            <p>Upload successful! Thank you.</p>
+          </div>
           <input type="file" id="file" class="file-input active" accept=".json" />
           <label for="file" class="file-label active">
             <i class="fa-solid fa-folder-open"></i>
@@ -272,6 +275,9 @@
         </div>
         <div class="or-icon"> OR </div>
         <div class="url-form active">
+          <div id="successMessageURL">
+            <p>Upload successful! Thank you.</p>
+          </div>
           <div class="url-button">
             <i class="fa-solid fa-link"></i>
             Upload from URL

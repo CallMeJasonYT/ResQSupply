@@ -13,7 +13,7 @@ if (!$conn) {
 
 $response = [];
 
-$stmtSelect = $conn->prepare("SELECT ann_id, ann_title, ann_text, ann_date, needs_goodn FROM announcements INNER JOIN needs WHERE ann_id=needs_ann_id");
+$stmtSelect = $conn->prepare("SELECT ann_id, ann_title, ann_text, ann_date, needs_goodn FROM announcements INNER JOIN needs WHERE ann_id=needs_ann_id ORDER BY ann_date DESC");
 $stmtSelect->execute();
 $result = $stmtSelect->get_result();
 

@@ -208,7 +208,8 @@ section {
 
 .error.emptytitle.active,
 .error.emptydetails.active,
-.error.address.active {
+.error.address.active,
+.error.none.active {
   font-size: 10px !important;
   display: flex;
   color: red;
@@ -265,14 +266,18 @@ section {
 #successMessage,
 #successMessageAnn,
 #successMessageStorage,
-#successMessagetransferred {
+#successMessagetransferred,
+#successMessageURL,
+#successMessageUpload {
   display: none;
 }
 
 #successMessage p,
 #successMessageAnn p,
 #successMessageStorage p,
-#successMessagetransferred p{
+#successMessagetransferred p,
+#successMessageURL p,
+#successMessageUpload p{
   font-weight: 500;
   color: rgb(32, 204, 104);
 }

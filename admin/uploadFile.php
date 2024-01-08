@@ -39,7 +39,7 @@ if (isset($_FILES['files'])) {
     $jsonData = json_decode($jsonContent);
     foreach ($jsonData->categories as $category) {
         $id = $category->id;
-        $name = $category->category_name;
+        $name = rtrim($category->category_name);
 
         if (!in_array($id, $cat_id)) {
             $stmtInsert = $conn->prepare("INSERT INTO categories (cat_id, cat_name) VALUES (?, ?)");
@@ -49,7 +49,7 @@ if (isset($_FILES['files'])) {
         }
     }
     foreach ($jsonData->items as $item) {
-        $name = $item->name;
+        $name = rtrim($item->name);
         $category_id = $item->category;
         if (!empty($item->details)) {
             $detail_name = $item->details[0]->detail_name;

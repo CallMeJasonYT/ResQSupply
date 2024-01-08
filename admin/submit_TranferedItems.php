@@ -57,6 +57,15 @@ foreach ($itemsInStorage as $item) {
 }
 $stmtDelete->close();
 
+$stmtDelete = $conn->prepare("DELETE FROM needs WHERE needs_goodn = ?");
+foreach ($itemsInStorage as $item) {
+    if (!in_array($item, $itemsInGoods)) {
+        $stmtDelete->bind_param("s", $item);
+        $stmtDelete->execute();
+    }
+}
+$stmtDelete->close();
+
 $response = "OK";
 header('Content-Type: application/json');
 echo json_encode($response);

@@ -397,7 +397,6 @@ function itemsOffBtnListener() {
     item.addEventListener("click", function () {
       itemsOffText.textContent = item.textContent;
       const selectedItemText = item.textContent.toLowerCase();
-
       for (const category in catItemConnection.categories) {
         if (catItemConnection.categories.hasOwnProperty(category)) {
           var itemsInCat = catItemConnection.categories[category].items.map(item => item.toLowerCase());
