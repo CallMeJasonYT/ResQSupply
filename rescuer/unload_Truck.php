@@ -41,15 +41,14 @@ foreach ($dataArray['data'] as $data) {
         $stmtInsert->execute();
         $stmtInsert->close();
     }
-
 }
 
 foreach ($dataArray['data'] as $data) {
     $itemText = $data['itemText'];
     $itemQ = $data['itemQ'];
 
-    $stmtSelect = $conn->prepare("SELECT load_goodv FROM loads WHERE load_veh = ?");
-    $stmtSelect->bind_param('s', $veh);
+    $stmtSelect = $conn->prepare("SELECT load_goodv FROM loads WHERE load_veh = ? && load_goodn = ?");
+    $stmtSelect->bind_param('ss', $veh, $itemText);
     $stmtSelect->execute();
     $stmtSelect->bind_result($currentLoadGoodv);
 

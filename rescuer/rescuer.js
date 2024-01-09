@@ -639,6 +639,7 @@ loadTruckBtn.addEventListener("click", (e) => {
     loadItemsForm.classList.add("active");
     loadItems.classList.add("active");
     fetchLoadItems();
+    loadDataArray = [];
   } else {
     distanceErrorLoad.classList.add("active");
   }
@@ -662,14 +663,23 @@ selectQuantityLoadBtn.addEventListener("click", (e) => {
 //Load Truck Confirm
 const submitButtonLoad = document.querySelector(".button.submitLoad");
 submitButtonLoad.addEventListener("click", (e) => {
-  loadConfirm.classList.remove("active");
-  loadTruckBtn.classList.add("active");
-  removeTruckLoad();
-  loadTruck();
-  removeItemLoad();
-  removeQuantityLoad();
-  removeConfirmLoad();
+  showSuccessMessageLoad();
 });
+
+const successMessageLoad = document.getElementById("successMessageLoad");
+function showSuccessMessageLoad() {
+  successMessageLoad.style.display = "block";
+  setTimeout(() => {
+    successMessageLoad.style.display = "none";
+    loadConfirm.classList.remove("active");
+    loadTruckBtn.classList.add("active");
+    removeTruckLoad();
+    loadTruck();
+    removeItemLoad();
+    removeQuantityLoad();
+    removeConfirmLoad();
+  }, 3000);
+}
 
 //Cancel Button Load
 const cancelBtnL = document.querySelectorAll(".cancell");
@@ -737,6 +747,7 @@ unloadTruckBtn.addEventListener("click", (e) => {
     quantityUnLoad();
     unloadEventListener();
     maxBtnEventListener();
+    unloadDataArray = [];
   } else if(distance > 100){
     distanceErrorUnload.classList.add("active");
     truckloadErrorUnload.classList.remove("active");
@@ -758,12 +769,21 @@ selectItemsUnloadBtn.addEventListener("click", (e) => {
 //Unload Truck Confirm
 const submitButtonUnload = document.querySelector(".button.submitUnload");
 submitButtonUnload.addEventListener("click", (e) => {
-  unloadConfirm.classList.remove("active");
-  unloadTruckBtn.classList.add("active");
-  removeTruckLoad();
-  removeUnloadConfirm();
-  unloadTruck();
+  showSuccessMessageUnload();
 });
+
+const successMessageUnload = document.getElementById("successMessageUnload");
+function showSuccessMessageUnload() {
+  successMessageUnload.style.display = "block";
+  setTimeout(() => {
+    successMessageUnload.style.display = "none";
+    unloadConfirm.classList.remove("active");
+    unloadTruckBtn.classList.add("active");
+    removeTruckLoad();
+    removeUnloadConfirm();
+    unloadTruck();
+  }, 3000);
+}
 
 //Cancel Button Unload
 const cancelBtnU = document.querySelectorAll(".cancelu");

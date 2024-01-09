@@ -227,6 +227,17 @@ ul {
   display: block;
 }
 
+#successMessageLoad,
+#successMessageUnload {
+  display: none;
+}
+
+#successMessageLoad p,
+#successMessageUnload p{
+  font-weight: 500;
+  color: rgb(32, 204, 104);
+}
+
 /* ~~~~~~~~~~~~~ Burger Menu Styles ~~~~~~~~~~~~~ */
 /* General Styles*/
 .load-confirm-form .cancelbtn,

@@ -50,7 +50,7 @@ foreach ($jsonData->categories as $category) {
 }
 
 foreach ($jsonData->items as $item) {
-     $name = rtrim($item->name);
+    $name = rtrim($item->name);
     $category_id = $item->category;
     if (!empty($item->details)) {
         $detail_name = $item->details[0]->detail_name;

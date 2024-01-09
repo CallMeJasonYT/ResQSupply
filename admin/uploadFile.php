@@ -29,7 +29,7 @@ $stmtSelect->execute();
 $stmtSelect->bind_result($existingGoodName);
 
 while ($stmtSelect->fetch()) {
-    $good_name[] = $existingGoodName;
+    $good_name[] = strtolower(str_replace(' ', '', $existingGoodName));
 }
 $stmtSelect->close();
 
@@ -41,11 +41,12 @@ if (isset($_FILES['files'])) {
         $id = $category->id;
         $name = rtrim($category->category_name);
 
-        if (!in_array($id, $cat_id)) {
+        if (!in_array($id, $cat_id) && $name != "") {
             $stmtInsert = $conn->prepare("INSERT INTO categories (cat_id, cat_name) VALUES (?, ?)");
             $stmtInsert->bind_param("is", $id, $name);
             $stmtInsert->execute();
             $stmtInsert->close();
+            $cat_id[] = $id;
         }
     }
     foreach ($jsonData->items as $item) {
@@ -59,11 +60,12 @@ if (isset($_FILES['files'])) {
             $detail_value = null;
         }
 
-        if (!in_array($name, $good_name) && in_array($category_id, $cat_id)) {
+        if (!in_array(strtolower(str_replace(' ', '', $name)), $good_name) && in_array($category_id, $cat_id) && $name != "") {
             $stmtInsert = $conn->prepare("INSERT INTO goods (good_name, good_detn, good_detv, good_cat_id) VALUES (?, ?, ?, ?)");
             $stmtInsert->bind_param("ssii", $name, $detail_name, $detail_value, $category_id);
             $stmtInsert->execute();
             $stmtInsert->close();
+            $good_name[] = strtolower(str_replace(' ', '', $name));
         }
     }
 }

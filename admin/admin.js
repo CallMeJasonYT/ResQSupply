@@ -192,8 +192,14 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
       var position = marker.getLatLng();
       marker.setLatLng(position).update();
       map.panTo(position);
-      revGeocode(position);
-    });
+      marker.bindPopup(`<div class="confirmLocation"> Confirm New Location?
+      <div class="changeLocation">
+      <div class="buttonConfirm" onclick="confirmBaseLocation('${marker._leaflet_id}')">Confirm</div>
+      <div class="buttonCancel" onclick="cancelBaseLocation('${marker._leaflet_id}')">Cancel</div>
+      </div>
+      </div>
+      `).openPopup();
+  });
   } else {
     fetch("fetch_TasksInfo.php", {
       method: "POST",
@@ -224,6 +230,34 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
         });
         drawLine();
       });
+  }
+}
+
+function confirmBaseLocation(markerId) {
+  const marker = baseMarkers.find(m => m._leaflet_id == markerId);
+  if (marker) {
+    const position = marker.getLatLng();
+    const latitude = position.lat;
+    const longitude = position.lng;
+
+    marker.baseInfo = {
+      latitude: latitude,
+      longitude: longitude
+  };
+      revGeocode(position);
+      marker.closePopup();
+      marker.unbindPopup();
+  }
+}
+
+function cancelBaseLocation(markerId) {
+  const marker = baseMarkers.find(m => m._leaflet_id == markerId);
+  if (marker) {
+    const position = new L.LatLng(marker.baseInfo.latitude, marker.baseInfo.longitude);
+    marker.setLatLng(position).update();
+    map.panTo(position);
+    marker.closePopup();
+    marker.unbindPopup();
   }
 }
 
@@ -307,7 +341,6 @@ function replaceMapWithMenu() {
 
 //Add or Remove Markers when the xmark is clicked
 let polylinesHidden = false;
-let polylinesHiddenOffers = false;
 document.addEventListener("DOMContentLoaded", function () {
   const xmark = document.querySelector(".cancelf");
   xmark.addEventListener('click', () => {
@@ -341,10 +374,8 @@ document.addEventListener("DOMContentLoaded", function () {
         case 'Executing Offers':
           if (!checkbox.checked) {
             removeMarkersByCategory('Executing Offer');
-            polylinesHiddenOffers = true;
           } else {
             addMarkersByCategory('Executing Offer');
-            polylinesHiddenOffers = false;
           }
           break;
         case 'Trucks with Active Tasks':
@@ -368,7 +399,7 @@ document.addEventListener("DOMContentLoaded", function () {
         case 'Tasks Lines':
           if (!checkbox.checked) {
             hidePolylines();
-          } else if (!polylinesHidden && !polylinesHiddenOffers){
+          } else if (!polylinesHidden){
             showPolylines();
           }
           break;
@@ -424,6 +455,7 @@ function getIconName(marker) {
 
 function hidePolylines() {
   polylines.forEach(polyline => {
+    console.log(polyline)
     map.removeLayer(polyline);
   })
 }
@@ -479,7 +511,7 @@ function drawLine() {
       const pointB = [task.getLatLng().lat, task.getLatLng().lng];
       const polyline = L.polyline([pointA, pointB], { color: '#350052' }).addTo(map);
       polyline.taskInfo = {
-        task_id: task.id
+        task_id: task.taskInfo.taskId
       };
       polylines.push(polyline);
     });
@@ -1033,7 +1065,9 @@ storageBtn.addEventListener("click", function () {
   fetchUpdateStorage();
   fileInput.value = '';
   fileList.innerHTML = '';
-  document.querySelector(".upload-files").remove();
+  if(document.querySelector(".upload-files")){
+    document.querySelector(".upload-files").remove();
+  }
   fileInput.classList.add("active");
   fileLabel.classList.add("active");
   numOfFiles.textContent = 'No Files Selected';
@@ -1048,7 +1082,9 @@ transferredBtn.addEventListener("click", function () {
   updateGoodsTab.classList.remove("active");
   fileInput.value = '';
   fileList.innerHTML = '';
-  document.querySelector(".upload-files").remove();
+  if(document.querySelector(".upload-files")){
+    document.querySelector(".upload-files").remove();
+  }
   fileInput.classList.add("active");
   fileLabel.classList.add("active");
   numOfFiles.textContent = 'No Files Selected';
