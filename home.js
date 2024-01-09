@@ -4,11 +4,11 @@ const signupBtn = document.querySelector("#signup-btn");
 const loginBtn = document.querySelector("#login");
 signupBtn.addEventListener("click", (e) => {
   e.preventDefault();
-  formContainer.classList.add("active");
+  formContainer.classList.add("active"); //Make the Sign-Up Form Visible
 });
 loginBtn.addEventListener("click", (e) => {
   e.preventDefault();
-  formContainer.classList.remove("active");
+  formContainer.classList.remove("active"); //Hide the Sign-Up Form
 });
 
 //Show-Hide Password Icon
@@ -16,11 +16,11 @@ const pwShowHide = document.querySelectorAll(".pw_hide");
 pwShowHide.forEach((icon) => {
   icon.addEventListener("click", () => {
     let getPwInput = icon.parentElement.querySelector("input");
-    if (getPwInput.type === "password") {
+    if (getPwInput.type === "password") { //Show Password
       getPwInput.type = "text";
       icon.classList.replace("fa-eye-slash", "fa-eye");
-    } else {
-      getPwInput.type = "password";
+    } else { //Hide Password
+      getPwInput.type = "password"; 
       icon.classList.replace("fa-eye", "fa-eye-slash");
     }
   });
@@ -40,9 +40,9 @@ const passInput = document.querySelector("#pass");
 passInput.addEventListener("keyup", () => {
   validationRegex.forEach((item, i) => {
     let isValid = item.regex.test(passInput.value);
-    if (isValid) {
+    if (isValid) { //Check the Corresponding Field if the Criterias are met
       passChecklist[i].classList.add("checked");
-    } else {
+    } else { //Uncheck the Corresponding Field if the Criterias are not met
       passChecklist[i].classList.remove("checked");
     }
   });
@@ -62,7 +62,7 @@ passInput.addEventListener("blur", (e) => {
 //Password Validation
 function checkPass() {
   for (var i = 0; i < passChecklist.length; i++) {
-    if (!passChecklist[i].classList.contains("checked")) {
+    if (!passChecklist[i].classList.contains("checked")) { //If all the Items of the Array contain the Class checked, then the Password is Valid
       passGood = false;
     } else passGood = true;
   }
@@ -78,7 +78,7 @@ function checkUsername() {
     usernameField.classList.remove("duplicate");
   } else {
     usernameField.classList.remove("invalid");
-    checkUsernameAvailability();
+    checkUsernameAvailability(); //Function that checks if the same Username already exists
   }
 }
 
@@ -116,7 +116,7 @@ function checkAddress() {
   addressField.classList.remove("invalid");
 }
 
-// AJAX Request to check the Database for Username Similarity
+// Fetch API to check the Database for Username Similarity
 function checkUsernameAvailability() {
   var data = { username: usernameInput.value };
   fetch("check_username.php", {
@@ -127,14 +127,14 @@ function checkUsernameAvailability() {
     .then((response) => response.json())
     .then((result) => {
       if (result != "False") {
-        usernameField.classList.add("duplicate");
+        usernameField.classList.add("duplicate"); //Show the Error for Duplicate Username
       } else {
-        usernameField.classList.remove("duplicate");
+        usernameField.classList.remove("duplicate"); //Hide the Error for Duplicate Username
       }
     });
 }
 
-// AJAX Request to check the Database for Credentials
+// Fetch API to check the Database for Credentials
 const formAct = document.querySelector("#login-form");
 const passLoginField = document.querySelector(".field.passwordlogin");
 const passLoginInput = document.querySelector("#pass-login");
@@ -151,9 +151,9 @@ function checkCredentials() {
   })
     .then((response) => response.json())
     .then((result) => {
-      if (result == "False") {
+      if (result == "False") { //The Credentials are Wrong. Print an Error
         passLoginField.classList.add("invalid");
-      } else {
+      } else { //The Credentianls are Correct. Open the corresponding page, depending on the Type of the User.
         passLoginField.classList.remove("invalid");
         formAct.action = result + "/" + result + ".html";
         formAct.submit();
@@ -186,13 +186,13 @@ submitBtn.addEventListener("click", (e) => {
     addressField.classList.contains("invalid") ||
     !passGood
   ) {
-    e.preventDefault();
-  } else {
+    e.preventDefault(); //If at least one of the Fields is Incorrectly filled, don't Submit
+  } else { //Proceed to Submission
     e.preventDefault();
     var lat;
     var lon;
 
-    fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + addressInput.value + '&limit=1')
+    fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + addressInput.value + '&limit=1') //Get the lat and lon if the Address that was typed.
       .then(result => {
         if (!result.ok) {
           throw new Error("Network response was not ok");
@@ -200,17 +200,18 @@ submitBtn.addEventListener("click", (e) => {
         return result.json();
       })
       .then(result => {
-        if (result.length > 0 && result[0].lat && result[0].lon) {
+        if (result.length > 0 && result[0].lat && result[0].lon) { //If the Address Exists Submit
           lat = result[0].lat;
           lon = result[0].lon;
           submit(lat, lon);
         } else {
-          errorAddress.classList.add("active");
+          errorAddress.classList.add("active"); //If the Address Does Not Exist, print an Error
         }
       })
   }
 });
 
+//Submit Sign-Up Form
 function submit(lat, lon) {
   fetch("home.php", {
     method: "POST",
@@ -228,7 +229,7 @@ function submit(lat, lon) {
   })
     .then((response) => response.json())
     .then((result) => {
-      window.location.href = "citizen/citizen.html";
+      window.location.href = "citizen/citizen.html"; //Open the Citizen Page, since only Citizens can Register
     })
     .catch(error => {
       console.error("Error during form submission:", error.message);
