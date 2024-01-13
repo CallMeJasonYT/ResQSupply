@@ -192,7 +192,7 @@ submitBtn.addEventListener("click", (e) => {
     var lat;
     var lon;
 
-    fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + addressInput.value + '&limit=1') //Get the lat and lon if the Address that was typed.
+    fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + addressInput.value + '&limit=1') //Get the lat and lon of the Address that was typed.
       .then(result => {
         if (!result.ok) {
           throw new Error("Network response was not ok");

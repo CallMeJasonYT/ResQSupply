@@ -713,6 +713,8 @@ burgerItems.forEach(function (item) {
 });
 
 /* ~~~~~~~~~~ Statistics ~~~~~~~~~~ */
+
+//Create a Date object, and get the current day, month and year
 function getCurrentDate() {
   const today = new Date();
   const year = today.getFullYear();
@@ -721,6 +723,7 @@ function getCurrentDate() {
   return `${year}-${month}-${day}`;
 }
 
+//Create a Date object that calculates the date that it was 7 days ago
 function getLastWeekDate() {
   const today = new Date();
   const sevenDaysAgo = new Date(today - 7 * 24 * 60 * 60 * 1000); // 7 days ago in milliseconds
@@ -879,6 +882,7 @@ const annSubmitBtn = document.querySelector(".ann-submit");
 const cancelAnn = document.querySelectorAll(".cancela");
 let selectedItems = [];
 
+//Cretae an Event Listener for the canccel Button
 cancelAnn.forEach(function (btn) {
   btn.addEventListener("click", function () {
     annTextForm.classList.add("active");
@@ -896,25 +900,31 @@ const titleInput = document.querySelector("#title");
 const detailsInput = document.querySelector("#details");
 var titleValue;
 var detailsValue;
+
+//Create an Event Listener for the Announcements Next Button
 annNextTextBtn.addEventListener("click", function () {
   checkInput()
 })
 
+//Create an Event Listener for the Title Input Field
 titleInput.addEventListener("input", function () {
   const errorTitle = document.querySelector(".error.emptytitle");
   errorTitle.classList.remove("active");
 });
 
+//Create an Event Listener for the Details Input Field
 detailsInput.addEventListener("input", function () {
   const errorDetails = document.querySelector(".error.emptydetails");
   errorDetails.classList.remove("active");
 });
 
+////Create an Event Listener for the Announcements Items Next Button
 const errorNone = document.querySelector(".error.none");
 annNextItemsBtn.addEventListener("click", function () {
     selItems();
 })
 
+//Create an Event Listener for for the Announcement Submit Button
 annSubmitBtn.addEventListener("click", function () {
   annSubmit();
   showSuccessMessageAnn();
@@ -925,6 +935,7 @@ annSubmitBtn.addEventListener("click", function () {
   detailsInput.value = '';
 })
 
+//Show a Succes Message when the Submission was Successful
 const successMessageAnn = document.getElementById("successMessageAnn");
 function showSuccessMessageAnn() {
   successMessageAnn.style.display = "block";
@@ -937,6 +948,7 @@ function showSuccessMessageAnn() {
   }, 3000);
 }
 
+//Fetch API for the Storage Table Items
 const itemSelect = document.querySelector(".item-drop-sel");
 function fetchStorageItems() {
   fetch("fetch_storageItems.php")
@@ -944,12 +956,12 @@ function fetchStorageItems() {
       return response.json();
     })
     .then((data) => {
-      if (data.length != 0) {
+      if (data.length != 0) {//If the Storage Table is not Empty
         if(document.querySelector(".ann-items-form .empty")){
           document.querySelector(".ann-items-form .empty").remove();
         }
         itemSelect.classList.add("active");
-        data.forEach((res) => {
+        data.forEach((res) => {//Create a List Item for every Item in the Storage Table
           markup =
             `<li class="item">` +
             `<p class="item-text">${res.GoodName}</p>` +
@@ -958,8 +970,8 @@ function fetchStorageItems() {
         });
         itemsBtn = document.querySelectorAll(".ann-items-form .item-list .item");
         itemsBtnListener();
-      } else {
-        itemSelect.classList.remove("active");
+      } else { //If the Storage Table is Empty display a Message
+        itemSelect.classList.remove("active"); //Remove the items list if it exists.
         if(document.querySelector(".ann-items-form .item-list li")){
           document.querySelector(".ann-items-form .item-list").innerHTML = "";
         }
@@ -1011,6 +1023,7 @@ function showAnnouncement() {
   document.querySelector(".ann-text-confirm").insertAdjacentHTML("beforeend", markup);
 }
 
+//Submit Announcement in Database
 function annSubmit() {
   fetch("announcement_Creation.php", {
     method: "POST",
@@ -1020,6 +1033,7 @@ function annSubmit() {
     .then((response) => response.json())
 }
 
+//Check if the Title or the Details field is Empty 
 function checkInput() {
   const errorTitle = document.querySelector(".error.emptytitle");
   const errorDetails = document.querySelector(".error.emptydetails");
@@ -1109,14 +1123,16 @@ function showSuccessMessagetransferred() {
     successMessagetransferred.style.display = "none";
   }, 3000);
 }
+
+//Fetch API for the Transferred Items
 function fetchtransferredItems() {
   // Fetch storage items
   fetch("fetch_storageItems.php")
     .then((response) => response.json())
     .then((data) => {
       emptyGoodStorageLists();
-      if (data.length !== 0) {
-        data.forEach((res) => {
+      if (data.length !== 0) {//If the Storage Table is not Empty
+        data.forEach((res) => {//Create a List Item for each Item of the Storage Table
           const markup = `<li class="item">` +
             `<p class="item-text">${res.GoodName}</p>` +
             `</li>`;
@@ -1125,23 +1141,23 @@ function fetchtransferredItems() {
         });
 
         const items = document.querySelectorAll(".storage-item-list .item");
-        items.forEach((item) => {
+        items.forEach((item) => { //Add all the Storage Items in an Array
           storageListItems.push(item);
         });
         storageItemsEventListener();
-      } else {
+      } else {//If the Storage Table is Empty print an Error Message
         if (!document.querySelector(".storage-items-form .empty")) {
           const markup = `<p class="empty">There aren't any Goods in the Storage at the moment.</p>`;
           document.querySelector(".storage-items-form .item-options").insertAdjacentHTML("beforeend", markup);
         }
       }
-      return fetch("fetch_GoodItems.php");
+      return fetch("fetch_GoodItems.php"); //Fetch Good Items
     })
     .then((response) => response.json())
     .then((data) => {
-      if (data.length !== 0) {
+      if (data.length !== 0) {//If the Goods Table is not Empty
         data.forEach((res) => {
-          if (!storageItemsNames.includes(res.GoodName)) {
+          if (!storageItemsNames.includes(res.GoodName)) {//Create a List Item for every Item of the Goods Table that does not Exist in the Storage Table.
             const markup = `<li class="item">` +
               `<p class="item-text">${res.GoodName}</p>` +
               `</li>`;
@@ -1150,7 +1166,7 @@ function fetchtransferredItems() {
         });
 
         const items = document.querySelectorAll(".good-item-list .item");
-        items.forEach((item) => {
+        items.forEach((item) => {//Add every item of the Goods Table to an Array
           goodListItems.push(item);
         });
         goodsItemsEventListener();
@@ -1160,22 +1176,23 @@ function fetchtransferredItems() {
 
 var storageListenersAdded = [];
 var goodListenersAdded = [];
+//Add an Event Listener to Every Item of the Storage List, if it doesn't already Exist
 function storageItemsEventListener() {
   storageListItems.forEach(function (item, index) {
     if (!storageListenersAdded[index]) {
       item.addEventListener("click", function () {
-        const clonedItem = item.cloneNode(true);
-        document.querySelector(".good-item-list").appendChild(clonedItem);
-        goodListItems.push(clonedItem);
-        if(storageListItems.length - 1 == 0){
+        const clonedItem = item.cloneNode(true); //When an Item is Cliecked, clone it 
+        document.querySelector(".good-item-list").appendChild(clonedItem); //Add the item to the Goods List
+        goodListItems.push(clonedItem); //Add the cloned Item to the Goods Array
+        if(storageListItems.length - 1 == 0){ //If there is no other Items in the Goods List, print the Following Message
           const markup = `<p class="empty">There aren't any Available Goods at the moment</p>`;
           document.querySelector(".storage-items-form .item-options").insertAdjacentHTML("beforeend", markup);
         }
-        storageListItems.splice(storageListItems.indexOf(item), 1);
-        storageListenersAdded.splice(index, 1);
-        sortItems(".storage-item-list");
-        sortItems(".good-item-list");
-        goodsItemsEventListener();
+        storageListItems.splice(storageListItems.indexOf(item), 1); //Remove the Clicked Item from the Storage Array
+        storageListenersAdded.splice(index, 1); //Remove the Event Listener of the Clicked Item
+        sortItems(".storage-item-list"); //Sort the Lists Again
+        sortItems(".good-item-list");//Sort the Lists Again
+        goodsItemsEventListener();//Add Event Listener to the Goods Items List Again 
         item.remove();
       });
       storageListenersAdded[index] = true;
@@ -1183,18 +1200,19 @@ function storageItemsEventListener() {
   });
 }
 
+//Add an Event Listener to Every Item of the Goods List, if it doesn't already Exist
 function goodsItemsEventListener() {
   goodListItems.forEach(function (item, index) {
     if (!goodListenersAdded[index]) {
       item.addEventListener("click", function () {
-        const clonedItem = item.cloneNode(true);
-        document.querySelector(".storage-item-list").appendChild(clonedItem);
-        storageListItems.push(clonedItem);
-        goodListItems.splice(goodListItems.indexOf(item), 1);
-        goodListenersAdded.splice(index, 1);
-        sortItems(".storage-item-list");
-        sortItems(".good-item-list");
-        storageItemsEventListener();
+        const clonedItem = item.cloneNode(true);//When an Item is Cliecked, clone it 
+        document.querySelector(".storage-item-list").appendChild(clonedItem);//Add the item to the Storage List
+        storageListItems.push(clonedItem);//Add the cloned Item to the Storage Array
+        goodListItems.splice(goodListItems.indexOf(item), 1); //Remove the Clicked Item from the Goods Array
+        goodListenersAdded.splice(index, 1);//Remove the Event Listener of the Clicked Item
+        sortItems(".storage-item-list");//Sort the Lists Again
+        sortItems(".good-item-list");//Sort the Lists Again
+        storageItemsEventListener();//Add Event Listener to the Storage Items List Again 
         item.remove();
         if(storageListItems != null && document.querySelector(".transferred-items-tab .empty")){
           document.querySelector(".transferred-items-tab .empty").remove();
@@ -1205,6 +1223,7 @@ function goodsItemsEventListener() {
   });
 }
 
+//Empty the Goods and Storage Lists
 function emptyGoodStorageLists() {
   const goodsItems = document.querySelector(".good-item-list");
   const storageItems = document.querySelector(".storage-item-list");
@@ -1216,6 +1235,7 @@ function emptyGoodStorageLists() {
   storageListenersAdded = [];
 }
 
+//Sort the Items of the 2 Lists
 function sortItems(selector) {
   const list = document.querySelectorAll(selector + " .item");
   const sortedList = Array.from(list).sort((a, b) => {
@@ -1233,6 +1253,7 @@ function sortItems(selector) {
 const submittransferredBtn = document.querySelector(".exchange-submit");
 submittransferredBtn.addEventListener("click", submitTranferedItems);
 
+//Submit the Transferred Items to the Database
 function submitTranferedItems() {
   showSuccessMessagetransferred();
   var itemNames = [];
@@ -1257,7 +1278,7 @@ const strgQuantityForm = document.querySelector(".storage-quantity-form");
 const strgConfirmForm = document.querySelector(".storage-confirm-form");
 let quantityChanges = [];
 
-cancelUpdate.addEventListener("click", function () {
+cancelUpdate.addEventListener("click", function () { //Create an Event Listener for the Cancel Button
   strgQuantityForm.classList.add("active");
   strgConfirmForm.classList.remove("active");
   document.querySelector(".storage-confirm-form .items-list").innerHTML = "";
@@ -1265,19 +1286,21 @@ cancelUpdate.addEventListener("click", function () {
   fetchUpdateStorage();
 })
 
+//Proceed to the Confirm Form when the Next Button is Clicked
 function storageNextEventListener() {
   const strgNextQuantityBtn = document.querySelector(".strg-next-quantity");
   strgNextQuantityBtn.addEventListener("click", function () {
     displayFinalChanges();
-    if (Object.keys(quantityChanges).length == 0) {
+    if (Object.keys(quantityChanges).length == 0) { //If No Changes have been made, print the according Error Message. 
       errorNoChange.classList.add("active");
-    } else {
+    } else { //Else Proceed to the Confirm Form
       strgQuantityForm.classList.remove("active");
       strgConfirmForm.classList.add("active");
     }
   })
 }
 
+//Submit the Quantity Changes in the Database
 const successMessageStorage = document.getElementById("successMessageStorage");
 const strgSubmitBtn = document.querySelector(".storage-submit");
 strgSubmitBtn.addEventListener("click", function () {
@@ -1285,6 +1308,7 @@ strgSubmitBtn.addEventListener("click", function () {
   showSuccessMessageStorage();
 })
 
+//Show a Success Message when the Form is Successfully Submitted. 
 function showSuccessMessageStorage() {
   successMessageStorage.style.display = "block";
   setTimeout(() => {
@@ -1297,6 +1321,7 @@ function showSuccessMessageStorage() {
   }, 3000);
 }
 
+//Fetch API to Display all the Items in the Storage Table and set their Default Quantities
 function fetchUpdateStorage() {
   fetch("fetch_storageItems.php")
     .then((response) => {
@@ -1305,10 +1330,10 @@ function fetchUpdateStorage() {
     .then((data) => {
       const storageForm = document.querySelector(".storage-quantity-form");
       document.querySelector(".storage-confirm-form .items-list").innerHTML = "";
-      if (data.length != 0) {
+      if (data.length != 0) { //If the Storage Table is not Empty, Display its items
         storageForm.classList.add("active");
         document.querySelector(".storage-update-tab .empty").classList.remove("active");
-        if (!storageForm.querySelector(".item-select")) {
+        if (!storageForm.querySelector(".item-select")) { //If it is not already created, create the div and the list
           markup1 =
             `<div class="item-select">` +
             `<ul class="items-list">` +
@@ -1319,27 +1344,27 @@ function fetchUpdateStorage() {
         storageForm.querySelector(".items-list").innerHTML = "";
         data.forEach((res) => {
           const existingItem = storageForm.querySelector(`.item-text[data-goodname="${res.GoodName}"]`);
-          if (!existingItem) {
+          if (!existingItem) {//If it is not already added in the list, display the item and its default quantity
             markup =
               `<li class="item">` +
               `<div class="item-count">` +
               `<p class="item-text" data-goodname="${res.GoodName}">${res.GoodName}</p>` +
               `<div class="item-quantity">` +
               `<p class="quantity-text">Quantity:</p>` +
-              `<input class="quantity-input" type="number" value="${res.GoodValue}" oninput="validity.valid||(value='0');" onchange="updateQuantity(this, '${res.GoodName}')">` +
-              `<p class="reset-button" onclick="resetQuantity(this, ${res.GoodValue})"> Reset </p>` +
+              `<input class="quantity-input" type="number" value="${res.GoodValue}" oninput="validity.valid||(value='0');" onchange="updateQuantity(this, '${res.GoodName}')">` + //When the quantity of an item changes, call the updatQuantity() function
+              `<p class="reset-button" onclick="resetQuantity(this, ${res.GoodValue})"> Reset </p>` + //When the Reset Button is Clicked, call the resetQuantity() function
               `</div>` +
               `</div>` +
               `</li>`;
             storageForm.querySelector(".items-list").insertAdjacentHTML("beforeend", markup);
           }
         });
-        if (!storageForm.querySelector(".strg-next-quantity")) {
+        if (!storageForm.querySelector(".strg-next-quantity")) { //If it doesn't already exists, create a Next Button
           markup2 = `<button type="button" class="button strg-next-quantity"> Next </button>`;
           storageForm.insertAdjacentHTML("beforeend", markup2);
           storageNextEventListener();
         }
-        if (!storageForm.querySelector(".error.nochange")) {
+        if (!storageForm.querySelector(".error.nochange")) {//If it doesn't already exists, create an Error Message
           markup3 =
             `<div class="error nochange">` +
             `<p><b>Error:&nbsp;</b> No changes were made.</p>` +
@@ -1357,6 +1382,7 @@ function fetchUpdateStorage() {
     });
 }
 
+//Set the Quantity to its Default Value
 function resetQuantity(button, initialValue) {
   const inputElement = button.parentElement.querySelector('.quantity-input');
   inputElement.value = initialValue;
@@ -1364,10 +1390,12 @@ function resetQuantity(button, initialValue) {
   delete quantityChanges[goodName];
 }
 
+//Store the Updated Quantity in an Array
 function updateQuantity(inputElement, goodName) {
   quantityChanges[goodName] = parseInt(inputElement.value);
 }
 
+//Display the Final Quantity Changes Before Submitting
 function displayFinalChanges() {
   for (const goodName in quantityChanges) {
     const newQuantity = quantityChanges[goodName];
@@ -1383,6 +1411,7 @@ function displayFinalChanges() {
   }
 }
 
+//Submit Changes in Database
 function submitChanges() {
   const itemsToSend = {};
   for (const goodName in quantityChanges) {
@@ -1405,19 +1434,19 @@ let numOfFiles = document.getElementById("num-of-files");
 const fileLabel = document.querySelector(".file-label");
 const errorFiletype = document.querySelector(".error.filetype");
 const successMessageUpload = document.getElementById("successMessageUpload");
-fileInput.addEventListener("change", () => {
+fileInput.addEventListener("change", () => { //Create Event Listener for the Uploaded File
   fileList.innerHTML = "";
   numOfFiles.textContent = ``;
   for (i of fileInput.files) {
     let reader = new FileReader();
-    if (i.type != "application/json") {
+    if (i.type != "application/json") { //If the Selected File is not .json, print an Error Message
       errorFiletype.classList.add("active");
       numOfFiles.textContent = 'No Files Selected';
     } else {
-      errorFiletype.classList.remove("active");
+      errorFiletype.classList.remove("active"); //Remove the Error Message if it Exists
       let fileName = i.name;
-      let fileSize = (i.size / 1024).toFixed(1);
-      var markup =
+      let fileSize = (i.size / 1024).toFixed(1); //Display the size of the Selected File correctly
+      var markup = //Display the Selected file and its Size
         `<li>` +
         `<p>${fileName}</p>` +
         `<div class="details">` +
@@ -1426,8 +1455,8 @@ fileInput.addEventListener("change", () => {
         `</div>` +
         `</li>`;
       if (fileSize >= 1024) {
-        fileSize = (fileSize / 1024).toFixed(1);
-        markup =
+        fileSize = (fileSize / 1024).toFixed(1); //Display the size of the Selected File correctly
+        markup = //Display the Selected file and its Size
           `<li>` +
           `<p>${fileName}</p>` +
           `<div class="details">` +
@@ -1439,7 +1468,7 @@ fileInput.addEventListener("change", () => {
       fileList.insertAdjacentHTML("beforeend", markup);
       fileInput.classList.remove("active");
       fileLabel.classList.remove("active");
-      var markup =
+      var markup = //Change the Button from "Select File" to "Upload File"
         `<div class="upload-files">` +
         `<i class="fa-solid fa-arrow-up-from-bracket"></i> Upload Selected File` +
         `</div>`;
@@ -1449,7 +1478,7 @@ fileInput.addEventListener("change", () => {
       uploadFileBtn = document.querySelector(".upload-files");
       uploadFileListener();
       const cancelUpload = document.querySelector(".cancelu");
-      cancelUpload.addEventListener("click", function () {
+      cancelUpload.addEventListener("click", function () { //Create an Event Listener for the Cancel Button
         fileInput.value = '';
         fileList.innerHTML = '';
         document.querySelector(".upload-files").remove();
@@ -1461,6 +1490,7 @@ fileInput.addEventListener("change", () => {
   }
 });
 
+//When the Upload File button is clicked, show a Success Message and Update the SQL Database
 const successMessageURL = document.getElementById("successMessageURL");
 var uploadFileBtn = document.querySelector(".upload-files");
 function uploadFileListener() {
@@ -1478,7 +1508,7 @@ function uploadFileListener() {
 }
 const urlBtn = document.querySelector(".url-button");
 
-urlBtn.addEventListener("click", function () {
+urlBtn.addEventListener("click", function () {//Create an Event Listener for Uploading File from URL
   showSuccessMessageURL()
   const corsAnywhereUrl = 'https://cors-anywhere.herokuapp.com/';
   const targetUrl = 'http://usidas.ceid.upatras.gr/web/2023/export.php';
@@ -1505,6 +1535,7 @@ urlBtn.addEventListener("click", function () {
     })
 })
 
+//Show Success Message when the file is Uploaded Successfully from the URL
 function showSuccessMessageURL() {
   successMessageURL.style.display = "block";
   setTimeout(() => {
@@ -1512,6 +1543,7 @@ function showSuccessMessageURL() {
   }, 3000);
 }
 
+//Show Success Message when the file is Uploaded Successfully
 function showSuccessMessageUpload() {
   successMessageUpload.style.display = "block";
   setTimeout(() => {
@@ -1532,10 +1564,10 @@ const pwShowHide = document.querySelectorAll(".pw_hide");
 pwShowHide.forEach((icon) => {
   icon.addEventListener("click", () => {
     let getPwInput = icon.parentElement.querySelector("input");
-    if (getPwInput.type === "password") {
+    if (getPwInput.type === "password") {//Show Password
       getPwInput.type = "text";
       icon.classList.replace("fa-eye-slash", "fa-eye");
-    } else {
+    } else {//Hide Password
       getPwInput.type = "password";
       icon.classList.replace("fa-eye", "fa-eye-slash");
     }
@@ -1556,9 +1588,9 @@ const passInput = document.querySelector("#pass");
 passInput.addEventListener("keyup", () => {
   validationRegex.forEach((item, i) => {
     let isValid = item.regex.test(passInput.value);
-    if (isValid) {
+    if (isValid) {//Check the Corresponding Field if the Criterias are met
       passChecklist[i].classList.add("checked");
-    } else {
+    } else {//Uncheck the Corresponding Field if the Criterias are not met
       passChecklist[i].classList.remove("checked");
     }
   });
@@ -1578,7 +1610,7 @@ passInput.addEventListener("blur", (e) => {
 //Password Validation
 function checkPass() {
   for (var i = 0; i < passChecklist.length; i++) {
-    if (!passChecklist[i].classList.contains("checked")) {
+    if (!passChecklist[i].classList.contains("checked")) {//If all the Items of the Array contain the Class checked, then the Password is Valid
       passGood = false;
     } else passGood = true;
   }
@@ -1594,7 +1626,7 @@ function checkUsername() {
     usernameField.classList.remove("duplicate");
   } else {
     usernameField.classList.remove("invalid");
-    checkUsernameAvailability();
+    checkUsernameAvailability(); //Function that checks if the same Username already exists
   }
 }
 
@@ -1608,7 +1640,7 @@ function checkTruckId() {
     truckidField.classList.remove("duplicate");
   } else {
     truckidField.classList.remove("invalid");
-    checktruckidAvailability();
+    checktruckidAvailability();//Function that checks if the same TruckID already exists
   }
 }
 
@@ -1657,9 +1689,9 @@ function checkUsernameAvailability() {
     .then((response) => response.json())
     .then((result) => {
       if (result != "False") {
-        usernameField.classList.add("duplicate");
+        usernameField.classList.add("duplicate");//Show the Error for Duplicate Username
       } else {
-        usernameField.classList.remove("duplicate");
+        usernameField.classList.remove("duplicate");//Hide the Error for Duplicate Username
       }
     });
 }
@@ -1675,9 +1707,9 @@ function checktruckidAvailability() {
     .then((response) => response.json())
     .then((result) => {
       if (result != "False") {
-        truckidField.classList.add("duplicate");
+        truckidField.classList.add("duplicate");//Show the Error for Duplicate TruckID
       } else {
-        truckidField.classList.remove("duplicate");
+        truckidField.classList.remove("duplicate");//Hide the Error for Duplicate TruckID
       }
     });
 }
@@ -1709,24 +1741,33 @@ signupBtn.addEventListener("click", (e) => {
     truckidField.classList.contains("invalid") ||
     !passGood
   ) {
+    e.preventDefault();//If at least one of the Fields is Incorrectly filled, don't Submit
+  } else { //Proceed to Submission
     e.preventDefault();
-  } else {
-    e.preventDefault();
-    fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + addressInput.value + '&limit=1')
-      .then(result => result.json())
+    var lat;
+    var lon;
+
+    fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + addressInput.value + '&limit=1') //Get the lat and lon of the Address that was typed.
       .then(result => {
-        if (result.length == 0) {
-          errorAddress.classList.add("active");
-        } else {
-          var lat = result[0].lat;
-          var lon = result[0].lon;
+        if (!result.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return result.json();
+      })
+      .then(result => {
+        if (result.length > 0 && result[0].lat && result[0].lon) { //If the Address Exists Submit
+          lat = result[0].lat;
+          lon = result[0].lon;
           submit(lat, lon);
           showSuccessMessage();
+        } else {
+          errorAddress.classList.add("active"); //If the Address Does Not Exist, print an Error
         }
       })
   }
 });
 
+//Show a Success Message when the Rescuer Account is Created Successfully
 function showSuccessMessage() {
   successMessage.style.display = "block";
   setTimeout(() => {
@@ -1734,6 +1775,7 @@ function showSuccessMessage() {
   }, 3000);
 }
 
+//Submit Rescuer Account Creation Form
 function submit(lat, lon) {
   fetch("rescuer_Creation.php", {
     method: "POST",
@@ -1752,6 +1794,7 @@ function submit(lat, lon) {
 }
 
 //---------- Storage Info -----------//
+//Fetch the items that are either in the Storage or inside a Truck
 function fetchStorageInfo() {
   var categories = [];
   fetch("fetch_StorageInfo.php")
@@ -1760,11 +1803,11 @@ function fetchStorageInfo() {
     })
     .then((data) => {
       const storageTable = document.querySelector(".storage-table");
-      if (data.length != 0) {
-        storageTable.classList.add("active");
+      if (data.length != 0) { //If there are items in the storage table, proceed.
+        storageTable.classList.add("active"); //Display the table
         document.querySelector(".storage-tbody").innerHTML = "";
         document.querySelector(".category-list").innerHTML = "";
-        data.forEach((res) => {
+        data.forEach((res) => { //Create each Row of the Table
           markup1 =
             `<tr>` +
             `<td> ${res.GoodName} </td>` +
@@ -1774,7 +1817,7 @@ function fetchStorageInfo() {
             `</tr>`;
           document.querySelector(".storage-tbody").insertAdjacentHTML("beforeend", markup1);
 
-          if (!categories.includes(res.GoodCategory)) {
+          if (!categories.includes(res.GoodCategory)) { //Create the Category Dropdown Menu
             markup2 =
               `<li class="category-item">` +
               `<input type="checkbox" checked>` +
@@ -1785,8 +1828,8 @@ function fetchStorageInfo() {
           }
         });
         categoryEventListener();
-        updateDisplayedCategories();
-      } else {
+        updateDisplayedCategories(); 
+      } else {//If there are no items in the Storage table, print the following Message.
         storageTable.classList.remove("active");
         markup = `<p class="empty">There aren't any Goods in the Storage at the moment.</p>`;
         document.querySelector(".storage-container").insertAdjacentHTML("beforeend", markup);
@@ -1794,6 +1837,7 @@ function fetchStorageInfo() {
     });
 }
 
+//Add Evenet Listeners to Each Category of the Category DropDown Menu 
 function categoryEventListener() {
   var catItems = document.querySelectorAll(".category-item p");
   catItems.forEach((catItem) => {
@@ -1808,6 +1852,7 @@ function categoryEventListener() {
   });
 }
 
+//Add an Event Listener to the Category DropDown Menu
 const dropdown = document.querySelector(".dropdown-button");
 const dropdownContent = document.querySelector(".dropdown-content");
 dropdown.addEventListener("click", (e) => {
@@ -1815,12 +1860,13 @@ dropdown.addEventListener("click", (e) => {
   updateDisplayedCategories();
 });
 
+//Update the Categories that are displayes in the Category Dropdown Menu
 function updateDisplayedCategories() {
   const selectedCategories = Array.from(document.querySelectorAll('.category-item input[type=checkbox]:checked')).map(checkbox => checkbox.nextSibling.textContent.trim());
   const categoryRows = document.querySelectorAll('.storage-tbody tr');
   categoryRows.forEach(row => {
     const category = row.querySelector('td:nth-child(2)').textContent.trim();
-    if (!selectedCategories.includes(category)) {
+    if (!selectedCategories.includes(category)) { //If the checkbox of a Category is not Checked, then change the style of its row to none. 
       row.style.display = 'none';
     } else {
       row.style.display = '';
