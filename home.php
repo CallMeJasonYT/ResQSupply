@@ -50,6 +50,7 @@ $stmtInsert = $conn->prepare("INSERT INTO citizen (cit_id, cit_fullname, cit_tel
 $stmtInsert->bind_param("issssdd", $id, $fullname, $phone, $email, $address, $latitude, $longitude);
 $stmtInsert->execute();
 $stmtInsert->close();
+$_SESSION["category"] = "citizen";
 
 $response = "OK";
 header('Content-Type: application/json');

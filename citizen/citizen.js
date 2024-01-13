@@ -1031,12 +1031,19 @@ function fetchCitInfo() {
       return response.json();
     })
     .then((data) => {
-      markup =
+      console.log(data)
+      if(data != 'False'){
+        markup =
         `<div class="welcome">` +
         `Welcome, ${data}!` +
         `</div>`
 
-      document.querySelector(".footer").insertAdjacentHTML("afterBegin", markup);
+        document.querySelector(".footer").insertAdjacentHTML("afterBegin", markup);
+      }else{
+        
+        window.location.href = "/ResQSupply/home.html";
+      }
+
     });
 }
 

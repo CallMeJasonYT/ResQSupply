@@ -26,6 +26,7 @@ if (mysqli_num_rows($result) > 0) {
         $response = $row["category"];
         $_SESSION["username"] = $username;
         $_SESSION["id"] = $row["user_id"];
+        $_SESSION["category"] = $row["category"];
     }
 } else {
     $response = "False";
