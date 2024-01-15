@@ -1,6 +1,13 @@
 <?php
 session_start();
 
+if(!isset($_SESSION["category"]) || $_SESSION["category"] != 'rescuer'){
+    session_destroy();
+    header('Content-Type: application/json');
+    echo json_encode("False");
+    exit;
+}
+
 $sname = "localhost";
 $uname = "root";
 $password = "";

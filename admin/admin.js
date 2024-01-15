@@ -119,6 +119,9 @@ function fetchTasksLoc() {
           return fetch("fetch_TasksLoc.php", { method: "POST" })
             .then((response) => response.json())
             .then((data) => {
+              if(data == "False"){
+                location.href = "/ResQSupply/home.html";
+              }
               data.forEach(entry => {
                 setMapMarkers(entry.lat, entry.lon, entry.task_id, null);//Place a pin in the Map for the Task
               });

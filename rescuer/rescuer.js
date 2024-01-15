@@ -1185,6 +1185,9 @@ function fetchResInfo() {
     .then((response) => response.json())
     .then((data) => {
       veh_id = data[0].vehicle;
+      if(data == "False"){
+        location.href = "/ResQSupply/home.html";
+      }
       if (data[0]) {
         const markupWelcome = `<div class="welcome">Welcome, ${data[0].username}!</div>`;
         document.querySelector(".footer").insertAdjacentHTML("afterBegin", markupWelcome);

@@ -36,7 +36,7 @@ function logoutUser() {
     method: "POST",
     credentials: 'include'
   });
-  location.href = "/" + "ResQSupply/home.html";
+  location.href = "/ResQSupply/home.html";
 }
 
 /* ~~~~~~~~~~ Mobile/Desktop Layout ~~~~~~~~~~ */
