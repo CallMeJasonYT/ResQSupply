@@ -29,10 +29,12 @@ $result = $stmtSelect->get_result();
 
 if (mysqli_num_rows($result) > 0) {
     while ($row = mysqli_fetch_assoc($result)) {
+        if($row['task_veh'] == null){$task_veh = null;} 
+        else $task_veh = $row['task_veh'];
         $response[] = [
             'category' => $row['task_cat'],
             'status' => $row['task_status'],
-            'veh' => $row['task_veh']
+            'veh' => $task_veh
         ];
     }
 }

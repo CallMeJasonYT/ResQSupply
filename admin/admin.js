@@ -1,6 +1,6 @@
 /* ~~~~~~~~~~ Map Creation ~~~~~~~~~~ */
 
-//Map Initialization
+// Map Initialization
 var map = L.map('map').setView([38.246242, 21.7350847], 12);
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -15,36 +15,36 @@ const map_desktop = document.getElementById('map');
 map_desktop.classList.add("map");
 map_desktop.classList.add("active");
 
-//Change Position of Search
+// Change Position of Search
 var searchControl = L.control({
   position: 'topright'
 });
 
-//Add the Search Bar Element
+// Add the Search Bar Element
 searchControl.onAdd = function (map) {
   var container = L.DomUtil.create('div', 'leaflet-control leaflet-bar');
   container.innerHTML = '<div class="search active">' +
     `<input type="text" class="address-search" placeholder="Search...">` +
     `<i class="fa-solid fa-magnifying-glass mglass" id="search-icon"></i>` +
     '</div>';
-  //Add event listener to the mglassIcon
+  // Add event listener to the mglassIcon
   const mglassIcon = container.querySelector("#search-icon");
   mglassIcon.addEventListener("click", fetchGeoSearch);
   return container;
 };
 searchControl.addTo(map);
 
-//Fetch Geolocation based on the Searched Route Name
+// Fetch Geolocation based on the Searched Route Name
 function fetchGeoSearch() {
   const query = document.querySelector(".address-search").value;
-  fetch('https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + query + '&limit=1')
+  fetch('https:// nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + query + '&limit=1')
     .then(result => result.json())
     .then(parsedResult => {
       setResultList(parsedResult[0]);
     });
 }
 
-//Change the displayed location according to the Searched Route Name
+// Change the displayed location according to the Searched Route Name
 function setResultList(parsedResult) {
   if (parsedResult && parsedResult.lat && parsedResult.lon) {
     const latitude = parseFloat(parsedResult.lat);
@@ -54,7 +54,7 @@ function setResultList(parsedResult) {
   }
 }
 
-//Markers Icons Initialization
+// Markers Icons Initialization
 const categoryIcons = {
   'Pending Request': L.icon({
     iconUrl: '/ResQSupply/icons/requestsIconPending.svg',
@@ -100,35 +100,35 @@ const categoryIcons = {
   })
 };
 
-//Fetch API to find the location of Every Task, Truck and Base
+// Fetch API to find the location of Every Task, Truck and Base
 function fetchMarkersInfo() {
   fetch("fetch_BaseInfo.php", { method: "POST" })
     .then((response) => response.json())
     .then((data) => {
       data.forEach(entry => {
-        setMapMarkers(entry.lat, entry.lon, 'Base', null); //Place a pin on the Map for the Base
+        setMapMarkers(entry.lat, entry.lon, 'Base', null); // Place a pin on the Map for the Base
       })
       return fetch("fetch_TrucksLoc.php", { method: "POST" })
         .then((response) => response.json())
         .then((data) => {
           data.forEach(entry => {
-            setMapMarkers(entry.lat, entry.lon, entry.category, entry.veh_id); //Place a pin on the Map for the Truck
+            setMapMarkers(entry.lat, entry.lon, entry.category, entry.veh_id); // Place a pin on the Map for the Truck
           });
           return fetch("fetch_TasksLoc.php", { method: "POST" })
             .then((response) => response.json())
             .then((data) => {
-              if(data == "False"){
+              if (data == "False") {
                 location.href = "/ResQSupply/home.html";
               }
               data.forEach(entry => {
-                setMapMarkers(entry.lat, entry.lon, entry.task_id, null); //Place a pin in the Map for the Task
+                setMapMarkers(entry.lat, entry.lon, entry.task_id, null); // Place a pin in the Map for the Task
               });
             });
         });
     });
 }
 
-//Function that Reverse Geocodes the Base Location when updated by the Admin
+// Function that Reverse Geocodes the Base Location when updated by the Admin
 function revGeocode(query) {
   var lng = query.lng;
   var lat = query.lat;
@@ -139,14 +139,14 @@ function revGeocode(query) {
     });
 }
 
-//Function that Formats the address correctly
+// Function that Formats the address correctly
 function parseDisplayName(displayName) {
   const words = displayName.split(', ');
   const address = words.slice(0, 2).join(', ');
   return address;
 }
 
-//Function that Updates the Base Location in the Database when updated by the Admin
+// Function that Updates the Base Location in the Database when updated by the Admin
 function updateBaseLoc(position, lat, lon) {
   fetch('update_BaseLoc.php', {
     method: 'POST',
@@ -158,14 +158,14 @@ function updateBaseLoc(position, lat, lon) {
     .then(response => response.json())
 }
 
-//Function that places the Markers on the Map
+// Function that places the Markers on the Map
 const taskMarkers = [];
 const truckMarkers = [];
 const baseMarkers = [];
 function setMapMarkers(lat, lon, task_id, veh_id) {
   const latitude = lat;
   const longitude = lon;
-  if (task_id == 'YesTruck') { //Markers for Trucks with Active Tasks
+  if (task_id == 'YesTruck') { // Markers for Trucks with Active Tasks
     const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['YesTruck'], draggable: false });
     marker.truckInfo = {
       vehId: veh_id,
@@ -177,7 +177,7 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
       showTruckPopup(marker);
     });
     truckMarkers.push(marker);
-  } else if (task_id == 'NoTruck') { //Markers for Trucks without Active Tasks
+  } else if (task_id == 'NoTruck') { // Markers for Trucks without Active Tasks
     const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['NoTruck'], draggable: false });
     marker.truckInfo = {
       vehId: veh_id,
@@ -185,11 +185,11 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
       longitude: longitude
     };
     marker.addTo(map);
-    marker.on('click', function () { //Popup Info for each Truck
+    marker.on('click', function () { // Popup Info for each Truck
       showTruckPopup(marker);
     });
     truckMarkers.push(marker);
-  } else if (task_id == 'Base') { //Markers for the Base
+  } else if (task_id == 'Base') { // Markers for the Base
     const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Base'], draggable: true });
     marker.baseInfo = {
       latitude: latitude,
@@ -198,7 +198,7 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
     marker.addTo(map);
     baseMarkers.push(marker);
 
-    marker.on('dragend', function (e) { //Make the Base Icon Draggable and add a Confirm Button
+    marker.on('dragend', function (e) { // Make the Base Icon Draggable and add a Confirm Button
       var position = marker.getLatLng();
       marker.setLatLng(position).update();
       map.panTo(position);
@@ -209,9 +209,9 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
       </div>
       </div>
       `).openPopup();
-  });
+    });
   } else {
-    fetch("fetch_TasksInfo.php", { //Task Markers
+    fetch("fetch_TasksInfo.php", { // Task Markers
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ taskID: task_id })
@@ -232,7 +232,7 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
               longitude: longitude
             };
             marker.addTo(map);
-            marker.on('click', function () { //Popup Info for each Task
+            marker.on('click', function () { // Popup Info for each Task
               showTaskPopup(marker, res.status);
             });
             taskMarkers.push(marker);
@@ -243,7 +243,7 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
   }
 }
 
-//Confirm updated Base Location
+// Confirm updated Base Location
 function confirmBaseLocation(markerId) {
   const marker = baseMarkers.find(m => m._leaflet_id == markerId);
   if (marker) {
@@ -254,14 +254,14 @@ function confirmBaseLocation(markerId) {
     marker.baseInfo = {
       latitude: latitude,
       longitude: longitude
-  };
-      revGeocode(position);
-      marker.closePopup();
-      marker.unbindPopup();
+    };
+    revGeocode(position);
+    marker.closePopup();
+    marker.unbindPopup();
   }
 }
 
-//Cancel updated Base Location
+// Cancel updated Base Location
 function cancelBaseLocation(markerId) {
   const marker = baseMarkers.find(m => m._leaflet_id == markerId);
   if (marker) {
@@ -273,7 +273,7 @@ function cancelBaseLocation(markerId) {
   }
 }
 
-//Show Tasks Popups
+// Show Tasks Popups
 function showTaskPopup(marker) {
   fetch("fetch_TasksPopup.php", {
     method: "POST",
@@ -297,7 +297,7 @@ function showTaskPopup(marker) {
     });
 }
 
-//Show Truck Popups
+// Show Truck Popups
 function showTruckPopup(marker) {
   fetch("fetch_TrucksPopup.php", {
     method: "POST",
@@ -329,7 +329,24 @@ function showTruckPopup(marker) {
     })
 }
 
-//Function that Adds the filters on the Map
+// Function that draws Lines from the Truck to its Active Tasks
+const polylines = [];
+function drawLine() {
+  truckMarkers.forEach(function (tmarker) {
+    const pointA = [tmarker.getLatLng().lat, tmarker.getLatLng().lng];
+    const tasksToTruck = taskMarkers.filter(marker => marker.taskInfo.taskVeh == tmarker.truckInfo.vehId);
+    tasksToTruck.forEach(function (task) {
+      const pointB = [task.getLatLng().lat, task.getLatLng().lng];
+      const polyline = L.polyline([pointA, pointB], { color: '#350052' }).addTo(map);
+      polyline.taskInfo = {
+        task_id: task.taskInfo.taskId
+      };
+      polylines.push(polyline);
+    });
+  })
+}
+
+// Function that Adds the filters on the Map
 const filters = L.control({ position: 'topleft' });
 filters.onAdd = function (map) {
   const div = L.DomUtil.create('div', 'filters');
@@ -344,7 +361,18 @@ filters.onAdd = function (map) {
 };
 filters.addTo(map);
 
-//Replace the Map with the Filter Menu
+// Function that Adds Event Listener on each Filter Menu Item
+document.addEventListener("DOMContentLoaded", function () {
+  var filterItems = document.querySelectorAll('.filters-list li .name');
+  filterItems.forEach(function (item) {
+    var checkbox = item.parentNode.querySelector('input[type="checkbox"]');
+    item.addEventListener('click', function () {
+      checkbox.checked = !checkbox.checked;
+    });
+  })
+});
+
+// Replace the Map with the Filter Menu
 const filtersmenu = document.querySelector(".filters-menu");
 const search = document.querySelector(".map-container .search");
 function replaceMapWithMenu() {
@@ -353,7 +381,7 @@ function replaceMapWithMenu() {
   search.classList.remove("active");
 }
 
-//Add or Remove Markers when the xmark is clicked
+// Add or Remove Markers when the xmark is clicked
 let polylinesHidden = false;
 document.addEventListener("DOMContentLoaded", function () {
   const xmark = document.querySelector(".cancelf");
@@ -413,7 +441,7 @@ document.addEventListener("DOMContentLoaded", function () {
         case 'Tasks Lines':
           if (!checkbox.checked) {
             hidePolylines();
-          } else if (!polylinesHidden){
+          } else if (!polylinesHidden) {
             showPolylines();
           }
           break;
@@ -425,7 +453,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-//Hide Markers based on their Category
+// Hide Markers based on their Category
 function removeMarkersByCategory(category) {
   if (category == 'YesTruck' || category == 'NoTruck') {
     truckMarkers.forEach(marker => {
@@ -444,7 +472,7 @@ function removeMarkersByCategory(category) {
   }
 }
 
-//Show Markers based on their Category
+// Show Markers based on their Category
 function addMarkersByCategory(category) {
   if (category == 'YesTruck' || category == 'NoTruck') {
     truckMarkers.forEach(marker => {
@@ -463,38 +491,28 @@ function addMarkersByCategory(category) {
   }
 }
 
-//Function that returns the Icon Name that has been Assigned to a Marker
+// Function that returns the Icon Name that has been Assigned to a Marker
 function getIconName(marker) {
   const iconUrl = marker.options.icon.options.iconUrl;
   const iconName = Object.keys(categoryIcons).find(key => categoryIcons[key].options.iconUrl == iconUrl);
   return iconName;
 }
 
-//Function that Hides all the Polylines
+// Function that Hides all the Polylines
 function hidePolylines() {
   polylines.forEach(polyline => {
     map.removeLayer(polyline);
   })
 }
 
-//Function that Shows all the Polylines
+// Function that Shows all the Polylines
 function showPolylines() {
   polylines.forEach(polyline => {
     map.addLayer(polyline);
   })
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  var filterItems = document.querySelectorAll('.filters-list li .name');
-  filterItems.forEach(function (item) {
-    var checkbox = item.parentNode.querySelector('input[type="checkbox"]');
-    item.addEventListener('click', function () {
-      checkbox.checked = !checkbox.checked;
-    });
-  })
-});
-
-//Create Map Legend
+// Map Legend Creation
 const legendContent = {
   'Pending Request': 'Pending Requests',
   'Executing Request': 'Executing Requests',
@@ -506,7 +524,6 @@ const legendContent = {
 };
 
 const legend = L.control({ position: 'topleft' });
-
 legend.onAdd = function (map) {
   const div = L.DomUtil.create('div', 'legend');
   for (const category in categoryIcons) {
@@ -514,37 +531,20 @@ legend.onAdd = function (map) {
   }
   return div;
 };
-
 legend.addTo(map);
 
+// Zoom Buttons Location
 L.control.zoom({
   position: 'bottomright'
 }).addTo(map);
 
-//Create Map Polylines
-const polylines = [];
-function drawLine() {
-  truckMarkers.forEach(function (tmarker) {
-    const pointA = [tmarker.getLatLng().lat, tmarker.getLatLng().lng];
-    const tasksToTruck = taskMarkers.filter(marker => marker.taskInfo.taskVeh == tmarker.truckInfo.vehId);
-    tasksToTruck.forEach(function (task) {
-      const pointB = [task.getLatLng().lat, task.getLatLng().lng];
-      const polyline = L.polyline([pointA, pointB], { color: '#350052' }).addTo(map);
-      polyline.taskInfo = {
-        task_id: task.taskInfo.taskId
-      };
-      polylines.push(polyline);
-    });
-  })
-}
-
-//Remove Polylines
+// Function that Removes all the Polylines
 function removeAllPolylines() {
   polylines.forEach(polyline => map.removeLayer(polyline));
   polylines.length = 0;
 }
 
-//Remove a Polyline based on the Task_id
+// Function that Removes a Polyline based on the Task id
 function removePolyline(task_id) {
   const polylineToRemove = polylines.find(polyline => polyline.taskInfo.task_id == task_id);
   map.removeLayer(polylineToRemove);
@@ -556,7 +556,7 @@ function removePolyline(task_id) {
 
 /* ~~~~~~~~~~ General Functions ~~~~~~~~~~ */
 
-//When the window is resized or Loaded do the following
+// When the window is resized or Loaded do the following
 document.addEventListener("DOMContentLoaded", function () {
   map.invalidateSize();
   checkWidth();
@@ -567,7 +567,7 @@ window.addEventListener("resize", (e) => {
   checkWidth();
 });
 
-//Checking Viewport Width
+// Checking Viewport Width
 var viewportW = window.innerWidth;
 var cnt = 0;
 function checkWidth() {
@@ -583,20 +583,17 @@ function checkWidth() {
   }
 }
 
-//Desktop Layout Changes
+// Desktop Layout Changes
 function desktopApply() {
   deskCustomization();
   cnt++;
 }
 
-//Creating desktop-view Div
+// Function that Customizes the DOM for Desktop-like Viewports
 const burgerCont = document.querySelector(".burger-container");
 const storageCont = document.querySelector(".storage-container");
-
-//Activating all the tabs and NavBar Options
 const burgerIcox = document.querySelector(".burgerx");
 const burgerIco = document.querySelector(".burgeri");
-
 function deskCustomization() {
   mainModule.style.flexDirection = "row";
   var storageSection = document.querySelector('.storage-sect');
@@ -607,13 +604,13 @@ function deskCustomization() {
   map.invalidateSize();
 }
 
-//Mobile Layout Changes
+// Mobile Layout Changes
 function mobileApply() {
   mobileCustomization();
   cnt--;
 }
 
-//Activating 
+// Function that Customizes the DOM for Mobile-like Viewports
 function mobileCustomization() {
   mainModule.style.flexDirection = "column";
   var storageSection = document.querySelector('.storage-sect');
@@ -621,12 +618,12 @@ function mobileCustomization() {
   var mainElement = document.querySelector('main');
   mainElement.removeChild(storageSection);
   mainElement.insertBefore(storageSection, mapSection.nextSibling);
-  map.invalidateSize()
+  map.invalidateSize();
 }
 
 /* ~~~~~~~~~~ Burger Menu Functions ~~~~~~~~~~ */
 
-//Burger Open
+// Burger Menu Event Listener (Open)
 const burgerSect = document.querySelector(".burger-sect");
 burgerIco.addEventListener("click", (e) => {
   annTextForm.classList.add("active");
@@ -637,18 +634,18 @@ burgerIco.addEventListener("click", (e) => {
   burgerSect.classList.add("active");
 });
 
-//Burger Close
+// Burger Menu Event Listener (Close)
 const statsTab = document.querySelector(".statistics-sect");
 const rescAccSect = document.querySelector(".rescuer-acc-sect");
 const annCreateSect = document.querySelector(".ann-create-sect");
 const storageMngSect = document.querySelector(".storage-mngmt-sect");
-
 burgerIcox.addEventListener("click", (e) => {
   burgerIcox.classList.remove("active");
   burgerIco.classList.add("active");
   burgerSect.classList.remove("active");
 });
 
+// Event Listener for each item in the Burger Menu
 const burgerItems = document.querySelectorAll(".burger-item");
 const mapSection = document.querySelector(".map-sect");
 const storageSection = document.querySelector(".storage-sect");
@@ -736,7 +733,7 @@ burgerItems.forEach(function (item) {
 
 /* ~~~~~~~~~~ Statistics ~~~~~~~~~~ */
 
-//Create a Date object, and get the current day, month and year
+// Function that returns the current day, month and year
 function getCurrentDate() {
   const today = new Date();
   const year = today.getFullYear();
@@ -745,7 +742,7 @@ function getCurrentDate() {
   return `${year}-${month}-${day}`;
 }
 
-//Create a Date object that calculates the date that it was 7 days ago
+// Function that returns the day, month and year, 7 days ago
 function getLastWeekDate() {
   const today = new Date();
   const sevenDaysAgo = new Date(today - 7 * 24 * 60 * 60 * 1000); // 7 days ago in milliseconds
@@ -755,9 +752,9 @@ function getLastWeekDate() {
   return `${year}-${month}-${day}`;
 }
 
+// Chart Configuration
 Chart.defaults.plugins.legend.position = 'top';
 Chart.defaults.plugins.legend.align = 'start';
-
 const config = {
   type: 'bar',
   data: {},
@@ -775,12 +772,13 @@ const config = {
   }
 };
 
-// Render Initial Block
+// Render Initial Chart Block
 const myChart = new Chart(
   document.getElementById('myChart'),
   config
 );
 
+// Function that fetches the Stats and Renders the Chart
 const containerBody = document.querySelector('.containerBody');
 const chartBox = document.querySelector('.chartBox');
 function fetchAndRenderChart(startDate, endDate) {
@@ -834,37 +832,47 @@ function fetchAndRenderChart(startDate, endDate) {
     });
 }
 
+// Function that transforms the Fetched Data
 function transformData(jsonData, startDate, endDate) {
   let dates = [];
   let currentDateObj = new Date(startDate);
   const endDateObj = new Date(endDate);
 
+  // Loop through dates from the start date to the end date
   while (currentDateObj <= endDateObj) {
+
+    // Format the month and day with leading zeros if necessary.
     let month = (currentDateObj.getMonth() + 1).toString().padStart(2, '0');
     let day = currentDateObj.getDate().toString().padStart(2, '0');
 
+    // Construct a formatted date string in the format 'YYYY-MM-DD'.
     let date = `${currentDateObj.getFullYear()}-${month}-${day}`;
     dates.push(date);
 
     currentDateObj.setDate(currentDateObj.getDate() + 1);
   }
-
   let finalLabels = [];
   let finalDatas = [];
 
+  // Loop through the 'dates' array and populate 'finalLabels' and 'finalDatas'.
   for (const [index, date] of dates.entries()) {
+    // Check if there is data for the current date in the fetched data.
     if (jsonData.data.length != 0 && jsonData.data.count[date]) {
+      // If data exists, add the date and the Stats for that Date to the arrays.
       finalLabels.push(date);
       finalDatas.push(jsonData.data.count[date]);
     } else {
+      // If no data exists for the current date, add the date and 0 to the arrays.
       finalLabels.push(date);
       finalDatas.push(0);
     }
   }
 
+  // Return an object containing the final labels and data arrays.
   return { labels: finalLabels, data: finalDatas };
 }
 
+// Initialisation of the Custom Range Date Picker
 const picker = new easepick.create({
   element: document.getElementById('datepicker'),
   css: [
@@ -884,6 +892,7 @@ const picker = new easepick.create({
   }
 });
 
+// Function that Converts the Selected date into a Date Element
 function dateConverter(dateString) {
   const inputDate = new Date(dateString);
   const year = inputDate.getFullYear();
@@ -904,7 +913,7 @@ const annSubmitBtn = document.querySelector(".ann-submit");
 const cancelAnn = document.querySelectorAll(".cancela");
 let selectedItems = [];
 
-//Cretae an Event Listener for the canccel Button
+// Create an Event Listener for the cancel Button
 cancelAnn.forEach(function (btn) {
   btn.addEventListener("click", function () {
     annTextForm.classList.add("active");
@@ -923,45 +932,45 @@ const detailsInput = document.querySelector("#details");
 var titleValue;
 var detailsValue;
 
-//Create an Event Listener for the Announcements Next Button
+// Create an Event Listener for the Announcements Next Button
 annNextTextBtn.addEventListener("click", function () {
   checkInput()
 })
 
-//Create an Event Listener for the Title Input Field
+// Create an Event Listener for the Title Input Field
 titleInput.addEventListener("input", function () {
   const errorTitle = document.querySelector(".error.emptytitle");
   errorTitle.classList.remove("active");
 });
 
-//Create an Event Listener for the Details Input Field
+// Create an Event Listener for the Details Input Field
 detailsInput.addEventListener("input", function () {
   const errorDetails = document.querySelector(".error.emptydetails");
   errorDetails.classList.remove("active");
 });
 
-////Create an Event Listener for the Announcements Items Next Button
+// Create an Event Listener for the Announcements Items Next Button
 const errorNone = document.querySelector(".error.none");
 annNextItemsBtn.addEventListener("click", function () {
-    selItems();
+  selItems();
 })
 
-//Create an Event Listener for for the Announcement Submit Button
+// Create an Event Listener for for the Announcement Submit Button
 annSubmitBtn.addEventListener("click", function () {
   annSubmit();
   showSuccessMessageAnn();
-  selectedItems = [];
-  document.querySelector(".ann-items-form .item-list").innerHTML = "";
-  document.querySelector(".ann-text-confirm").innerHTML = "";
-  titleInput.value = '';
-  detailsInput.value = '';
 })
 
-//Show a Succes Message when the Submission was Successful
+// Show a Succes Message when the Submission was Successful
 const successMessageAnn = document.getElementById("successMessageAnn");
 function showSuccessMessageAnn() {
   successMessageAnn.style.display = "block";
   setTimeout(() => {
+    selectedItems = [];
+    document.querySelector(".ann-items-form .item-list").innerHTML = "";
+    document.querySelector(".ann-text-confirm").innerHTML = "";
+    titleInput.value = '';
+    detailsInput.value = '';
     successMessageAnn.style.display = "none";
     annConfirmForm.classList.remove("active");
     annTextForm.classList.add("active");
@@ -970,7 +979,7 @@ function showSuccessMessageAnn() {
   }, 3000);
 }
 
-//Fetch API for the Storage Table Items
+// Fetch API for the Storage Table Items
 const itemSelect = document.querySelector(".item-drop-sel");
 function fetchStorageItems() {
   fetch("fetch_storageItems.php")
@@ -978,12 +987,12 @@ function fetchStorageItems() {
       return response.json();
     })
     .then((data) => {
-      if (data.length != 0) {//If the Storage Table is not Empty
-        if(document.querySelector(".ann-items-form .empty")){
+      if (data.length != 0) {// If the Storage Table is not Empty
+        if (document.querySelector(".ann-items-form .empty")) {
           document.querySelector(".ann-items-form .empty").remove();
         }
         itemSelect.classList.add("active");
-        data.forEach((res) => {//Create a List Item for every Item in the Storage Table
+        data.forEach((res) => {// Create a List Item for every Item in the Storage Table
           markup =
             `<li class="item">` +
             `<p class="item-text">${res.GoodName}</p>` +
@@ -992,12 +1001,12 @@ function fetchStorageItems() {
         });
         itemsBtn = document.querySelectorAll(".ann-items-form .item-list .item");
         itemsBtnListener();
-      } else { //If the Storage Table is Empty display a Message
-        itemSelect.classList.remove("active"); //Remove the items list if it exists.
-        if(document.querySelector(".ann-items-form .item-list li")){
+      } else { // If the Storage Table is Empty display a Message
+        itemSelect.classList.remove("active"); // Remove the items list if it exists.
+        if (document.querySelector(".ann-items-form .item-list li")) {
           document.querySelector(".ann-items-form .item-list").innerHTML = "";
         }
-        if(!document.querySelector(".ann-items-form .empty")){
+        if (!document.querySelector(".ann-items-form .empty")) {
           markup = `<p class="empty">There aren't any Goods in the Storage at the moment.</p>`;
           document.querySelector(".item-select").insertAdjacentHTML("beforeend", markup);
         }
@@ -1005,7 +1014,7 @@ function fetchStorageItems() {
     });
 }
 
-//Adding Event Listeners to the Item Elements and Displaying the Selected Items Correctly
+// Adding Event Listeners to the Item Elements and Displaying the Selected Items Correctly
 var itemsBtn = document.querySelectorAll(".ann-items-form .item-list .item");
 function itemsBtnListener() {
   itemsBtn.forEach(function (item) {
@@ -1019,24 +1028,24 @@ function itemsBtnListener() {
   });
 }
 
-//Loading the Selected Items on an Array
+// Loading the Selected Items on an Array
 function selItems() {
   itemsBtn.forEach(function (item) {
     if (item.classList.contains("selected")) {
       selectedItems.push(item.innerText);
     }
   })
-  if(selectedItems.length != 0){
+  if (selectedItems.length != 0) {
     annItemsForm.classList.remove("active");
     annConfirmForm.classList.add("active");
     errorNone.classList.remove("active");
     showAnnouncement();
-  }else{
+  } else {
     errorNone.classList.add("active");
   }
 }
 
-//Show the Final Announcement beore Submititng
+// Show the Final Announcement beore Submititng
 function showAnnouncement() {
   markup =
     `<div class="item-title"><b>${titleValue}</b></div>` +
@@ -1045,7 +1054,7 @@ function showAnnouncement() {
   document.querySelector(".ann-text-confirm").insertAdjacentHTML("beforeend", markup);
 }
 
-//Submit Announcement in Database
+// Submit Announcement in Database
 function annSubmit() {
   fetch("announcement_Creation.php", {
     method: "POST",
@@ -1055,11 +1064,11 @@ function annSubmit() {
     .then((response) => response.json())
 }
 
-//Check if the Title or the Details field is Empty 
+// Check if the Title or the Details field is Empty 
 function checkInput() {
   const errorTitle = document.querySelector(".error.emptytitle");
   const errorDetails = document.querySelector(".error.emptydetails");
-  if(titleInput.value != '' && detailsInput.value != '') {
+  if (titleInput.value != '' && detailsInput.value != '') {
     annTextForm.classList.remove("active");
     annItemsForm.classList.add("active");
     titleValue = titleInput.value;
@@ -1067,20 +1076,22 @@ function checkInput() {
     errorTitle.classList.remove("active");
     errorDetails.classList.remove("active");
     fetchStorageItems();
-  } 
-  else if(titleInput.value == '' && detailsInput.value == '') {
+  }
+  else if (titleInput.value == '' && detailsInput.value == '') {
     errorTitle.classList.add("active");
     errorDetails.classList.add("active");
   }
-  else if(titleInput.value == '') {
+  else if (titleInput.value == '') {
     errorTitle.classList.add("active");
   }
-  else if(detailsInput.value == '') {
+  else if (detailsInput.value == '') {
     errorDetails.classList.add("active");
   }
 }
+
 /* ~~~~~~~~~~ Storage Management Functions ~~~~~~~~~~ */
 
+// Function that adds a Bottom Border for the Tab Buttons
 function toggleBottomBorder(clickedButton) {
   var buttons = document.querySelectorAll(".button");
   buttons.forEach(function (button) {
@@ -1089,6 +1100,7 @@ function toggleBottomBorder(clickedButton) {
   clickedButton.classList.add("selected");
 }
 
+// Storage Tab Button Event Listener
 const storageBtn = document.querySelector("#storageBtn");
 const storageUpdateTab = document.querySelector(".storage-update-tab");
 const transferredItemsTab = document.querySelector(".transferred-items-tab");
@@ -1101,7 +1113,7 @@ storageBtn.addEventListener("click", function () {
   fetchUpdateStorage();
   fileInput.value = '';
   fileList.innerHTML = '';
-  if(document.querySelector(".upload-files")){
+  if (document.querySelector(".upload-files")) {
     document.querySelector(".upload-files").remove();
   }
   fileInput.classList.add("active");
@@ -1109,16 +1121,17 @@ storageBtn.addEventListener("click", function () {
   numOfFiles.textContent = 'No Files Selected';
 })
 
+// Transferred Items Tab Button Event Listener
 const transferredBtn = document.querySelector("#transferredBtn");
 transferredBtn.addEventListener("click", function () {
-  fetchtransferredItems();
+  fetchTransferredItems();
   quantityChanges = [];
   transferredItemsTab.classList.add("active");
   storageUpdateTab.classList.remove("active");
   updateGoodsTab.classList.remove("active");
   fileInput.value = '';
   fileList.innerHTML = '';
-  if(document.querySelector(".upload-files")){
+  if (document.querySelector(".upload-files")) {
     document.querySelector(".upload-files").remove();
   }
   fileInput.classList.add("active");
@@ -1126,6 +1139,7 @@ transferredBtn.addEventListener("click", function () {
   numOfFiles.textContent = 'No Files Selected';
 })
 
+// Update Goods Tab Button Event Listener
 const updateBtn = document.querySelector("#updateBtn");
 updateBtn.addEventListener("click", function () {
   quantityChanges = [];
@@ -1139,22 +1153,24 @@ var goodListItems = [];
 var storageItemsNames = [];
 var storageListItems = [];
 const successMessagetransferred = document.getElementById("successMessagetransferred");
-function showSuccessMessagetransferred() {
+
+// Function that shows a success message after Submiting the Changes in Transferred Items
+function showSuccessMessageTransferred() {
   successMessagetransferred.style.display = "block";
   setTimeout(() => {
     successMessagetransferred.style.display = "none";
   }, 3000);
 }
 
-//Fetch API for the Transferred Items
-function fetchtransferredItems() {
-  // Fetch storage items
+// Function that Fetches Storage and Goods Items
+function fetchTransferredItems() {
   fetch("fetch_storageItems.php")
     .then((response) => response.json())
     .then((data) => {
       emptyGoodStorageLists();
-      if (data.length !== 0) {//If the Storage Table is not Empty
-        data.forEach((res) => {//Create a List Item for each Item of the Storage Table
+      if (data.length !== 0) {
+        data.forEach((res) => {
+          // Create a List Item for each Item of the Storage Table
           const markup = `<li class="item">` +
             `<p class="item-text">${res.GoodName}</p>` +
             `</li>`;
@@ -1163,23 +1179,25 @@ function fetchtransferredItems() {
         });
 
         const items = document.querySelectorAll(".storage-item-list .item");
-        items.forEach((item) => { //Add all the Storage Items in an Array
+        items.forEach((item) => {
           storageListItems.push(item);
         });
         storageItemsEventListener();
-      } else {//If the Storage Table is Empty print an Error Message
+      } else {
+        // If the Storage Table is Empty print an Error Message
         if (!document.querySelector(".storage-items-form .empty")) {
           const markup = `<p class="empty">There aren't any Goods in the Storage at the moment.</p>`;
           document.querySelector(".storage-items-form .item-options").insertAdjacentHTML("beforeend", markup);
         }
       }
-      return fetch("fetch_GoodItems.php"); //Fetch Good Items
+      return fetch("fetch_GoodItems.php");
     })
     .then((response) => response.json())
     .then((data) => {
-      if (data.length !== 0) {//If the Goods Table is not Empty
+      if (data.length !== 0) {
         data.forEach((res) => {
-          if (!storageItemsNames.includes(res.GoodName)) {//Create a List Item for every Item of the Goods Table that does not Exist in the Storage Table.
+          if (!storageItemsNames.includes(res.GoodName)) {
+            // Create a List Item for every Item of the Goods Table that does not Exist in the Storage Table.
             const markup = `<li class="item">` +
               `<p class="item-text">${res.GoodName}</p>` +
               `</li>`;
@@ -1188,7 +1206,7 @@ function fetchtransferredItems() {
         });
 
         const items = document.querySelectorAll(".good-item-list .item");
-        items.forEach((item) => {//Add every item of the Goods Table to an Array
+        items.forEach((item) => {
           goodListItems.push(item);
         });
         goodsItemsEventListener();
@@ -1198,23 +1216,29 @@ function fetchtransferredItems() {
 
 var storageListenersAdded = [];
 var goodListenersAdded = [];
-//Add an Event Listener to Every Item of the Storage List, if it doesn't already Exist
+// Add an Event Listener to Every Item of the Storage List, if it doesn't already Exist
 function storageItemsEventListener() {
   storageListItems.forEach(function (item, index) {
     if (!storageListenersAdded[index]) {
       item.addEventListener("click", function () {
-        const clonedItem = item.cloneNode(true); //When an Item is Cliecked, clone it 
-        document.querySelector(".good-item-list").appendChild(clonedItem); //Add the item to the Goods List
-        goodListItems.push(clonedItem); //Add the cloned Item to the Goods Array
-        if(storageListItems.length - 1 == 0){ //If there is no other Items in the Goods List, print the Following Message
+        // When an Item is Cliecked, clone it 
+        const clonedItem = item.cloneNode(true);
+        // Add the item to the Goods List
+        document.querySelector(".good-item-list").appendChild(clonedItem);
+        goodListItems.push(clonedItem);
+        // If there is no other Items in the Goods List, print the Following Message
+        if (storageListItems.length - 1 == 0) {
           const markup = `<p class="empty">There aren't any Available Goods at the moment</p>`;
           document.querySelector(".storage-items-form .item-options").insertAdjacentHTML("beforeend", markup);
         }
-        storageListItems.splice(storageListItems.indexOf(item), 1); //Remove the Clicked Item from the Storage Array
-        storageListenersAdded.splice(index, 1); //Remove the Event Listener of the Clicked Item
-        sortItems(".storage-item-list"); //Sort the Lists Again
-        sortItems(".good-item-list");//Sort the Lists Again
-        goodsItemsEventListener();//Add Event Listener to the Goods Items List Again 
+        // Remove the Clicked Item from the Storage Array
+        storageListItems.splice(storageListItems.indexOf(item), 1);
+        // Remove the Event Listener of the Clicked Item
+        storageListenersAdded.splice(index, 1);
+        sortItems(".storage-item-list");
+        sortItems(".good-item-list");
+        // Add Event Listener to the Goods Items List 
+        goodsItemsEventListener();
         item.remove();
       });
       storageListenersAdded[index] = true;
@@ -1222,21 +1246,26 @@ function storageItemsEventListener() {
   });
 }
 
-//Add an Event Listener to Every Item of the Goods List, if it doesn't already Exist
+// Add an Event Listener to Every Item of the Goods List, if it doesn't already Exist
 function goodsItemsEventListener() {
   goodListItems.forEach(function (item, index) {
     if (!goodListenersAdded[index]) {
       item.addEventListener("click", function () {
-        const clonedItem = item.cloneNode(true);//When an Item is Cliecked, clone it 
-        document.querySelector(".storage-item-list").appendChild(clonedItem);//Add the item to the Storage List
-        storageListItems.push(clonedItem);//Add the cloned Item to the Storage Array
-        goodListItems.splice(goodListItems.indexOf(item), 1); //Remove the Clicked Item from the Goods Array
-        goodListenersAdded.splice(index, 1);//Remove the Event Listener of the Clicked Item
-        sortItems(".storage-item-list");//Sort the Lists Again
-        sortItems(".good-item-list");//Sort the Lists Again
-        storageItemsEventListener();//Add Event Listener to the Storage Items List Again 
+        // When an Item is Cliecked, clone it 
+        const clonedItem = item.cloneNode(true);
+        // Add the item to the Storage List
+        document.querySelector(".storage-item-list").appendChild(clonedItem);
+        storageListItems.push(clonedItem);
+        // Remove the Clicked Item from the Goods Array
+        goodListItems.splice(goodListItems.indexOf(item), 1);
+        // Remove the Event Listener of the Clicked Item
+        goodListenersAdded.splice(index, 1);
+        sortItems(".storage-item-list");
+        sortItems(".good-item-list");
+        // Add Event Listener to the Storage Items List
+        storageItemsEventListener();
         item.remove();
-        if(storageListItems != null && document.querySelector(".transferred-items-tab .empty")){
+        if (storageListItems != null && document.querySelector(".transferred-items-tab .empty")) {
           document.querySelector(".transferred-items-tab .empty").remove();
         }
       });
@@ -1245,7 +1274,7 @@ function goodsItemsEventListener() {
   });
 }
 
-//Empty the Goods and Storage Lists
+// Function that Empties the Goods and Storage Lists
 function emptyGoodStorageLists() {
   const goodsItems = document.querySelector(".good-item-list");
   const storageItems = document.querySelector(".storage-item-list");
@@ -1257,7 +1286,7 @@ function emptyGoodStorageLists() {
   storageListenersAdded = [];
 }
 
-//Sort the Items of the 2 Lists
+// Function that Sorts the Items of the Goods and Storage Lists
 function sortItems(selector) {
   const list = document.querySelectorAll(selector + " .item");
   const sortedList = Array.from(list).sort((a, b) => {
@@ -1275,9 +1304,9 @@ function sortItems(selector) {
 const submittransferredBtn = document.querySelector(".exchange-submit");
 submittransferredBtn.addEventListener("click", submitTranferedItems);
 
-//Submit the Transferred Items to the Database
+// Submit the Transferred Items to the Database
 function submitTranferedItems() {
-  showSuccessMessagetransferred();
+  showSuccessMessageTransferred();
   var itemNames = [];
   storageListItems.forEach((item) => {
     itemNames.push(item.innerText);
@@ -1300,7 +1329,8 @@ const strgQuantityForm = document.querySelector(".storage-quantity-form");
 const strgConfirmForm = document.querySelector(".storage-confirm-form");
 let quantityChanges = [];
 
-cancelUpdate.addEventListener("click", function () { //Create an Event Listener for the Cancel Button
+// Create an Event Listener for the Cancel Button
+cancelUpdate.addEventListener("click", function () {
   strgQuantityForm.classList.add("active");
   strgConfirmForm.classList.remove("active");
   document.querySelector(".storage-confirm-form .items-list").innerHTML = "";
@@ -1308,21 +1338,22 @@ cancelUpdate.addEventListener("click", function () { //Create an Event Listener 
   fetchUpdateStorage();
 })
 
-//Proceed to the Confirm Form when the Next Button is Clicked
+// Next Button after Quantity Input Event Listener
 function storageNextEventListener() {
   const strgNextQuantityBtn = document.querySelector(".strg-next-quantity");
   strgNextQuantityBtn.addEventListener("click", function () {
     displayFinalChanges();
-    if (Object.keys(quantityChanges).length == 0) { //If No Changes have been made, print the according Error Message. 
+    if (Object.keys(quantityChanges).length == 0) {
+      // If No Changes have been made, print an Error Message. 
       errorNoChange.classList.add("active");
-    } else { //Else Proceed to the Confirm Form
+    } else {
       strgQuantityForm.classList.remove("active");
       strgConfirmForm.classList.add("active");
     }
   })
 }
 
-//Submit the Quantity Changes in the Database
+// Submit the Quantity Changes in the Database
 const successMessageStorage = document.getElementById("successMessageStorage");
 const strgSubmitBtn = document.querySelector(".storage-submit");
 strgSubmitBtn.addEventListener("click", function () {
@@ -1330,7 +1361,7 @@ strgSubmitBtn.addEventListener("click", function () {
   showSuccessMessageStorage();
 })
 
-//Show a Success Message when the Form is Successfully Submitted. 
+// Show a Success Message when the Form is Successfully Submitted. 
 function showSuccessMessageStorage() {
   successMessageStorage.style.display = "block";
   setTimeout(() => {
@@ -1343,7 +1374,7 @@ function showSuccessMessageStorage() {
   }, 3000);
 }
 
-//Fetch API to Display all the Items in the Storage Table and set their Default Quantities
+// Function that Fetches and Displays all the Items in the Storage Table and their Quantities
 function fetchUpdateStorage() {
   fetch("fetch_storageItems.php")
     .then((response) => {
@@ -1352,10 +1383,10 @@ function fetchUpdateStorage() {
     .then((data) => {
       const storageForm = document.querySelector(".storage-quantity-form");
       document.querySelector(".storage-confirm-form .items-list").innerHTML = "";
-      if (data.length != 0) { //If the Storage Table is not Empty, Display its items
+      if (data.length != 0) {
         storageForm.classList.add("active");
         document.querySelector(".storage-update-tab .empty").classList.remove("active");
-        if (!storageForm.querySelector(".item-select")) { //If it is not already created, create the div and the list
+        if (!storageForm.querySelector(".item-select")) {
           markup1 =
             `<div class="item-select">` +
             `<ul class="items-list">` +
@@ -1366,27 +1397,27 @@ function fetchUpdateStorage() {
         storageForm.querySelector(".items-list").innerHTML = "";
         data.forEach((res) => {
           const existingItem = storageForm.querySelector(`.item-text[data-goodname="${res.GoodName}"]`);
-          if (!existingItem) {//If it is not already added in the list, display the item and its default quantity
+          if (!existingItem) {
             markup =
               `<li class="item">` +
               `<div class="item-count">` +
               `<p class="item-text" data-goodname="${res.GoodName}">${res.GoodName}</p>` +
               `<div class="item-quantity">` +
               `<p class="quantity-text">Quantity:</p>` +
-              `<input class="quantity-input" type="number" value="${res.GoodValue}" oninput="validity.valid||(value='0');" onchange="updateQuantity(this, '${res.GoodName}')">` + //When the quantity of an item changes, call the updatQuantity() function
-              `<p class="reset-button" onclick="resetQuantity(this, ${res.GoodValue})"> Reset </p>` + //When the Reset Button is Clicked, call the resetQuantity() function
+              `<input class="quantity-input" type="number" value="${res.GoodValue}" oninput="validity.valid||(value='0');" onchange="updateQuantity(this, '${res.GoodName}')">` +
+              `<p class="reset-button" onclick="resetQuantity(this, ${res.GoodValue})"> Reset </p>` +
               `</div>` +
               `</div>` +
               `</li>`;
             storageForm.querySelector(".items-list").insertAdjacentHTML("beforeend", markup);
           }
         });
-        if (!storageForm.querySelector(".strg-next-quantity")) { //If it doesn't already exists, create a Next Button
+        if (!storageForm.querySelector(".strg-next-quantity")) {
           markup2 = `<button type="button" class="button strg-next-quantity"> Next </button>`;
           storageForm.insertAdjacentHTML("beforeend", markup2);
           storageNextEventListener();
         }
-        if (!storageForm.querySelector(".error.nochange")) {//If it doesn't already exists, create an Error Message
+        if (!storageForm.querySelector(".error.nochange")) {
           markup3 =
             `<div class="error nochange">` +
             `<p><b>Error:&nbsp;</b> No changes were made.</p>` +
@@ -1396,7 +1427,7 @@ function fetchUpdateStorage() {
         }
       } else {
         storageForm.classList.remove("active");
-        if(storageForm.querySelector(".items-list")){
+        if (storageForm.querySelector(".items-list")) {
           storageForm.querySelector(".items-list").innerHTML = "";
         }
         document.querySelector(".storage-update-tab .empty").classList.add("active");
@@ -1404,7 +1435,7 @@ function fetchUpdateStorage() {
     });
 }
 
-//Set the Quantity to its Default Value
+// Set the Quantity to its Default Value
 function resetQuantity(button, initialValue) {
   const inputElement = button.parentElement.querySelector('.quantity-input');
   inputElement.value = initialValue;
@@ -1412,12 +1443,12 @@ function resetQuantity(button, initialValue) {
   delete quantityChanges[goodName];
 }
 
-//Store the Updated Quantity in an Array
+// Store the Updated Quantity in an Array
 function updateQuantity(inputElement, goodName) {
   quantityChanges[goodName] = parseInt(inputElement.value);
 }
 
-//Display the Final Quantity Changes Before Submitting
+// Display the Final Quantity Changes Before Submitting
 function displayFinalChanges() {
   for (const goodName in quantityChanges) {
     const newQuantity = quantityChanges[goodName];
@@ -1433,7 +1464,7 @@ function displayFinalChanges() {
   }
 }
 
-//Submit Changes in Database
+// Function that Submits the Changes in Database
 function submitChanges() {
   const itemsToSend = {};
   for (const goodName in quantityChanges) {
@@ -1456,19 +1487,21 @@ let numOfFiles = document.getElementById("num-of-files");
 const fileLabel = document.querySelector(".file-label");
 const errorFiletype = document.querySelector(".error.filetype");
 const successMessageUpload = document.getElementById("successMessageUpload");
-fileInput.addEventListener("change", () => { //Create Event Listener for the Uploaded File
+// Create Event Listener for the File Input
+fileInput.addEventListener("change", () => {
   fileList.innerHTML = "";
   numOfFiles.textContent = ``;
   for (i of fileInput.files) {
     let reader = new FileReader();
-    if (i.type != "application/json") { //If the Selected File is not .json, print an Error Message
+    // If the Selected File is not .json, print an Error Message
+    if (i.type != "application/json") {
       errorFiletype.classList.add("active");
       numOfFiles.textContent = 'No Files Selected';
     } else {
-      errorFiletype.classList.remove("active"); //Remove the Error Message if it Exists
+      errorFiletype.classList.remove("active");
       let fileName = i.name;
-      let fileSize = (i.size / 1024).toFixed(1); //Display the size of the Selected File correctly
-      var markup = //Display the Selected file and its Size
+      let fileSize = (i.size / 1024).toFixed(1);
+      var markup =
         `<li>` +
         `<p>${fileName}</p>` +
         `<div class="details">` +
@@ -1477,8 +1510,8 @@ fileInput.addEventListener("change", () => { //Create Event Listener for the Upl
         `</div>` +
         `</li>`;
       if (fileSize >= 1024) {
-        fileSize = (fileSize / 1024).toFixed(1); //Display the size of the Selected File correctly
-        markup = //Display the Selected file and its Size
+        fileSize = (fileSize / 1024).toFixed(1);
+        markup =
           `<li>` +
           `<p>${fileName}</p>` +
           `<div class="details">` +
@@ -1490,7 +1523,7 @@ fileInput.addEventListener("change", () => { //Create Event Listener for the Upl
       fileList.insertAdjacentHTML("beforeend", markup);
       fileInput.classList.remove("active");
       fileLabel.classList.remove("active");
-      var markup = //Change the Button from "Select File" to "Upload File"
+      var markup =
         `<div class="upload-files">` +
         `<i class="fa-solid fa-arrow-up-from-bracket"></i> Upload Selected File` +
         `</div>`;
@@ -1500,7 +1533,7 @@ fileInput.addEventListener("change", () => { //Create Event Listener for the Upl
       uploadFileBtn = document.querySelector(".upload-files");
       uploadFileListener();
       const cancelUpload = document.querySelector(".cancelu");
-      cancelUpload.addEventListener("click", function () { //Create an Event Listener for the Cancel Button
+      cancelUpload.addEventListener("click", function () {
         fileInput.value = '';
         fileList.innerHTML = '';
         document.querySelector(".upload-files").remove();
@@ -1512,7 +1545,7 @@ fileInput.addEventListener("change", () => { //Create Event Listener for the Upl
   }
 });
 
-//When the Upload File button is clicked, show a Success Message and Update the SQL Database
+// When the Upload File button is clicked, show a Success Message and Update the Database
 const successMessageURL = document.getElementById("successMessageURL");
 var uploadFileBtn = document.querySelector(".upload-files");
 function uploadFileListener() {
@@ -1530,7 +1563,8 @@ function uploadFileListener() {
 }
 const urlBtn = document.querySelector(".url-button");
 
-urlBtn.addEventListener("click", function () {//Create an Event Listener for Uploading File from URL
+// Create an Event Listener for Uploading File from URL
+urlBtn.addEventListener("click", function () {
   showSuccessMessageURL()
   const corsAnywhereUrl = 'https://cors-anywhere.herokuapp.com/';
   const targetUrl = 'http://usidas.ceid.upatras.gr/web/2023/export.php';
@@ -1557,7 +1591,7 @@ urlBtn.addEventListener("click", function () {//Create an Event Listener for Upl
     })
 })
 
-//Show Success Message when the file is Uploaded Successfully from the URL
+// Show Success Message when the file is Uploaded Successfully from the URL
 function showSuccessMessageURL() {
   successMessageURL.style.display = "block";
   setTimeout(() => {
@@ -1565,7 +1599,7 @@ function showSuccessMessageURL() {
   }, 3000);
 }
 
-//Show Success Message when the file is Uploaded Successfully
+// Show Success Message when the file is Uploaded Successfully
 function showSuccessMessageUpload() {
   successMessageUpload.style.display = "block";
   setTimeout(() => {
@@ -1581,22 +1615,22 @@ function showSuccessMessageUpload() {
 
 /* ~~~~~~~~~~ Rescuer Signup Form ~~~~~~~~~~ */
 
-//Show-Hide Password Icon
+// Show-Hide Password Icon
 const pwShowHide = document.querySelectorAll(".pw_hide");
 pwShowHide.forEach((icon) => {
   icon.addEventListener("click", () => {
     let getPwInput = icon.parentElement.querySelector("input");
-    if (getPwInput.type === "password") {//Show Password
+    if (getPwInput.type === "password") {
       getPwInput.type = "text";
       icon.classList.replace("fa-eye-slash", "fa-eye");
-    } else {//Hide Password
+    } else {
       getPwInput.type = "password";
       icon.classList.replace("fa-eye", "fa-eye-slash");
     }
   });
 });
 
-//Password Requirements
+// Password Requirements
 let validationRegex = [
   { regex: /.{8,}/ },
   { regex: /[A-Z]/ },
@@ -1604,21 +1638,21 @@ let validationRegex = [
   { regex: /^[a-zA-Z0-9!@#$%^&*()-_=+{}\[\]:;<>,.?\/\\|]+$/ },
 ];
 
-//Password Requirements Checklist
+// Password Requirements Checklist
 const passChecklist = document.querySelectorAll(".checklist-item");
 const passInput = document.querySelector("#pass");
 passInput.addEventListener("keyup", () => {
   validationRegex.forEach((item, i) => {
     let isValid = item.regex.test(passInput.value);
-    if (isValid) {//Check the Corresponding Field if the Criterias are met
+    if (isValid) {
       passChecklist[i].classList.add("checked");
-    } else {//Uncheck the Corresponding Field if the Criterias are not met
+    } else {
       passChecklist[i].classList.remove("checked");
     }
   });
 });
 
-//Show-Hide Password Requirements
+// Show-Hide Password Requirements
 const passField = document.querySelector(".field.password");
 passInput.addEventListener("focus", (e) => {
   e.preventDefault();
@@ -1629,16 +1663,16 @@ passInput.addEventListener("blur", (e) => {
   passField.classList.remove("active");
 });
 
-//Password Validation
+// Password Validation
 function checkPass() {
   for (var i = 0; i < passChecklist.length; i++) {
-    if (!passChecklist[i].classList.contains("checked")) {//If all the Items of the Array contain the Class checked, then the Password is Valid
+    if (!passChecklist[i].classList.contains("checked")) {
       passGood = false;
     } else passGood = true;
   }
 }
 
-//Username Validation
+// Username Validation
 const usernamePattern = /^[a-zA-Z0-9]+\s?[a-zA-Z0-9]+$/;
 const usernameField = document.querySelector(".field.username");
 const usernameInput = document.querySelector("#username");
@@ -1648,7 +1682,7 @@ function checkUsername() {
     usernameField.classList.remove("duplicate");
   } else {
     usernameField.classList.remove("invalid");
-    checkUsernameAvailability(); //Function that checks if the same Username already exists
+    checkUsernameAvailability();
   }
 }
 
@@ -1662,11 +1696,11 @@ function checkTruckId() {
     truckidField.classList.remove("duplicate");
   } else {
     truckidField.classList.remove("invalid");
-    checktruckidAvailability();//Function that checks if the same TruckID already exists
+    checktruckidAvailability();
   }
 }
 
-//Fullname Validation
+// Fullname Validation
 const fullnamePattern = /[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+\s+[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+$/;
 const fullnameField = document.querySelector(".field.fullname");
 const fullnameInput = document.querySelector("#fullname");
@@ -1677,7 +1711,7 @@ function checkFullname() {
   fullnameField.classList.remove("invalid");
 }
 
-//Phone Number Validation
+// Phone Number Validation
 const phonePattern = /^[+0-9]+$/;
 const phoneField = document.querySelector(".field.phone");
 const phoneInput = document.querySelector("#phone");
@@ -1688,7 +1722,7 @@ function checkPhone() {
   phoneField.classList.remove("invalid");
 }
 
-//Address Validation
+// Address Validation
 const addressPattern = /^[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+\s+[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+$/;
 const addressField = document.querySelector(".field.address");
 const addressInput = document.querySelector("#address");
@@ -1700,7 +1734,7 @@ function checkAddress() {
   addressField.classList.remove("invalid");
 }
 
-// AJAX Request to check the Database for Username Similarity
+// Function that checks for Username Similarity
 function checkUsernameAvailability() {
   var data = { username: usernameInput.value };
   fetch("/ResQSupply/check_username.php", {
@@ -1711,14 +1745,14 @@ function checkUsernameAvailability() {
     .then((response) => response.json())
     .then((result) => {
       if (result != "False") {
-        usernameField.classList.add("duplicate");//Show the Error for Duplicate Username
+        usernameField.classList.add("duplicate");
       } else {
-        usernameField.classList.remove("duplicate");//Hide the Error for Duplicate Username
+        usernameField.classList.remove("duplicate");
       }
     });
 }
 
-// AJAX Request to check the Database for TruckID Similarity
+// Function that checks for TruckID Similarity
 function checktruckidAvailability() {
   var data = { truckid: truckidInput.value };
   fetch("check_truckid.php", {
@@ -1729,21 +1763,21 @@ function checktruckidAvailability() {
     .then((response) => response.json())
     .then((result) => {
       if (result != "False") {
-        truckidField.classList.add("duplicate");//Show the Error for Duplicate TruckID
+        truckidField.classList.add("duplicate");
       } else {
-        truckidField.classList.remove("duplicate");//Hide the Error for Duplicate TruckID
+        truckidField.classList.remove("duplicate");
       }
     });
 }
 
-//Validation When Typing
+// Validation When Typing
 usernameInput.addEventListener("keyup", checkUsername);
 fullnameInput.addEventListener("keyup", checkFullname);
 phoneInput.addEventListener("keyup", checkPhone);
 addressInput.addEventListener("keyup", checkAddress);
 truckidInput.addEventListener("keyup", checkTruckId);
 
-//Submit Form Validation When Submiting
+// Submit Form Validation When Submiting
 const successMessage = document.getElementById("successMessage");
 const signupBtn = document.querySelector(".signup");
 const errorAddress = document.querySelector(".error.address")
@@ -1763,13 +1797,14 @@ signupBtn.addEventListener("click", (e) => {
     truckidField.classList.contains("invalid") ||
     !passGood
   ) {
-    e.preventDefault();//If at least one of the Fields is Incorrectly filled, don't Submit
-  } else { //Proceed to Submission
+    // If at least one of the Fields is Incorrectly filled, don't Submit
+    e.preventDefault();
+  } else {
     e.preventDefault();
     var lat;
     var lon;
 
-    fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + addressInput.value + '&limit=1') //Get the lat and lon of the Address that was typed.
+    fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + addressInput.value + '&limit=1') // Get the lat and lon of the Address that was typed.
       .then(result => {
         if (!result.ok) {
           throw new Error("Network response was not ok");
@@ -1777,19 +1812,19 @@ signupBtn.addEventListener("click", (e) => {
         return result.json();
       })
       .then(result => {
-        if (result.length > 0 && result[0].lat && result[0].lon) { //If the Address Exists Submit
+        if (result.length > 0 && result[0].lat && result[0].lon) {
           lat = result[0].lat;
           lon = result[0].lon;
           submit(lat, lon);
           showSuccessMessage();
         } else {
-          errorAddress.classList.add("active"); //If the Address Does Not Exist, print an Error
+          errorAddress.classList.add("active");
         }
       })
   }
 });
 
-//Show a Success Message when the Rescuer Account is Created Successfully
+// Show a Success Message when the Rescuer Account is Created Successfully
 function showSuccessMessage() {
   successMessage.style.display = "block";
   setTimeout(() => {
@@ -1797,7 +1832,7 @@ function showSuccessMessage() {
   }, 3000);
 }
 
-//Submit Rescuer Account Creation Form
+// Submit Rescuer Account Creation Form
 function submit(lat, lon) {
   fetch("rescuer_Creation.php", {
     method: "POST",
@@ -1805,7 +1840,7 @@ function submit(lat, lon) {
     body: JSON.stringify({ username: usernameInput.value, fullname: fullnameInput.value, phone: phoneInput.value, truckid: truckidInput.value, address: addressInput.value, password: passInput.value, latitude: lat, longitude: lon }),
   })
     .then((response) => response.json())
-    .then((data) =>{
+    .then((data) => {
       addressInput.value = "";
       phoneInput.value = "";
       fullnameInput.value = "";
@@ -1815,8 +1850,9 @@ function submit(lat, lon) {
     })
 }
 
-//---------- Storage Info -----------//
-//Fetch the items that are either in the Storage or inside a Truck
+/* ~~~~~~~~~~ Load Functions ~~~~~~~~~~ */
+
+// Fetch the items that are either in the Storage or inside a Truck
 function fetchStorageInfo() {
   var categories = [];
   fetch("fetch_StorageInfo.php")
@@ -1825,11 +1861,11 @@ function fetchStorageInfo() {
     })
     .then((data) => {
       const storageTable = document.querySelector(".storage-table");
-      if (data.length != 0) { //If there are items in the storage table, proceed.
-        storageTable.classList.add("active"); //Display the table
+      if (data.length != 0) {
+        storageTable.classList.add("active");
         document.querySelector(".storage-tbody").innerHTML = "";
         document.querySelector(".category-list").innerHTML = "";
-        data.forEach((res) => { //Create each Row of the Table
+        data.forEach((res) => {
           markup1 =
             `<tr>` +
             `<td> ${res.GoodName} </td>` +
@@ -1839,7 +1875,7 @@ function fetchStorageInfo() {
             `</tr>`;
           document.querySelector(".storage-tbody").insertAdjacentHTML("beforeend", markup1);
 
-          if (!categories.includes(res.GoodCategory)) { //Create the Category Dropdown Menu
+          if (!categories.includes(res.GoodCategory)) {
             markup2 =
               `<li class="category-item">` +
               `<input type="checkbox" checked>` +
@@ -1850,8 +1886,8 @@ function fetchStorageInfo() {
           }
         });
         categoryEventListener();
-        updateDisplayedCategories(); 
-      } else {//If there are no items in the Storage table, print the following Message.
+        updateDisplayedCategories();
+      } else {
         storageTable.classList.remove("active");
         markup = `<p class="empty">There aren't any Goods in the Storage at the moment.</p>`;
         document.querySelector(".storage-container").insertAdjacentHTML("beforeend", markup);
@@ -1859,22 +1895,22 @@ function fetchStorageInfo() {
     });
 }
 
-//Add Evenet Listeners to Each Category of the Category DropDown Menu 
+// Add Evenet Listeners to Each Category of the Category DropDown Menu 
 function categoryEventListener() {
   var catItems = document.querySelectorAll(".category-item p");
   catItems.forEach((catItem) => {
     var checkbox = catItem.parentNode.querySelector('input[type="checkbox"]');
-    checkbox.addEventListener('click', function(){
+    checkbox.addEventListener('click', function () {
       updateDisplayedCategories();
     })
-    catItem.addEventListener('click', function() {
+    catItem.addEventListener('click', function () {
       checkbox.checked = !checkbox.checked;
       updateDisplayedCategories();
     });
   });
 }
 
-//Add an Event Listener to the Category DropDown Menu
+// Add an Event Listener to the Category DropDown Menu
 const dropdown = document.querySelector(".dropdown-button");
 const dropdownContent = document.querySelector(".dropdown-content");
 dropdown.addEventListener("click", (e) => {
@@ -1882,13 +1918,14 @@ dropdown.addEventListener("click", (e) => {
   updateDisplayedCategories();
 });
 
-//Update the Categories that are displayes in the Category Dropdown Menu
+// Update the Categories that are displayes in the Category Dropdown Menu
 function updateDisplayedCategories() {
   const selectedCategories = Array.from(document.querySelectorAll('.category-item input[type=checkbox]:checked')).map(checkbox => checkbox.nextSibling.textContent.trim());
   const categoryRows = document.querySelectorAll('.storage-tbody tr');
   categoryRows.forEach(row => {
     const category = row.querySelector('td:nth-child(2)').textContent.trim();
-    if (!selectedCategories.includes(category)) { //If the checkbox of a Category is not Checked, then change the style of its row to none. 
+    // If the checkbox of a Category is not Checked, then change the style of its row to none. 
+    if (!selectedCategories.includes(category)) {
       row.style.display = 'none';
     } else {
       row.style.display = '';
@@ -1896,7 +1933,7 @@ function updateDisplayedCategories() {
   });
 }
 
-//Logging out Actions
+// Function that handles the Logout of the User
 const logoutButton = document.querySelector(".button.logout");
 logoutButton.addEventListener("click", logoutUser);
 function logoutUser() {

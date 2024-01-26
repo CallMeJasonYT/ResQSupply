@@ -1,6 +1,6 @@
 /* ~~~~~~~~~~ General Functions ~~~~~~~~~~ */
 
-//When the window is resized or Loaded do the following
+// When the window is resized or Loaded do the following
 document.addEventListener("DOMContentLoaded", function () {
   checkWidth();
   fetchCitInfo();
@@ -13,7 +13,7 @@ window.addEventListener("resize", (e) => {
   checkWidth();
 });
 
-//Fetching the Connection between Categories and Items
+// Fetching the Connection between Categories and Items
 var catItemConnection;
 function itemCatConn() {
   fetch("itemCatConn.php", {
@@ -28,7 +28,7 @@ function itemCatConn() {
     });
 }
 
-//Logging out Actions
+// Logging out Actions
 const logoutButton = document.querySelector(".button.logout");
 logoutButton.addEventListener("click", logoutUser);
 function logoutUser() {
@@ -41,7 +41,7 @@ function logoutUser() {
 
 /* ~~~~~~~~~~ Mobile/Desktop Layout ~~~~~~~~~~ */
 
-//Checking Viewport Width
+// Checking Viewport Width
 var viewportW = window.innerWidth;
 var cnt = 0;
 function checkWidth() {
@@ -57,19 +57,19 @@ function checkWidth() {
   }
 }
 
-//Desktop Layout Changes
+// Desktop Layout Changes
 function desktopApply() {
   deskCustomization();
   mainTabDivCreation();
   cnt++;
 }
 
-//Creating desktop-view Div
+// Creating desktop-view Div
 const reqTab = document.querySelector(".requests-tab");
 const annTab = document.querySelector(".announcements-tab");
 const offTab = document.querySelector(".offers-tab");
 
-//Activating all the tabs and NavBar Options
+// Activating all the tabs and NavBar Options
 const burgerIcox = document.querySelector(".burgerx");
 const burgerIco = document.querySelector(".burgeri");
 const burgerSect = document.querySelector(".burger-sect");
@@ -79,7 +79,7 @@ function deskCustomization() {
   offTab.classList.add("active");
 }
 
-function mainTabDivCreation(){
+function mainTabDivCreation() {
   var newDiv = document.createElement('div');
   newDiv.classList.add("main-tab");
   newDiv.appendChild(reqTab);
@@ -88,14 +88,14 @@ function mainTabDivCreation(){
   document.querySelector(".main-menu").appendChild(newDiv);
 }
 
-//Mobile Layout Changes
+// Mobile Layout Changes
 function mobileApply() {
   mobileCustomization();
   mainTabDivDeletion();
   cnt--;
 }
 
-//Activating Announcements only and removes NavBar Options
+// Activating Announcements only and removes NavBar Options
 const reqBtn = document.querySelector("#reqBtn");
 const annBtn = document.querySelector("#annBtn");
 const offBtn = document.querySelector("#offBtn");
@@ -108,7 +108,7 @@ function mobileCustomization() {
   annBtn.classList.add("selected");
 }
 
-function mainTabDivDeletion(){
+function mainTabDivDeletion() {
   document.querySelector(".main-menu").appendChild(reqTab);
   document.querySelector(".main-menu").appendChild(annTab);
   document.querySelector(".main-menu").appendChild(offTab);
@@ -117,7 +117,7 @@ function mainTabDivDeletion(){
 
 /* ~~~~~~~~~~ Tab Buttons ~~~~~~~~~~ */
 
-//Requests Button
+// Requests Button
 const createReq = document.querySelector(".add-req");
 const reqForm = document.querySelector(".requests-form");
 const offForm = document.querySelector(".offers-form");
@@ -133,7 +133,7 @@ reqBtn.addEventListener("click", (e) => {
   }
 });
 
-//Announcements Button
+// Announcements Button
 annBtn.addEventListener("click", (e) => {
   annTab.classList.add("active");
   reqTab.classList.remove("active");
@@ -142,7 +142,7 @@ annBtn.addEventListener("click", (e) => {
   reqForm.classList.remove("active");
 });
 
-//Offers Button
+// Offers Button
 const offBox = document.querySelector(".offers-box");
 offBtn.addEventListener("click", (e) => {
   offTab.classList.add("active");
@@ -154,7 +154,7 @@ offBtn.addEventListener("click", (e) => {
   }
 });
 
-//Bottom Border for Tab Buttons
+// Bottom Border for Tab Buttons
 function toggleBottomBorder(clickedButton) {
   var buttons = document.querySelectorAll(".button");
   buttons.forEach(function (button) {
@@ -165,7 +165,7 @@ function toggleBottomBorder(clickedButton) {
 
 /* ~~~~~~~~~~ Burger and Options ~~~~~~~~~~ */
 
-//Burger Icon
+// Burger Icon
 const mainMenuSect = document.querySelector(".main-menu");
 burgerIco.addEventListener("click", (e) => {
   burgerIco.classList.remove("active");
@@ -174,7 +174,7 @@ burgerIco.addEventListener("click", (e) => {
   mainMenuSect.classList.remove("active");
 });
 
-//Burger Icon Close
+// Burger Icon Close
 burgerIcox.addEventListener("click", (e) => {
   burgerIcox.classList.remove("active");
   burgerIco.classList.add("active");
@@ -185,7 +185,7 @@ burgerIcox.addEventListener("click", (e) => {
   removeErrors();
 });
 
-//Adding Click Event Listener to the Address Burger Button
+// Adding Click Event Listener to the Address Burger Button
 const addressBtn = document.querySelector(".burger-item.address");
 const addressField = document.querySelector(".field.address");
 const emmField = document.querySelector(".emergency-num");
@@ -194,11 +194,11 @@ addressBtn.addEventListener("click", (e) => {
   emmField.classList.remove("active");
 });
 
-//Adding Keystroke Event Listener to the Address field
+// Adding Keystroke Event Listener to the Address field
 const addressInput = document.querySelector(".address-text");
 addressInput.addEventListener("keyup", checkAddress);
 
-//Address Validation 
+// Address Validation 
 const addressPattern = /^[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+\s+[a-zA-Zα-ωΑ-ΩίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏ]+$/;
 function checkAddress() {
   errorAddress.classList.remove("active");
@@ -208,7 +208,7 @@ function checkAddress() {
   addressField.classList.remove("invalid");
 }
 
-//Adding Event Listener to the Emergency Numbers Button
+// Adding Event Listener to the Emergency Numbers Button
 const emmBtn = document.querySelector(".burger-item.emergency");
 emmBtn.addEventListener("click", (e) => {
   emmField.classList.toggle("active");
@@ -217,7 +217,7 @@ emmBtn.addEventListener("click", (e) => {
 
 /* ~~~~~~~~~~ Requests/Offers ~~~~~~~~~~ */
 
-//Item Select Dropdowns
+// Item Select Dropdowns
 const itemSelButton = document.querySelectorAll(".item-btn");
 const catSelButton = document.querySelectorAll(".cat-btn");
 const itemList = document.querySelectorAll(".item-options");
@@ -241,7 +241,7 @@ itemSelButton.forEach(function (button) {
   });
 });
 
-//Category Select Dropdowns
+// Category Select Dropdowns
 catSelButton.forEach(function (button) {
   button.addEventListener("click", function () {
     button.classList.toggle("selected");
@@ -260,10 +260,10 @@ catSelButton.forEach(function (button) {
   });
 });
 
-//Adding Listeners to the trash Buttons in the two Forms
+// Adding Listeners to the trash Buttons in the two Forms
 function trashBtnListener() {
   trashBtn.forEach(function (btn) {
-    // Check if the listener has already been added
+    //  Check if the listener has already been added
     if (!btn.dataset.listenerAdded) {
       btn.addEventListener("click", function () {
         var type = "requests";
@@ -273,13 +273,13 @@ function trashBtnListener() {
         }
         deleteOffReq(type, id);
       });
-      // Set the flag to indicate that the listener has been added
+      //  Set the flag to indicate that the listener has been added
       btn.dataset.listenerAdded = true;
     }
   });
 }
 
-//Function that removes an Offer or Request
+// Function that removes an Offer or Request
 function deleteOffReq(type, reqOffID) {
   fetch("delete_OffReq.php", {
     method: "POST",
@@ -321,7 +321,7 @@ function deleteOffReq(type, reqOffID) {
     });
 }
 
-//Function that removes all requests from Requests List
+// Function that removes all requests from Requests List
 function removeRequests() {
   reqList.forEach(function (reqListItem) {
     reqListItem.remove();
@@ -329,7 +329,7 @@ function removeRequests() {
   reqList = document.querySelectorAll(".requests-list .list-item");
 }
 
-//Function that removes all offers from Offers List
+// Function that removes all offers from Offers List
 function removeOffers() {
   offList.forEach(function (offListItem) {
     offListItem.remove();
@@ -337,7 +337,7 @@ function removeOffers() {
   offList = document.querySelectorAll(".offers-list .list-item");
 }
 
-//Submission of the Forms
+// Submission of the Forms
 function formSubmission(type, goodn, goodv) {
   fetch("form_Submission.php", {
     method: "POST",
@@ -360,7 +360,7 @@ function formSubmission(type, goodn, goodv) {
 
 /* ~~~~~~~~~~ Offers ~~~~~~~~~~ */
 
-//Deleting the Items and the Categories from each Offer before the Fetch
+// Deleting the Items and the Categories from each Offer before the Fetch
 function deleteOffersItems() {
   offerList = document.querySelectorAll(".offers-form .item");
   offerList.forEach(function (item) {
@@ -368,7 +368,7 @@ function deleteOffersItems() {
   });
 }
 
-//Make Offer Button
+// Make Offer Button
 var makeOffBtn = document.querySelectorAll(".offer");
 function offerBtnListener() {
   makeOffBtn.forEach(function (button) {
@@ -388,7 +388,7 @@ function offerBtnListener() {
   });
 }
 
-//Adding Event Listeners to the Offers Form List Item Elements and Displaying the Selected Items Correctly
+// Adding Event Listeners to the Offers Form List Item Elements and Displaying the Selected Items Correctly
 var itemsOffBtn = document.querySelectorAll(".offers-form .item-list .item");
 var selCategory = null;
 const itemsOffText = document.querySelector(".offers-form .item-btn .item-text");
@@ -411,7 +411,7 @@ function itemsOffBtnListener() {
   });
 }
 
-//Adding Event Listeners to the Offers Form List Category Elements and Displaying the Selected Categories Correctly
+// Adding Event Listeners to the Offers Form List Category Elements and Displaying the Selected Categories Correctly
 var catOffBtn = document.querySelectorAll(".offers-form .category-list .item");
 const catOffText = document.querySelector(".offers-form .cat-btn .item-text");
 function catOffBtnListener() {
@@ -431,7 +431,7 @@ function catOffBtnListener() {
   });
 }
 
-//Adding Event Listner to the Item Search Input Field of the Offers Form
+// Adding Event Listner to the Item Search Input Field of the Offers Form
 const itemOffSearch = document.querySelector("#itemOffSearch");
 let itemOffArray;
 let itemOffSearchListenerAdded = false;
@@ -439,7 +439,7 @@ function itemOffSearchListener() {
   itemOffArray = [];
   let sorteditem = Array.from(itemsOffBtn).map(item => item.textContent).sort();
 
-  // Check if the listener has not been added
+  //  Check if the listener has not been added
   if (!itemOffSearchListenerAdded) {
     itemOffSearch.addEventListener("keyup", function () {
       removeItemOff();
@@ -455,12 +455,12 @@ function itemOffSearchListener() {
       itemsOffBtn = document.querySelectorAll(".offers-form .item-list .item");
       itemsOffBtnListener();
     });
-    // Set the flag to indicate that the listener has been added
+    //  Set the flag to indicate that the listener has been added
     itemOffSearchListenerAdded = true;
   }
 }
 
-//Adding Event Listner to the Category Search Input Field of the Offers Form
+// Adding Event Listner to the Category Search Input Field of the Offers Form
 const catOffSearch = document.querySelector("#catOffSearch");
 let catOffArray;
 let catOffSearchListenerAdded = false;
@@ -468,7 +468,7 @@ function catOffSearchListener() {
   catOffArray = [];
   let sortedCat = Array.from(catOffBtn).map(item => item.textContent).sort();
 
-  // Check if the listener has not been added
+  //  Check if the listener has not been added
   if (!catOffSearchListenerAdded) {
     catOffSearch.addEventListener("keyup", function () {
       removeCatOff();
@@ -484,26 +484,26 @@ function catOffSearchListener() {
       catOffBtn = document.querySelectorAll(".offers-form .category-list .item");
       catOffBtnListener();
     });
-    // Set the flag to indicate that the listener has been added
+    //  Set the flag to indicate that the listener has been added
     catOffSearchListenerAdded = true;
   }
 }
 
-//Remove Items from Offers Form
+// Remove Items from Offers Form
 function removeItemOff() {
   itemsOffBtn.forEach(function (item) {
     item.remove();
   });
 }
 
-//Remove Categories from Offers Form
+// Remove Categories from Offers Form
 function removeCatOff() {
   catOffBtn.forEach(function (item) {
     item.remove();
   });
 }
 
-//Clear Offers Form Selections Button
+// Clear Offers Form Selections Button
 const broomO = document.querySelector(".broomo")
 broomO.addEventListener("click", (e) => {
   catOffText.textContent = "Select Category";
@@ -515,7 +515,7 @@ broomO.addEventListener("click", (e) => {
   fetchOfferItems(offID);
 });
 
-//Cancel Offer Button
+// Cancel Offer Button
 const cancelBtnO = document.querySelector(".cancelo");
 var error = document.querySelectorAll(".invalid .check");
 cancelBtnO.addEventListener("click", () => {
@@ -549,7 +549,7 @@ cancelBtnO.addEventListener("click", () => {
   removeErrors();
 });
 
-//Plus Offer Button
+// Plus Offer Button
 const plusO = document.querySelector(".pluso");
 const numO = document.querySelector(".numo");
 let offCount = 1;
@@ -560,7 +560,7 @@ plusO.addEventListener("click", () => {
   }
 });
 
-//Minus Offer Button
+// Minus Offer Button
 const minusO = document.querySelector(".minuso");
 minusO.addEventListener("click", () => {
   if (offCount > 1) {
@@ -569,7 +569,7 @@ minusO.addEventListener("click", () => {
   }
 });
 
-//Adding Event Listner to the Submit Button of the Offers Form
+// Adding Event Listner to the Submit Button of the Offers Form
 const submitOffForm = document.querySelector(".offers-form .button");
 submitOffForm.addEventListener("click", function () {
   goodn = document.querySelector(".offers-form .item-btn .item-text").innerText;
@@ -611,7 +611,7 @@ submitOffForm.addEventListener("click", function () {
 
 /* ~~~~~~~~~~ Requests ~~~~~~~~~~ */
 
-//Create Request Button
+// Create Request Button
 createReq.addEventListener("click", () => {
   reqForm.classList.add("active");
   reqBox.classList.remove("active");
@@ -620,7 +620,7 @@ createReq.addEventListener("click", () => {
   fetchGoods();
 });
 
-//Adding Event Listeners to the Requests Form List Item Elements and Displaying the Selected Items Correctly
+// Adding Event Listeners to the Requests Form List Item Elements and Displaying the Selected Items Correctly
 var itemsReqBtn = document.querySelectorAll(".requests-form .item-list .item");
 var selCategory = null;
 const itemsReqText = document.querySelector(".requests-form .item-btn .item-text");
@@ -644,7 +644,7 @@ function itemsReqBtnListener() {
   });
 }
 
-//Adding Event Listeners to the Requests Form List Category Elements and Displaying the Selected Categories Correctly
+// Adding Event Listeners to the Requests Form List Category Elements and Displaying the Selected Categories Correctly
 var catReqBtn = document.querySelectorAll(".requests-form .category-list .item");
 const catReqText = document.querySelector(".requests-form .cat-btn .item-text");
 function catReqBtnListener() {
@@ -666,7 +666,7 @@ function catReqBtnListener() {
   });
 }
 
-//Adding Event Listner to the Category Search Input Field of the Requirements Form
+// Adding Event Listner to the Category Search Input Field of the Requirements Form
 const catReqSearch = document.querySelector("#catReqSearch");
 let catReqArray;
 let catReqSearchListenerAdded = false;
@@ -674,7 +674,7 @@ function catReqSearchListener() {
   catReqArray = [];
   let sortedCat = Array.from(catReqBtn).map(item => item.textContent).sort();
 
-  // Check if the listener has not been added
+  //  Check if the listener has not been added
   if (!catReqSearchListenerAdded) {
     catReqSearch.addEventListener("keyup", function () {
       removeCatReq();
@@ -690,12 +690,12 @@ function catReqSearchListener() {
       catReqBtn = document.querySelectorAll(".requests-form .category-list .item");
       catReqBtnListener();
     });
-    // Set the flag to indicate that the listener has been added
+    //  Set the flag to indicate that the listener has been added
     catReqSearchListenerAdded = true;
   }
 }
 
-//Adding Event Listner to the Items Search Input Field of the Requirements Form
+// Adding Event Listner to the Items Search Input Field of the Requirements Form
 const itemReqSearch = document.querySelector("#itemReqSearch");
 let itemReqArray;
 let itemReqSearchListenerAdded = false;
@@ -703,7 +703,7 @@ function itemReqSearchListener() {
   itemReqArray = [];
   let sortedItem = Array.from(itemsReqBtn).map(item => item.textContent).sort();
 
-  // Check if the listener has not been added
+  //  Check if the listener has not been added
   if (!itemReqSearchListenerAdded) {
     itemReqSearch.addEventListener("keyup", function () {
       removeItemReq();
@@ -719,12 +719,12 @@ function itemReqSearchListener() {
       itemsReqBtn = document.querySelectorAll(".requests-form .item-list .item");
       itemsReqBtnListener();
     });
-    // Set the flag to indicate that the listener has been added
+    //  Set the flag to indicate that the listener has been added
     itemReqSearchListenerAdded = true;
   }
 }
 
-//Clear Requests Form Selections Button
+// Clear Requests Form Selections Button
 const broomR = document.querySelector(".broomr")
 broomR.addEventListener("click", (e) => {
   catReqText.textContent = "Select Category";
@@ -736,21 +736,21 @@ broomR.addEventListener("click", (e) => {
   fetchGoods();
 });
 
-//Remove Items from Requests Form
+// Remove Items from Requests Form
 function removeItemReq() {
   itemsReqBtn.forEach(function (item) {
     item.remove();
   });
 }
 
-//Remove Categories from Requests Form
+// Remove Categories from Requests Form
 function removeCatReq() {
   catReqBtn.forEach(function (item) {
     item.remove();
   });
 }
 
-//Cancel Request Button
+// Cancel Request Button
 let reqCount = 1;
 const cancelBtnR = document.querySelector(".cancelr");
 const numR = document.querySelector(".numr");
@@ -782,7 +782,7 @@ cancelBtnR.addEventListener("click", () => {
   removeErrors();
 });
 
-//Plus OfferRequest Button
+// Plus OfferRequest Button
 const plusR = document.querySelector(".plusr");
 plusR.addEventListener("click", () => {
   if (reqCount < 100) {
@@ -791,7 +791,7 @@ plusR.addEventListener("click", () => {
   }
 });
 
-//Minus Request Button
+// Minus Request Button
 const minusR = document.querySelector(".minusr");
 minusR.addEventListener("click", () => {
   if (reqCount > 1) {
@@ -800,7 +800,7 @@ minusR.addEventListener("click", () => {
   }
 });
 
-//Adding Event Listner to the Submit Button of the Requirements Form
+// Adding Event Listner to the Submit Button of the Requirements Form
 var formType;
 const submitReqForm = document.querySelector(".requests-form .button");
 submitReqForm.addEventListener("click", function () {
@@ -840,7 +840,7 @@ submitReqForm.addEventListener("click", function () {
 
 /* ~~~~~~~~~~ Data Fetching ~~~~~~~~~~ */
 
-//Fetching Announcements from the Database with FetchAPI
+// Fetching Announcements from the Database with FetchAPI
 function fetchAnnouncements() {
   fetch("fetch_Announcements.php")
     .then((response) => {
@@ -862,14 +862,14 @@ function fetchAnnouncements() {
         makeOffBtn = document.querySelectorAll(".offer");
         offerBtnListener();
       } else {
-        //If there aren't any Announcements Display the following Paragraph
+        // If there aren't any Announcements Display the following Paragraph
         markup = `<p>There aren't any Announcements Currently</p>`;
         document.querySelector(".announcements-list").insertAdjacentHTML("beforeend", markup);
       }
     });
 }
 
-//Fetching Offers from the Database with FetchAPI
+// Fetching Offers from the Database with FetchAPI
 var trashBtn = document.querySelectorAll(".trash");
 var offList = document.querySelectorAll(".offers-list .list-item");
 var emptyOffMessage = document.querySelector(".offers-list p");
@@ -903,7 +903,7 @@ function fetchOffers() {
         }
         trashBtnListener();
       } else {
-        //If there aren't any Offers Display the following Paragraph
+        // If there aren't any Offers Display the following Paragraph
         markup = `<p>There aren't any Offers Currently</p>`;
         document.querySelector(".offers-list").insertAdjacentHTML("beforeend", markup);
         emptyOffMessage = document.querySelector(".offers-list p");
@@ -911,7 +911,7 @@ function fetchOffers() {
     });
 }
 
-//Fetching Requests from the Database with FetchAPI
+// Fetching Requests from the Database with FetchAPI
 var reqList = document.querySelectorAll(".requests-list .list-item");
 var emptyReqMessage = document.querySelector(".requests-list p");
 function fetchRequests() {
@@ -944,7 +944,7 @@ function fetchRequests() {
         }
         trashBtnListener();
       } else {
-        //If there aren't any Requests Display the following Paragraph
+        // If there aren't any Requests Display the following Paragraph
         markup = `<p>There aren't any Requests Currently</p>`;
         document.querySelector(".requests-list").insertAdjacentHTML("beforeend", markup);
         emptyReqMessage = document.querySelector(".requests-list p");
@@ -952,7 +952,7 @@ function fetchRequests() {
     });
 }
 
-// Fetching and Inserting Goods into the Requests Form
+//  Fetching and Inserting Goods into the Requests Form
 function fetchGoods() {
   fetch("fetch_Goods.php", {
     method: "POST"
@@ -988,7 +988,7 @@ function fetchGoods() {
     });
 }
 
-//Fetching the Categories and the Items that each Offer requires
+// Fetching the Categories and the Items that each Offer requires
 var offItemCat;
 function fetchOfferItems(offID) {
   fetch("fetch_OfferItems.php", {
@@ -1022,7 +1022,7 @@ function fetchOfferItems(offID) {
     });
 }
 
-//Fetching the Username of the User and displaying the Welcome Message
+// Fetching the Username of the User and displaying the Welcome Message
 function fetchCitInfo() {
   fetch("fetch_CitInfo.php", {
     method: "POST"
@@ -1032,15 +1032,14 @@ function fetchCitInfo() {
     })
     .then((data) => {
       console.log(data)
-      if(data != 'False'){
+      if (data != 'False') {
         markup =
-        `<div class="welcome">` +
-        `Welcome, ${data}!` +
-        `</div>`
+          `<div class="welcome">` +
+          `Welcome, ${data}!` +
+          `</div>`
 
         document.querySelector(".footer").insertAdjacentHTML("afterBegin", markup);
-      }else{
-        
+      } else {
         window.location.href = "/ResQSupply/home.html";
       }
 
@@ -1080,7 +1079,7 @@ function changeAddress(newAddress) {
   }
 }
 
-function updateLoc(newAddress, lat, lon){
+function updateLoc(newAddress, lat, lon) {
   fetch("update_Location.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -1091,9 +1090,9 @@ function updateLoc(newAddress, lat, lon){
     })
 }
 
-function removeErrors(){
+function removeErrors() {
   error = document.querySelectorAll(".invalid .check");
-  error.forEach(function(error){
+  error.forEach(function (error) {
     error.parentElement.classList.remove("invalid");
   })
 }
