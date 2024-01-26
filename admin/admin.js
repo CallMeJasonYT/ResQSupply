@@ -15,27 +15,26 @@ const map_desktop = document.getElementById('map');
 map_desktop.classList.add("map");
 map_desktop.classList.add("active");
 
-
-//Create a Search Bar
+//Change Position of Search
 var searchControl = L.control({
   position: 'topright'
 });
 
+//Add the Search Bar Element
 searchControl.onAdd = function (map) {
   var container = L.DomUtil.create('div', 'leaflet-control leaflet-bar');
   container.innerHTML = '<div class="search active">' +
     `<input type="text" class="address-search" placeholder="Search...">` +
     `<i class="fa-solid fa-magnifying-glass mglass" id="search-icon"></i>` +
     '</div>';
-
-  // Add event listener to the mglassIcon
+  //Add event listener to the mglassIcon
   const mglassIcon = container.querySelector("#search-icon");
   mglassIcon.addEventListener("click", fetchGeoSearch);
   return container;
 };
-
 searchControl.addTo(map);
 
+//Fetch Geolocation based on the Searched Route Name
 function fetchGeoSearch() {
   const query = document.querySelector(".address-search").value;
   fetch('https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + query + '&limit=1')
@@ -45,6 +44,7 @@ function fetchGeoSearch() {
     });
 }
 
+//Change the displayed location according to the Searched Route Name
 function setResultList(parsedResult) {
   if (parsedResult && parsedResult.lat && parsedResult.lon) {
     const latitude = parseFloat(parsedResult.lat);
@@ -54,7 +54,7 @@ function setResultList(parsedResult) {
   }
 }
 
-//Icon Initialization
+//Markers Icons Initialization
 const categoryIcons = {
   'Pending Request': L.icon({
     iconUrl: '/ResQSupply/icons/requestsIconPending.svg',
@@ -101,10 +101,8 @@ const categoryIcons = {
 };
 
 //Fetch API to find the location of Every Task, Truck and Base
-function fetchTasksLoc() {
-  fetch("fetch_BaseInfo.php", {
-    method: "POST"
-  })
+function fetchMarkersInfo() {
+  fetch("fetch_BaseInfo.php", { method: "POST" })
     .then((response) => response.json())
     .then((data) => {
       data.forEach(entry => {
@@ -114,7 +112,7 @@ function fetchTasksLoc() {
         .then((response) => response.json())
         .then((data) => {
           data.forEach(entry => {
-            setMapMarkers(entry.lat, entry.lon, entry.category, entry.veh_id);//Place a pin on the Map for the Truck
+            setMapMarkers(entry.lat, entry.lon, entry.category, entry.veh_id); //Place a pin on the Map for the Truck
           });
           return fetch("fetch_TasksLoc.php", { method: "POST" })
             .then((response) => response.json())
@@ -123,14 +121,14 @@ function fetchTasksLoc() {
                 location.href = "/ResQSupply/home.html";
               }
               data.forEach(entry => {
-                setMapMarkers(entry.lat, entry.lon, entry.task_id, null);//Place a pin in the Map for the Task
+                setMapMarkers(entry.lat, entry.lon, entry.task_id, null); //Place a pin in the Map for the Task
               });
             });
         });
     });
 }
 
-//Function that gets the new Base Location when it is changed by the Admin
+//Function that Reverse Geocodes the Base Location when updated by the Admin
 function revGeocode(query) {
   var lng = query.lng;
   var lat = query.lat;
@@ -141,14 +139,14 @@ function revGeocode(query) {
     });
 }
 
-//Function that gets the correct address name
+//Function that Formats the address correctly
 function parseDisplayName(displayName) {
   const words = displayName.split(', ');
   const address = words.slice(0, 2).join(', ');
   return address;
 }
 
-//Function that updates the Base Location in the Database when it is changed by the Admin
+//Function that Updates the Base Location in the Database when updated by the Admin
 function updateBaseLoc(position, lat, lon) {
   fetch('update_BaseLoc.php', {
     method: 'POST',
@@ -160,15 +158,14 @@ function updateBaseLoc(position, lat, lon) {
     .then(response => response.json())
 }
 
+//Function that places the Markers on the Map
 const taskMarkers = [];
 const truckMarkers = [];
 const baseMarkers = [];
-
-//Function that places the Pins in the Map
 function setMapMarkers(lat, lon, task_id, veh_id) {
   const latitude = lat;
   const longitude = lon;
-  if (task_id == 'YesTruck') {//Trucks with Active Trucks
+  if (task_id == 'YesTruck') { //Markers for Trucks with Active Tasks
     const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['YesTruck'], draggable: false });
     marker.truckInfo = {
       vehId: veh_id,
@@ -180,7 +177,7 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
       showTruckPopup(marker);
     });
     truckMarkers.push(marker);
-  } else if (task_id == 'NoTruck') { //Trucks without Active Tasks
+  } else if (task_id == 'NoTruck') { //Markers for Trucks without Active Tasks
     const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['NoTruck'], draggable: false });
     marker.truckInfo = {
       vehId: veh_id,
@@ -188,11 +185,11 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
       longitude: longitude
     };
     marker.addTo(map);
-    marker.on('click', function () {
+    marker.on('click', function () { //Popup Info for each Truck
       showTruckPopup(marker);
     });
     truckMarkers.push(marker);
-  } else if (task_id == 'Base') {//Base
+  } else if (task_id == 'Base') { //Markers for the Base
     const marker = new L.Marker([latitude, longitude], { icon: categoryIcons['Base'], draggable: true });
     marker.baseInfo = {
       latitude: latitude,
@@ -201,7 +198,7 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
     marker.addTo(map);
     baseMarkers.push(marker);
 
-    marker.on('dragend', function (e) {//Make the Base Icon Draggable and add a Confirm Button
+    marker.on('dragend', function (e) { //Make the Base Icon Draggable and add a Confirm Button
       var position = marker.getLatLng();
       marker.setLatLng(position).update();
       map.panTo(position);
@@ -214,7 +211,7 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
       `).openPopup();
   });
   } else {
-    fetch("fetch_TasksInfo.php", {//Create Task Marker and Task Popup
+    fetch("fetch_TasksInfo.php", { //Task Markers
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ taskID: task_id })
@@ -235,7 +232,7 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
               longitude: longitude
             };
             marker.addTo(map);
-            marker.on('click', function () {
+            marker.on('click', function () { //Popup Info for each Task
               showTaskPopup(marker, res.status);
             });
             taskMarkers.push(marker);
@@ -246,7 +243,7 @@ function setMapMarkers(lat, lon, task_id, veh_id) {
   }
 }
 
-//Confirm new Base Location
+//Confirm updated Base Location
 function confirmBaseLocation(markerId) {
   const marker = baseMarkers.find(m => m._leaflet_id == markerId);
   if (marker) {
@@ -264,7 +261,7 @@ function confirmBaseLocation(markerId) {
   }
 }
 
-//Cancel new Base Location
+//Cancel updated Base Location
 function cancelBaseLocation(markerId) {
   const marker = baseMarkers.find(m => m._leaflet_id == markerId);
   if (marker) {
@@ -276,8 +273,8 @@ function cancelBaseLocation(markerId) {
   }
 }
 
-//Show Tasks PopUPs
-function showTaskPopup(marker, status) {
+//Show Tasks Popups
+function showTaskPopup(marker) {
   fetch("fetch_TasksPopup.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -300,7 +297,7 @@ function showTaskPopup(marker, status) {
     });
 }
 
-//Show Truck PopUps
+//Show Truck Popups
 function showTruckPopup(marker) {
   fetch("fetch_TrucksPopup.php", {
     method: "POST",
@@ -312,8 +309,7 @@ function showTruckPopup(marker) {
       var popupContent = '';
       popupContent += `
         <b>Truck ID:</b> ${marker.truckInfo.vehId}<br>
-        <b>Active Tasks:</b> ${data.taskCount}<br>
-        `;
+        <b>Active Tasks:</b> ${data.taskCount}<br>`;
 
       const hasOtherProperties = Object.keys(data).some((key) => key != 'taskCount');
       if (hasOtherProperties) {
@@ -333,6 +329,7 @@ function showTruckPopup(marker) {
     })
 }
 
+//Function that Adds the filters on the Map
 const filters = L.control({ position: 'topleft' });
 filters.onAdd = function (map) {
   const div = L.DomUtil.create('div', 'filters');
@@ -466,21 +463,21 @@ function addMarkersByCategory(category) {
   }
 }
 
+//Function that returns the Icon Name that has been Assigned to a Marker
 function getIconName(marker) {
   const iconUrl = marker.options.icon.options.iconUrl;
   const iconName = Object.keys(categoryIcons).find(key => categoryIcons[key].options.iconUrl == iconUrl);
   return iconName;
 }
 
-//Hide Polylines based on their Category
+//Function that Hides all the Polylines
 function hidePolylines() {
   polylines.forEach(polyline => {
-    console.log(polyline)
     map.removeLayer(polyline);
   })
 }
 
-//Show Polylines based on their Category
+//Function that Shows all the Polylines
 function showPolylines() {
   polylines.forEach(polyline => {
     map.addLayer(polyline);
@@ -563,7 +560,7 @@ function removePolyline(task_id) {
 document.addEventListener("DOMContentLoaded", function () {
   map.invalidateSize();
   checkWidth();
-  fetchTasksLoc();
+  fetchMarkersInfo();
   fetchStorageInfo();
 });
 window.addEventListener("resize", (e) => {

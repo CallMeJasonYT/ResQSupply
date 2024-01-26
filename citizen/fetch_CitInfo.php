@@ -7,7 +7,7 @@ if(!isset($_SESSION["category"]) || $_SESSION["category"] != 'citizen'){
     echo json_encode("False");
     exit;
 }else{
-    $response = $_SESSION["category"];
+    $response = $_SESSION["username"];
     header('Content-Type: application/json');
     echo json_encode($response);
 }
