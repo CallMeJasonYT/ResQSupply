@@ -904,6 +904,10 @@ input[type="checkbox"]:checked {
     font-size: 20px !important;
   }
 
+  .leaflet-popup-content-wrapper .error {
+    font-size: 14px !important;
+  }
+
   .item-options li,
   .selected-items-list li,
   .quantity-text,

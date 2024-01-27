@@ -4,11 +4,11 @@ const signupBtn = document.querySelector("#signup-btn");
 const loginBtn = document.querySelector("#login");
 signupBtn.addEventListener("click", (e) => {
   e.preventDefault();
-  formContainer.classList.add("active"); //Make the Sign-Up Form Visible
+  formContainer.classList.add("active");
 });
 loginBtn.addEventListener("click", (e) => {
   e.preventDefault();
-  formContainer.classList.remove("active"); //Hide the Sign-Up Form
+  formContainer.classList.remove("active");
 });
 
 //Show-Hide Password Icon
@@ -16,10 +16,10 @@ const pwShowHide = document.querySelectorAll(".pw_hide");
 pwShowHide.forEach((icon) => {
   icon.addEventListener("click", () => {
     let getPwInput = icon.parentElement.querySelector("input");
-    if (getPwInput.type === "password") { //Show Password
+    if (getPwInput.type === "password") {
       getPwInput.type = "text";
       icon.classList.replace("fa-eye-slash", "fa-eye");
-    } else { //Hide Password
+    } else {
       getPwInput.type = "password"; 
       icon.classList.replace("fa-eye", "fa-eye-slash");
     }
@@ -40,9 +40,9 @@ const passInput = document.querySelector("#pass");
 passInput.addEventListener("keyup", () => {
   validationRegex.forEach((item, i) => {
     let isValid = item.regex.test(passInput.value);
-    if (isValid) { //Check the Corresponding Field if the Criterias are met
+    if (isValid) {
       passChecklist[i].classList.add("checked");
-    } else { //Uncheck the Corresponding Field if the Criterias are not met
+    } else {
       passChecklist[i].classList.remove("checked");
     }
   });
@@ -62,7 +62,7 @@ passInput.addEventListener("blur", (e) => {
 //Password Validation
 function checkPass() {
   for (var i = 0; i < passChecklist.length; i++) {
-    if (!passChecklist[i].classList.contains("checked")) { //If all the Items of the Array contain the Class checked, then the Password is Valid
+    if (!passChecklist[i].classList.contains("checked")) {
       passGood = false;
     } else passGood = true;
   }
@@ -78,7 +78,7 @@ function checkUsername() {
     usernameField.classList.remove("duplicate");
   } else {
     usernameField.classList.remove("invalid");
-    checkUsernameAvailability(); //Function that checks if the same Username already exists
+    checkUsernameAvailability();
   }
 }
 
@@ -127,9 +127,9 @@ function checkUsernameAvailability() {
     .then((response) => response.json())
     .then((result) => {
       if (result != "False") {
-        usernameField.classList.add("duplicate"); //Show the Error for Duplicate Username
+        usernameField.classList.add("duplicate");
       } else {
-        usernameField.classList.remove("duplicate"); //Hide the Error for Duplicate Username
+        usernameField.classList.remove("duplicate");
       }
     });
 }
@@ -151,9 +151,9 @@ function checkCredentials() {
   })
     .then((response) => response.json())
     .then((result) => {
-      if (result == "False") { //The Credentials are Wrong. Print an Error
+      if (result == "False") {
         passLoginField.classList.add("invalid");
-      } else { //The Credentianls are Correct. Open the corresponding page, depending on the Type of the User.
+      } else {
         passLoginField.classList.remove("invalid");
         formAct.action = result + "/" + result + ".html";
         formAct.submit();
@@ -186,8 +186,9 @@ submitBtn.addEventListener("click", (e) => {
     addressField.classList.contains("invalid") ||
     !passGood
   ) {
-    e.preventDefault(); //If at least one of the Fields is Incorrectly filled, don't Submit
-  } else { //Proceed to Submission
+    //If at least one of the Fields is Incorrectly filled, don't Submit
+    e.preventDefault();
+  } else {
     e.preventDefault();
     var lat;
     var lon;
@@ -200,12 +201,12 @@ submitBtn.addEventListener("click", (e) => {
         return result.json();
       })
       .then(result => {
-        if (result.length > 0 && result[0].lat && result[0].lon) { //If the Address Exists Submit
+        if (result.length > 0 && result[0].lat && result[0].lon) {
           lat = result[0].lat;
           lon = result[0].lon;
           submit(lat, lon);
         } else {
-          errorAddress.classList.add("active"); //If the Address Does Not Exist, print an Error
+          errorAddress.classList.add("active");
         }
       })
   }
@@ -229,7 +230,7 @@ function submit(lat, lon) {
   })
     .then((response) => response.json())
     .then((result) => {
-      window.location.href = "citizen/citizen.html"; //Open the Citizen Page, since only Citizens can Register
+      window.location.href = "citizen/citizen.html";
     })
     .catch(error => {
       console.error("Error during form submission:", error.message);

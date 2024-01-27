@@ -188,7 +188,6 @@ function setMapMarkers(lat, lon, task_id) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
         data.forEach(res => {
           var iconName = "";
           if (res.status != 'Completed') {
@@ -285,11 +284,14 @@ function handleButtonClick(event, taskId) {
   } else {
     event.stopPropagation();
     const marker = taskMarkers.find((marker) => marker.taskInfo.taskId == taskId);
-    const popupContent = `
+    if(!document.querySelector(".error.activeTasks")){
+
+      const popupContent = `
       <p class="error activeTasks active"><b>Error:&nbsp;</b> You have reached the maximum number of active tasks.<p>
     `;
     marker.getPopup().setContent(marker.getPopup().getContent() + popupContent);
     marker.getPopup().update();
+    }
   }
 }
 
@@ -1262,24 +1264,18 @@ function completeBtnListener() {
           const distance = calculateDistance(truckMarker.getLatLng(), taskMarker.getLatLng());
 
           const taskToBeCompleted = document.getElementById("" + id + "");
-          const existingDistanceError = taskToBeCompleted.querySelector('.error.distance');
-          const existingLoadError = taskToBeCompleted.querySelector('.error.load');
-
           if (distance <= 50) {
             completeTask(id);
-            if (existingDistanceError) {
-              existingDistanceError.remove();
-            }
           } else {
-            if (existingLoadError) {
-              existingLoadError.remove();
-            }
-            if (!existingDistanceError) {
+            if (!taskToBeCompleted.querySelector('.error.distance')) {
               const markup =
-                `<div class="error distance active">` +
-                `<p><b>Error:&nbsp;</b>Your truck must be 50m away or closer to the Task Location.</p>` +
-                `</div>`;
+              `<div class="error distance active">` +
+              `<p><b>Error:&nbsp;</b>Your truck must be 50m away or closer to the Task Location.</p>` +
+              `</div>`;
               taskToBeCompleted.insertAdjacentHTML("beforeend", markup);
+              setTimeout(() => {
+                taskToBeCompleted.querySelector('.error.distance').remove();
+              }, 3000);
             }
           }
         }
@@ -1330,17 +1326,16 @@ function completeTask(taskID) {
         removeTruckLoad();
         truckLoadArray = [];
         fetchTruckLoad();
-
-        if (existingError) {
-          existingError.remove();
-        }
       } else {
         if (!existingError) {
           const markup =
-            `<div class="error load active">` +
+          `<div class="error load active">` +
             `<p><b>Error:&nbsp;</b> There aren't enough resources in your Truck to Complete this Task.</p>` +
             `</div>`;
           taskToBeCompleted.insertAdjacentHTML("beforeend", markup);
+          setTimeout(() => {
+            taskToBeCompleted.querySelector(".error.load").remove();
+          }, 3000);
         }
       }
     });
