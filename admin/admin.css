@@ -210,7 +210,7 @@ section {
 .error.emptydetails.active,
 .error.address.active,
 .error.none.active {
-  font-size: 10px !important;
+  font-size: 13px !important;
   display: flex;
   color: red;
 }
@@ -352,6 +352,7 @@ section {
 }
 
 .ann-confirm-form .cancelbtn,
+.ann-items-form .cancelbtn,
 .storage-confirm-form .cancelbtn {
   justify-content: flex-end;
   padding: 0;
@@ -972,6 +973,7 @@ label,
   margin-left: 5px;
   margin-right: 5px;
   text-align: center;
+  cursor: pointer;
 }
 
 .buttonConfirm{

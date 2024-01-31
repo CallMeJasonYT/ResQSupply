@@ -1031,7 +1031,6 @@ function fetchCitInfo() {
       return response.json();
     })
     .then((data) => {
-      console.log(data)
       if (data != 'False') {
         markup =
           `<div class="welcome">` +
@@ -1042,7 +1041,6 @@ function fetchCitInfo() {
       } else {
         window.location.href = "/ResQSupply/home.html";
       }
-
     });
 }
 

@@ -37,7 +37,7 @@ searchControl.addTo(map);
 // Fetch Geolocation based on the Searched Route Name
 function fetchGeoSearch() {
   const query = document.querySelector(".address-search").value;
-  fetch('https:// nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + query + '&limit=1')
+  fetch('https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + query + '&limit=1')
     .then(result => result.json())
     .then(parsedResult => {
       setResultList(parsedResult[0]);
@@ -117,9 +117,6 @@ function fetchMarkersInfo() {
           return fetch("fetch_TasksLoc.php", { method: "POST" })
             .then((response) => response.json())
             .then((data) => {
-              if (data == "False") {
-                location.href = "/ResQSupply/home.html";
-              }
               data.forEach(entry => {
                 setMapMarkers(entry.lat, entry.lon, entry.task_id, null); // Place a pin in the Map for the Task
               });
@@ -560,6 +557,7 @@ function removePolyline(task_id) {
 document.addEventListener("DOMContentLoaded", function () {
   map.invalidateSize();
   checkWidth();
+  fetchAdminInfo();
   fetchMarkersInfo();
   fetchStorageInfo();
 });
@@ -695,6 +693,10 @@ burgerItems.forEach(function (item) {
         storageMngSect.classList.remove("active");
         statsTab.classList.remove("active");
         mainModule.style.flexDirection = "column";
+        var fields = document.querySelectorAll("#signup-form .input-box input");
+        fields.forEach((item) => item.value = "");
+        var checks = document.querySelectorAll(".field");
+        checks.forEach((item) => item.classList.remove("invalid"));
         break;
       case 'announcement':
         annCreateSect.classList.add("active");
@@ -1107,8 +1109,12 @@ const transferredItemsTab = document.querySelector(".transferred-items-tab");
 const updateGoodsTab = document.querySelector(".update-goods-tab");
 storageBtn.addEventListener("click", function () {
   storageUpdateTab.classList.add("active");
+  strgConfirmForm.classList.remove("active");
   transferredItemsTab.classList.remove("active");
   updateGoodsTab.classList.remove("active");
+  if(errorNoChange){
+    errorNoChange.classList.remove("active");
+  }
   quantityChanges = [];
   fetchUpdateStorage();
   fileInput.value = '';
@@ -1196,7 +1202,8 @@ function fetchTransferredItems() {
     .then((data) => {
       if (data.length !== 0) {
         data.forEach((res) => {
-          if (!storageItemsNames.includes(res.GoodName)) {
+          const trimmedName = res.GoodName.trim(); 
+          if (!storageItemsNames.includes(trimmedName)) {
             // Create a List Item for every Item of the Goods Table that does not Exist in the Storage Table.
             const markup = `<li class="item">` +
               `<p class="item-text">${res.GoodName}</p>` +
@@ -1209,6 +1216,10 @@ function fetchTransferredItems() {
         items.forEach((item) => {
           goodListItems.push(item);
         });
+        if (!document.querySelector(".goods-items-form .empty") && goodListItems.length == 0) {
+          const markup = `<p class="empty">There aren't any Goods at the moment.</p>`;
+          document.querySelector(".goods-items-form .item-options").insertAdjacentHTML("beforeend", markup);
+        }
         goodsItemsEventListener();
       }
     });
@@ -1226,15 +1237,15 @@ function storageItemsEventListener() {
         // Add the item to the Goods List
         document.querySelector(".good-item-list").appendChild(clonedItem);
         goodListItems.push(clonedItem);
-        // If there is no other Items in the Goods List, print the Following Message
-        if (storageListItems.length - 1 == 0) {
-          const markup = `<p class="empty">There aren't any Available Goods at the moment</p>`;
-          document.querySelector(".storage-items-form .item-options").insertAdjacentHTML("beforeend", markup);
-        }
         // Remove the Clicked Item from the Storage Array
         storageListItems.splice(storageListItems.indexOf(item), 1);
         // Remove the Event Listener of the Clicked Item
         storageListenersAdded.splice(index, 1);
+        if (goodListItems.length != 0) {
+          if(document.querySelector(".goods-items-form .empty")){
+            document.querySelector(".goods-items-form .empty").remove();
+          }
+        }
         sortItems(".storage-item-list");
         sortItems(".good-item-list");
         // Add Event Listener to the Goods Items List 
@@ -1260,14 +1271,19 @@ function goodsItemsEventListener() {
         goodListItems.splice(goodListItems.indexOf(item), 1);
         // Remove the Event Listener of the Clicked Item
         goodListenersAdded.splice(index, 1);
+        // If there is no other Items in the Goods List, print the Following Message
+        if (goodListItems.length == 0) {
+          const markup = `<p class="empty">There aren't any Available Goods at the moment</p>`;
+          document.querySelector(".goods-items-form .item-options").insertAdjacentHTML("beforeend", markup);
+        }
         sortItems(".storage-item-list");
         sortItems(".good-item-list");
+        if ((storageListItems.length != 0) && document.querySelector(".transferred-items-tab .empty")) {
+          document.querySelector(".transferred-items-tab .empty").remove();
+        }
         // Add Event Listener to the Storage Items List
         storageItemsEventListener();
         item.remove();
-        if (storageListItems != null && document.querySelector(".transferred-items-tab .empty")) {
-          document.querySelector(".transferred-items-tab .empty").remove();
-        }
       });
       goodListenersAdded[index] = true;
     }
@@ -1311,7 +1327,6 @@ function submitTranferedItems() {
   storageListItems.forEach((item) => {
     itemNames.push(item.innerText);
   })
-
   fetch("submit_TranferedItems.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -1865,6 +1880,9 @@ function fetchStorageInfo() {
         storageTable.classList.add("active");
         document.querySelector(".storage-tbody").innerHTML = "";
         document.querySelector(".category-list").innerHTML = "";
+        if(document.querySelector(".storage-container .empty")){
+          document.querySelector(".storage-container .empty").remove();
+        }
         data.forEach((res) => {
           markup1 =
             `<tr>` +
@@ -1931,6 +1949,28 @@ function updateDisplayedCategories() {
       row.style.display = '';
     }
   });
+}
+
+// Fetching the Username of the User and displaying the Welcome Message
+function fetchAdminInfo() {
+  fetch("fetch_AdminInfo.php", {
+    method: "POST"
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      if (data != 'False') {
+        markup =
+          `<div class="welcome">` +
+          `Welcome, ${data}!` +
+          `</div>`
+
+        document.querySelector(".footer").insertAdjacentHTML("afterBegin", markup);
+      } else {
+        window.location.href = "/ResQSupply/home.html";
+      }
+    });
 }
 
 // Function that handles the Logout of the User

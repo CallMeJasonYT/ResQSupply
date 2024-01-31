@@ -74,9 +74,8 @@ if ($stmtSelect->fetch()) {
 }
 
 if ($continue) {
-    $currentDateTime = date('Y-m-d H:i:s');
-    $stmtUpdate = $conn->prepare("UPDATE tasks SET task_status = 'Completed', task_complete = ? WHERE task_id = ?");
-    $stmtUpdate->bind_param("si", $currentDateTime, $taskId);
+    $stmtUpdate = $conn->prepare("UPDATE tasks SET task_status = 'Completed', task_complete = CURRENT_TIMESTAMP WHERE task_id = ?");
+    $stmtUpdate->bind_param("i", $taskId);
     $stmtUpdate->execute();
     $stmtUpdate->close();
 }

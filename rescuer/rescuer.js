@@ -9,7 +9,6 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 map.zoomControl.remove();
 
-const searchInput = document.querySelector('.address-search');
 const mapContainer = document.getElementById('map-container');
 const map_desktop = document.getElementById('map');
 map_desktop.classList.add("map");
@@ -36,7 +35,7 @@ searchControl.addTo(map);
 
 // Fetch Geolocation based on the Searched Route Name
 function fetchGeoSearch() {
-  const query = searchInput.value;
+  const query = document.querySelector('.address-search').value;
   fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&polygon_geojson=1&addressdetails=1&q=' + query + '&limit=1')
     .then(result => result.json())
     .then(parsedResult => {
@@ -248,7 +247,7 @@ function drawLine() {
   const pointA = [truckMarkers[0].getLatLng().lat, truckMarkers[0].getLatLng().lng];
   var activeTasksMarkers = [];
   taskMarkers.forEach(marker => {
-    if (marker.options.icon == categoryIcons['Executing Request'] || marker.options.icon == categoryIcons['Executing Offer'] && marker.taskInfo.vehId == veh_id) {
+    if ((marker.options.icon == categoryIcons['Executing Request'] || marker.options.icon == categoryIcons['Executing Offer']) && marker.taskInfo.vehId == veh_id) {
       activeTasksMarkers.push(marker);
     }
   })
@@ -945,10 +944,16 @@ unloadTruckBtn.addEventListener("click", (e) => {
 // Next Button After Quantity Input Event Listener
 const selectItemsUnloadBtn = document.querySelector(".button.selectItemsUnload");
 const unloadConfirm = document.querySelector(".unload-confirm-form");
+const emptyErrorUnload = document.querySelector(".unload-tab .error.emptyUnload");
 selectItemsUnloadBtn.addEventListener("click", (e) => {
-  unloadQuantity.classList.remove("active");
-  unloadConfirm.classList.add("active");
   submitUnload();
+  if (unloadDataArray.length == 0){
+    emptyErrorUnload.classList.add("active");
+  }else{
+    emptyErrorUnload.classList.remove("active");
+    unloadQuantity.classList.remove("active");
+    unloadConfirm.classList.add("active");
+  }
 });
 
 // Submit Unload Button Event Listener
