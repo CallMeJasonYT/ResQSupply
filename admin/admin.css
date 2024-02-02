@@ -1038,6 +1038,8 @@ label,
 .filters-list {
   position: relative;
   padding: 10px;
+  border: 1px solid #525151;
+  border-radius: 6px;
 }
 
 .filter {
@@ -1128,6 +1130,10 @@ input[type="checkbox"]:checked {
   align-items: center;
   justify-content: space-between;
   font-size: 18px;
+}
+
+.item-text{
+  margin-right: 5px;
 }
 
 .item-title .cancel {
