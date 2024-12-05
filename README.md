@@ -1,7 +1,7 @@
 
 # ResQSupply
 
-The aim of the present project is the development of a collaborative system for the registration of requests for assistance (emergency items) and the servicing of needs in a community that has been affected by a natural disaster (e.g. flood, earthquake, etc.). It was developed in the context of the workshop of the course Programming & Systems on the Web, at the C.E.I.D.
+The aim of the present project is the development of a collaborative system for the registration of requests for assistance (emergency items) and the servicing of needs in a community that has been affected by a natural disaster (e.g. flood, earthquake, etc.). It was developed in the context of the workshop of the course "Programming & Systems on the Web", at C.E.I.D.
 
 
 ## Authors
@@ -23,7 +23,7 @@ The aim of the present project is the development of a collaborative system for 
 
 **Client:** CSS3, HTML5, JS
 
-**Server:** PhP, Apache
+**Server:** PhP, Apache, MySQL
 
 ## Screenshots
 
@@ -37,6 +37,7 @@ The aim of the present project is the development of a collaborative system for 
 ![Rescuer Main Page](https://snipboard.io/tT9pKb.jpg)
 ### Admin Main Page
 ![Admin Main Page](https://snipboard.io/p3BEUA.jpg)
+
 ## Acknowledgements
 
  - [Custom Date Range Picker: Easepick ](https://easepick.com/)
